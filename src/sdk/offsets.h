@@ -11,7 +11,35 @@ namespace offsets
 
 	// offsets.hpp
 	constexpr std::ptrdiff_t dwLocalPlayerPawn = 0x2562808;
+	constexpr std::ptrdiff_t dwEntityList = 0x2717828;
 
-	// client_dll.hpp (C_BaseEntity)
-	constexpr std::ptrdiff_t m_fFlags = 0x3F4;
+	// client_dll.hpp
+	constexpr std::ptrdiff_t m_fFlags = 0x3F4;                    // C_BaseEntity
+	constexpr std::ptrdiff_t m_iHealth = 0x34C;                   // C_BaseEntity
+	constexpr std::ptrdiff_t m_lifeState = 0x354;                 // C_BaseEntity
+	constexpr std::ptrdiff_t m_iTeamNum = 0x3E7;                  // C_BaseEntity
+	constexpr std::ptrdiff_t m_hOwnerEntity = 0x520;              // C_BaseEntity
+	constexpr std::ptrdiff_t m_bIsLocalPlayerController = 0x790;  // CBasePlayerController
+	constexpr std::ptrdiff_t m_hPlayerPawn = 0x92C;               // CCSPlayerController
+}
+
+// Not covered by cs2-dumper - reversed by hand (scenesystem.dll / CGameEntitySystem).
+namespace offsets::manual
+{
+	constexpr std::ptrdiff_t entityListBuckets = 0x10;  // CGameEntitySystem -> CEntityIdentity* buckets[64]
+	constexpr std::ptrdiff_t entityIdentitySize = 0x70; // sizeof(CEntityIdentity)
+	constexpr std::ptrdiff_t sceneObjectOwner = 0xB8;   // CSceneObject::m_hOwner
+}
+
+// IDA-style signatures
+namespace patterns
+{
+	// scenesystem.dll - CAnimatableSceneObjectDesc vtable[1] (renders player/weapon models)
+	constexpr const char* drawObject = "48 8B C4 53 57 41 54 48 81 EC ?? ?? ?? ?? 49 63 F9 49";
+
+	// materialsystem2.dll - CMaterialSystem2::CreateMaterial
+	constexpr const char* createMaterial = "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 56 48 81 EC 10 01 00 00 48 8B 05 ?? ?? ?? ?? 48";
+
+	// tier0.dll export
+	constexpr const char* loadKV3 = "?LoadKV3@@YA_NPEAVKeyValues3@@PEAVCUtlString@@PEBDAEBUKV3ID_t@@2I@Z";
 }

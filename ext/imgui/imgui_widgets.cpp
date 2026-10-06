@@ -1164,6 +1164,22 @@ bool ImGui::ImageButton(ImTextureID user_texture_id, const ImVec2& size, const I
 */
 #endif // #ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
 
+// [cs2 internal] shadcn-style helpers --------------------------------------------------
+// Smoothly moves a per-widget float towards `target` (0..1). Stored in the window state storage.
+static float ShadcnAnimate(ImGuiID id, float target, float speed = 14.0f)
+{
+    ImGuiContext& g = *GImGui;
+    ImGuiStorage* storage = &g.CurrentWindow->StateStorage;
+    const ImGuiID key = ImHashStr("##shadcn_anim", 0, id);
+    float* value = storage->GetFloatRef(key, target);
+    const float step = ImMin(1.0f, g.IO.DeltaTime * speed);
+    *value += (target - *value) * step;
+    if (ImFabs(*value - target) < 0.001f)
+        *value = target;
+    return *value;
+}
+
+// shadcn Switch: label on the left, 36x20 pill toggle right-aligned in the available width.
 bool ImGui::Checkbox(const char* label, bool* v)
 {
     ImGuiWindow* window = GetCurrentWindow();
@@ -1175,64 +1191,55 @@ bool ImGui::Checkbox(const char* label, bool* v)
     const ImGuiID id = window->GetID(label);
     const ImVec2 label_size = CalcTextSize(label, NULL, true);
 
-    const float square_sz = GetFrameHeight();
-    const ImVec2 pos = window->DC.CursorPos;
-    const ImRect total_bb(pos, pos + ImVec2(square_sz + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f), label_size.y + style.FramePadding.y * 2.0f));
-    ItemSize(total_bb, style.FramePadding.y);
-    const bool is_visible = ItemAdd(total_bb, id);
-    const bool is_multi_select = (g.LastItemData.ItemFlags & ImGuiItemFlags_IsMultiSelect) != 0;
-    if (!is_visible)
-        if (!is_multi_select || !g.BoxSelectState.UnclipMode || !g.BoxSelectState.UnclipRect.Overlaps(total_bb)) // Extra layer of "no logic clip" for box-select support
-        {
-            IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
-            return false;
-        }
+    const float track_h = IM_TRUNC(g.FontSize * 1.25f);
+    const float track_w = IM_TRUNC(track_h * 1.8f);
+    const float row_h = ImMax(label_size.y + style.FramePadding.y * 2.0f, track_h);
+    const float avail_w = ImMax(GetContentRegionAvail().x, label_size.x + style.ItemInnerSpacing.x + track_w);
 
-    // Range-Selection/Multi-selection support (header)
-    bool checked = *v;
-    if (is_multi_select)
-        MultiSelectItemHeader(id, &checked, NULL);
+    const ImVec2 pos = window->DC.CursorPos;
+    const ImRect total_bb(pos, pos + ImVec2(avail_w, row_h));
+    ItemSize(total_bb, style.FramePadding.y);
+    if (!ItemAdd(total_bb, id))
+    {
+        IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
+        return false;
+    }
 
     bool hovered, held;
     bool pressed = ButtonBehavior(total_bb, id, &hovered, &held);
-
-    // Range-Selection/Multi-selection support (footer)
-    if (is_multi_select)
-        MultiSelectItemFooter(id, &checked, &pressed);
-    else if (pressed)
-        checked = !checked;
-
-    if (*v != checked)
+    if (pressed)
     {
-        *v = checked;
-        pressed = true; // return value
+        *v = !(*v);
         MarkItemEdited(id);
     }
 
-    const ImRect check_bb(pos, pos + ImVec2(square_sz, square_sz));
-    const bool mixed_value = (g.LastItemData.ItemFlags & ImGuiItemFlags_MixedValue) != 0;
-    if (is_visible)
-    {
-        RenderNavCursor(total_bb, id);
-        RenderFrame(check_bb.Min, check_bb.Max, GetColorU32((held && hovered) ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg), true, style.FrameRounding);
-        ImU32 check_col = GetColorU32(ImGuiCol_CheckMark);
-        if (mixed_value)
-        {
-            // Undocumented tristate/mixed/indeterminate checkbox (#2644)
-            // This may seem awkwardly designed because the aim is to make ImGuiItemFlags_MixedValue supported by all widgets (not just checkbox)
-            ImVec2 pad(ImMax(1.0f, IM_TRUNC(square_sz / 3.6f)), ImMax(1.0f, IM_TRUNC(square_sz / 3.6f)));
-            window->DrawList->AddRectFilled(check_bb.Min + pad, check_bb.Max - pad, check_col, style.FrameRounding);
-        }
-        else if (*v)
-        {
-            const float pad = ImMax(1.0f, IM_TRUNC(square_sz / 6.0f));
-            RenderCheckMark(window->DrawList, check_bb.Min + ImVec2(pad, pad), check_col, square_sz - pad * 2.0f);
-        }
-    }
-    const ImVec2 label_pos = ImVec2(check_bb.Max.x + style.ItemInnerSpacing.x, check_bb.Min.y + style.FramePadding.y);
+    const float t = ShadcnAnimate(id, *v ? 1.0f : 0.0f);
+    const ImRect track_bb(ImVec2(total_bb.Max.x - track_w, pos.y + (row_h - track_h) * 0.5f), ImVec2(total_bb.Max.x, pos.y + (row_h + track_h) * 0.5f));
+
+    RenderNavCursor(total_bb, id);
+
+    // track: input colour when off, primary when on
+    ImVec4 off_col = GetStyleColorVec4(hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
+    ImVec4 on_col = GetStyleColorVec4(ImGuiCol_CheckMark);
+    ImVec4 track_col = ImLerp(off_col, on_col, t);
+    track_col.w *= style.Alpha;
+    window->DrawList->AddRectFilled(track_bb.Min, track_bb.Max, GetColorU32(track_col), track_h * 0.5f);
+
+    // thumb
+    const float pad = 2.0f;
+    const float radius = track_h * 0.5f - pad;
+    const float x0 = track_bb.Min.x + pad + radius;
+    const float x1 = track_bb.Max.x - pad - radius;
+    const ImVec2 center(ImLerp(x0, x1, t), track_bb.GetCenter().y);
+    ImVec4 thumb_col = ImLerp(GetStyleColorVec4(ImGuiCol_Text), GetStyleColorVec4(ImGuiCol_WindowBg), t);
+    thumb_col.w = style.Alpha;
+    window->DrawList->AddCircleFilled(center + ImVec2(0.0f, 1.0f), radius, IM_COL32(0, 0, 0, (int)(60 * style.Alpha)), 24);
+    window->DrawList->AddCircleFilled(center, radius, GetColorU32(thumb_col), 24);
+
+    const ImVec2 label_pos = ImVec2(pos.x, pos.y + (row_h - label_size.y) * 0.5f);
     if (g.LogEnabled)
-        LogRenderedText(&label_pos, mixed_value ? "[~]" : *v ? "[x]" : "[ ]");
-    if (is_visible && label_size.x > 0.0f)
+        LogRenderedText(&label_pos, *v ? "[x]" : "[ ]");
+    if (label_size.x > 0.0f)
         RenderText(label_pos, label);
 
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | ImGuiItemStatusFlags_Checkable | (*v ? ImGuiItemStatusFlags_Checked : 0));
@@ -1866,8 +1873,11 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
     const ImVec2 label_size = CalcTextSize(label, NULL, true);
     const float preview_width = ((flags & ImGuiComboFlags_WidthFitPreview) && (preview_value != NULL)) ? CalcTextSize(preview_value, NULL, true).x : 0.0f;
     const float w = (flags & ImGuiComboFlags_NoPreview) ? arrow_size : ((flags & ImGuiComboFlags_WidthFitPreview) ? (arrow_size + preview_width + style.FramePadding.x * 2.0f) : CalcItemWidth());
-    const ImRect bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
-    const ImRect total_bb(bb.Min, bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
+    // [cs2 internal] shadcn Select: label on the left, box right-aligned in the available width
+    const float row_w = ImMax(GetContentRegionAvail().x, w + (label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f));
+    const ImVec2 row_min = window->DC.CursorPos;
+    const ImRect total_bb(row_min, row_min + ImVec2(row_w, label_size.y + style.FramePadding.y * 2.0f));
+    const ImRect bb(ImVec2(total_bb.Max.x - w, total_bb.Min.y), total_bb.Max);
     ItemSize(total_bb, style.FramePadding.y);
     if (!ItemAdd(total_bb, id, &bb))
         return false;
@@ -1883,21 +1893,24 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
         popup_open = true;
     }
 
-    // Render shape
-    const ImU32 frame_col = GetColorU32(hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
+    // Render shape ([cs2 internal] outlined box + chevron instead of the arrow button)
+    const float t = ShadcnAnimate(id, (hovered || popup_open) ? 1.0f : 0.0f, 18.0f);
+    ImVec4 hover_fill = GetStyleColorVec4(ImGuiCol_FrameBg);
+    hover_fill.w *= 0.5f;
+    const ImU32 frame_col = GetColorU32(ImLerp(GetStyleColorVec4(ImGuiCol_WindowBg), hover_fill, t));
     const float value_x2 = ImMax(bb.Min.x, bb.Max.x - arrow_size);
     RenderNavCursor(bb, id);
-    if (!(flags & ImGuiComboFlags_NoPreview))
-        window->DrawList->AddRectFilled(bb.Min, ImVec2(value_x2, bb.Max.y), frame_col, style.FrameRounding, (flags & ImGuiComboFlags_NoArrowButton) ? ImDrawFlags_RoundCornersAll : ImDrawFlags_RoundCornersLeft);
+    window->DrawList->AddRectFilled(bb.Min, bb.Max, frame_col, style.FrameRounding);
+    window->DrawList->AddRect(bb.Min, bb.Max, GetColorU32(popup_open ? ImGuiCol_NavCursor : ImGuiCol_Border), style.FrameRounding, 0, 1.0f);
     if (!(flags & ImGuiComboFlags_NoArrowButton))
     {
-        ImU32 bg_col = GetColorU32((popup_open || hovered) ? ImGuiCol_ButtonHovered : ImGuiCol_Button);
-        ImU32 text_col = GetColorU32(ImGuiCol_Text);
-        window->DrawList->AddRectFilled(ImVec2(value_x2, bb.Min.y), bb.Max, bg_col, style.FrameRounding, (w <= arrow_size) ? ImDrawFlags_RoundCornersAll : ImDrawFlags_RoundCornersRight);
-        if (value_x2 + arrow_size - style.FramePadding.x <= bb.Max.x)
-            RenderArrow(window->DrawList, ImVec2(value_x2 + style.FramePadding.y, bb.Min.y + style.FramePadding.y), text_col, ImGuiDir_Down, 1.0f);
+        const ImU32 chevron_col = GetColorU32(ImGuiCol_TextDisabled);
+        const float cs = g.FontSize * 0.22f;
+        const ImVec2 c(bb.Max.x - arrow_size * 0.5f, bb.GetCenter().y + (popup_open ? -cs * 0.5f : cs * 0.25f));
+        const float dir = popup_open ? 1.0f : -1.0f;
+        const ImVec2 pts[3] = { ImVec2(c.x - cs * 1.6f, c.y + dir * cs * 0.5f), ImVec2(c.x, c.y - dir * cs), ImVec2(c.x + cs * 1.6f, c.y + dir * cs * 0.5f) };
+        window->DrawList->AddPolyline(pts, 3, chevron_col, ImDrawFlags_None, 1.5f);
     }
-    RenderFrameBorder(bb.Min, bb.Max, style.FrameRounding);
 
     // Custom preview
     if (flags & ImGuiComboFlags_CustomPreview)
@@ -1915,7 +1928,7 @@ bool ImGui::BeginCombo(const char* label, const char* preview_value, ImGuiComboF
         RenderTextClipped(bb.Min + style.FramePadding, ImVec2(value_x2, bb.Max.y), preview_value, NULL, NULL);
     }
     if (label_size.x > 0)
-        RenderText(ImVec2(bb.Max.x + style.ItemInnerSpacing.x, bb.Min.y + style.FramePadding.y), label);
+        RenderText(ImVec2(total_bb.Min.x, bb.Min.y + style.FramePadding.y), label);
 
     if (!popup_open)
         return false;
@@ -3232,11 +3245,18 @@ bool ImGui::SliderScalar(const char* label, ImGuiDataType data_type, void* p_dat
     const float w = CalcItemWidth();
 
     const ImVec2 label_size = CalcTextSize(label, NULL, true);
-    const ImRect frame_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(w, label_size.y + style.FramePadding.y * 2.0f));
-    const ImRect total_bb(frame_bb.Min, frame_bb.Max + ImVec2(label_size.x > 0.0f ? style.ItemInnerSpacing.x + label_size.x : 0.0f, 0.0f));
+    IM_UNUSED(w);
+
+    // [cs2 internal] shadcn Slider: "label ........ value" header row, full-width track below it
+    const float full_w = ImMax(GetContentRegionAvail().x, 50.0f);
+    const float header_h = label_size.x > 0.0f ? label_size.y + style.ItemInnerSpacing.y : 0.0f;
+    const float slider_h = IM_TRUNC(g.FontSize * 1.1f);
+    const ImVec2 pos = window->DC.CursorPos;
+    const ImRect frame_bb(ImVec2(pos.x, pos.y + header_h), ImVec2(pos.x + full_w, pos.y + header_h + slider_h));
+    const ImRect total_bb(pos, frame_bb.Max);
 
     const bool temp_input_allowed = (flags & ImGuiSliderFlags_NoInput) == 0;
-    ItemSize(total_bb, style.FramePadding.y);
+    ItemSize(total_bb, 0.0f);
     if (!ItemAdd(total_bb, id, &frame_bb, temp_input_allowed ? ImGuiItemFlags_Inputable : 0))
         return false;
 
@@ -3277,30 +3297,45 @@ bool ImGui::SliderScalar(const char* label, ImGuiDataType data_type, void* p_dat
         return TempInputScalar(frame_bb, id, label, data_type, p_data, format, clamp_enabled ? p_min : NULL, clamp_enabled ? p_max : NULL);
     }
 
-    // Draw frame
-    const ImU32 frame_col = GetColorU32(g.ActiveId == id ? ImGuiCol_FrameBgActive : hovered ? ImGuiCol_FrameBgHovered : ImGuiCol_FrameBg);
     RenderNavCursor(frame_bb, id);
-    RenderFrame(frame_bb.Min, frame_bb.Max, frame_col, true, g.Style.FrameRounding);
 
-    // Slider behavior
+    // Slider behavior (grab is sized by style.GrabMinSize; we only use its centre)
     ImRect grab_bb;
     const bool value_changed = SliderBehavior(frame_bb, id, data_type, p_data, p_min, p_max, format, flags, &grab_bb);
     if (value_changed)
         MarkItemEdited(id);
 
-    // Render grab
+    const float track_h = ImMax(4.0f, IM_TRUNC(slider_h * 0.3f));
+    const float radius = slider_h * 0.5f - 1.0f;
+    const float cy = frame_bb.GetCenter().y;
+    const ImRect track_bb(ImVec2(frame_bb.Min.x, cy - track_h * 0.5f), ImVec2(frame_bb.Max.x, cy + track_h * 0.5f));
+    window->DrawList->AddRectFilled(track_bb.Min, track_bb.Max, GetColorU32(ImGuiCol_FrameBg), track_h * 0.5f);
+
     if (grab_bb.Max.x > grab_bb.Min.x)
-        window->DrawList->AddRectFilled(grab_bb.Min, grab_bb.Max, GetColorU32(g.ActiveId == id ? ImGuiCol_SliderGrabActive : ImGuiCol_SliderGrab), style.GrabRounding);
+    {
+        const float target_x = ImClamp(grab_bb.GetCenter().x, frame_bb.Min.x + radius, frame_bb.Max.x - radius);
+        window->DrawList->AddRectFilled(track_bb.Min, ImVec2(target_x, track_bb.Max.y), GetColorU32(ImGuiCol_SliderGrab), track_h * 0.5f);
+
+        const float hover_t = ShadcnAnimate(id, (g.ActiveId == id || hovered) ? 1.0f : 0.0f, 18.0f);
+        if (hover_t > 0.0f) // focus ring
+            window->DrawList->AddCircleFilled(ImVec2(target_x, cy), radius + 4.0f * hover_t, GetColorU32(ImGuiCol_SliderGrab, 0.15f * hover_t), 32);
+        window->DrawList->AddCircleFilled(ImVec2(target_x, cy), radius, GetColorU32(ImGuiCol_WindowBg), 32);
+        window->DrawList->AddCircle(ImVec2(target_x, cy), radius, GetColorU32(g.ActiveId == id ? ImGuiCol_SliderGrabActive : ImGuiCol_SliderGrab), 32, 2.0f);
+    }
 
     // Display value using user-provided display format so user can add prefix/suffix/decorations to the value.
     char value_buf[64];
     const char* value_buf_end = value_buf + DataTypeFormatString(value_buf, IM_ARRAYSIZE(value_buf), data_type, p_data, format);
     if (g.LogEnabled)
         LogSetNextTextDecoration("{", "}");
-    RenderTextClipped(frame_bb.Min, frame_bb.Max, value_buf, value_buf_end, NULL, ImVec2(0.5f, 0.5f));
-
+    const ImVec2 value_size = CalcTextSize(value_buf, value_buf_end);
     if (label_size.x > 0.0f)
-        RenderText(ImVec2(frame_bb.Max.x + style.ItemInnerSpacing.x, frame_bb.Min.y + style.FramePadding.y), label);
+    {
+        RenderText(pos, label);
+        PushStyleColor(ImGuiCol_Text, GetStyleColorVec4(ImGuiCol_TextDisabled));
+        RenderText(ImVec2(total_bb.Max.x - value_size.x, pos.y), value_buf, value_buf_end);
+        PopStyleColor();
+    }
 
     IMGUI_TEST_ENGINE_ITEM_INFO(id, label, g.LastItemData.StatusFlags | (temp_input_allowed ? ImGuiItemStatusFlags_Inputable : 0));
     return value_changed;

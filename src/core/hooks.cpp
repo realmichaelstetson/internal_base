@@ -9,6 +9,9 @@
 
 #include "../sdk/globals.h"
 #include "../core/config.h"
+#include "../features/chams.h"
+#include "../sdk/offsets.h"
+#include "../sdk/pattern.h"
 #include "../ui/menu.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
@@ -20,6 +23,7 @@ namespace
 
 	PresentFn oPresent = nullptr;
 	ResizeBuffersFn oResizeBuffers = nullptr;
+	features::chams::DrawObjectFn oDrawObject = nullptr;
 	void* presentTarget = nullptr;
 	void* resizeBuffersTarget = nullptr;
 
@@ -117,6 +121,8 @@ namespace
 		io.IniFilename = nullptr;
 		io.ConfigFlags |= ImGuiConfigFlags_NoMouseCursorChange;
 
+		menu::setup( );
+
 		ImGui_ImplWin32_Init( window );
 		ImGui_ImplDX11_Init( device, context );
 
@@ -157,6 +163,11 @@ namespace
 	{
 		releaseRenderTarget( );
 		return oResizeBuffers( swapChain, bufferCount, width, height, format, flags );
+	}
+
+	void* __fastcall hkDrawObject( void* desc, void* renderContext, void* sceneData, int count, void* sceneView, void* sceneLayer, void* unk )
+	{
+		return features::chams::onDrawObject( oDrawObject, desc, renderContext, sceneData, count, sceneView, sceneLayer, unk );
 	}
 
 	// Creates a throwaway device + swap chain just to read the IDXGISwapChain vtable.
@@ -218,7 +229,16 @@ bool hooks::init( )
 	if ( MH_CreateHook( resizeBuffersTarget, reinterpret_cast< void* >( &hkResizeBuffers ), reinterpret_cast< void** >( &oResizeBuffers ) ) != MH_OK )
 		return false;
 
+	// chams hook is optional - the menu still works if the signature is outdated
+	if ( void* drawObject = reinterpret_cast< void* >( pattern::find( "scenesystem.dll", patterns::drawObject ) ) )
+		MH_CreateHook( drawObject, reinterpret_cast< void* >( &hkDrawObject ), reinterpret_cast< void** >( &oDrawObject ) );
+
 	return MH_EnableHook( MH_ALL_HOOKS ) == MH_OK;
+}
+
+bool hooks::chamsHooked( )
+{
+	return oDrawObject != nullptr;
 }
 
 void hooks::shutdown( )

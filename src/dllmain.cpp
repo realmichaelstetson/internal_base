@@ -4,6 +4,8 @@
 #include "core/config.h"
 #include "core/hooks.h"
 #include "features/bhop.h"
+#include "features/chams.h"
+#include "sdk/entities.h"
 #include "sdk/globals.h"
 
 namespace
@@ -21,11 +23,22 @@ namespace
 			FreeLibraryAndExitThread( static_cast< HMODULE >( instance ), 0 );
 		}
 
+		if ( hooks::chamsHooked( ) )
+			features::chams::init( );
+
 		// feature loop - runs on its own thread like the original bhop
+		ULONGLONG lastEntityUpdate = 0;
 		while ( globals::running )
 		{
 			if ( GetAsyncKeyState( config::unloadKey ) & 1 )
 				globals::running = false;
+
+			// refresh who is an enemy / teammate for the chams
+			if ( GetTickCount64( ) - lastEntityUpdate >= 10 )
+			{
+				entities::update( );
+				lastEntityUpdate = GetTickCount64( );
+			}
 
 			features::bhop::run( );
 			Sleep( 1 );

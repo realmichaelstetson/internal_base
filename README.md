@@ -1,11 +1,19 @@
 # cs2 internal base
 
-Prosty internal (DLL) pod CS2 z menu ImGui (DirectX 11) i bunnyhopem przeniesionym z
+Internal (DLL) pod CS2 z menu ImGui (DirectX 11) w stylu shadcn/ui, chamsami i bunnyhopem przeniesionym z
 [nexnith/internal_bhop](https://github.com/nexnith/internal_bhop).
 
 ## Funkcje
 
 - Hook `IDXGISwapChain::Present` / `ResizeBuffers` przez MinHook, menu ImGui (Win32 + DX11)
+- **Menu w stylu shadcn/ui** – sidebar z kategoriami po lewej, karty z opcjami po prawej, paleta zinc (dark).
+  W `ext/imgui/imgui_widgets.cpp` przerobione są widgety (oznaczone `[cs2 internal]`):
+  `Checkbox` → animowany switch, `SliderScalar` → cienki track z okrągłym thumbem, `BeginCombo` → select z chevronem
+- **Chams** (hook `CAnimatableSceneObjectDesc` draw w `scenesystem.dll`, własne materiały przez `CreateMaterial` + KV3)
+  - cele: Enemies / Teammates / Local player / Weapons / Viewmodel – każdy osobno skonfigurowany
+  - 3 warstwy na cel: **Visible**, **Through walls** (ignore-z), **Overlay** (dodatkowy pass na wierzchu)
+  - materiały: Flat, Textured, Metallic, Glow, Illuminate, Ghost, Original (tint oryginalnej tekstury)
+  - kolor z alfą (color picker), Rainbow, Pulse
 - **Bunnyhop**: wł./wył., wybór klawisza (Space / Mouse 4 / Mouse 5 / Left Alt / C), opóźnienie puszczenia skoku
 - `INSERT` – pokaż/ukryj menu (gdy menu jest otwarte, input do gry jest blokowany, a bhop wstrzymany)
 - `END` albo przycisk **Unload** – wyładowanie DLL
@@ -18,8 +26,12 @@ src/
   core/hooks.cpp      hook DX11, WndProc, inicjalizacja ImGui
   core/config.h       ustawienia zmieniane z menu
   features/bhop.cpp   bunnyhop
-  ui/menu.cpp         menu ImGui
-  sdk/offsets.h       offsety
+  features/chams.cpp  chamsy (materiały KV3 + logika rysowania)
+  ui/menu.cpp         menu ImGui (layout, motyw, karty, taby)
+  sdk/offsets.h       offsety + sygnatury
+  sdk/entities.cpp    entity lista, klasyfikacja graczy (wróg / team / local)
+  sdk/material.cpp    tworzenie CMaterial2 z bufora KV3
+  sdk/pattern.cpp     skaner sygnatur
   sdk/memory.h        bezpieczny odczyt/zapis pamięci
 ext/
   imgui/              Dear ImGui v1.91.9 (MIT)
@@ -38,7 +50,11 @@ Nowe funkcje: dodaj plik w `src/features/`, ustawienia w `core/config.h`, zakła
 
 Offsety w `src/sdk/offsets.h` zmieniają się praktycznie z każdą aktualizacją CS2. Po patchu weź
 aktualne wartości z [a2x/cs2-dumper](https://github.com/a2x/cs2-dumper)
-(`buttons.hpp` → `jump`, `offsets.hpp` → `dwLocalPlayerPawn`, `client_dll.hpp` → `m_fFlags`).
+(`buttons.hpp`, `offsets.hpp`, `client_dll.hpp`).
+
+Chamsy używają też sygnatur (`patterns::drawObject`, `patterns::createMaterial`) i kilku ręcznych offsetów
+(`offsets::manual`, layout `SceneData` w `chams.cpp`). Jeśli po update'cie na stronie Chams pojawi się
+czerwony badge („Draw hook not found” / „outdated signature”), trzeba je zaktualizować.
 
 ## Uwagi
 

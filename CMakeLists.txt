@@ -15,6 +15,10 @@ add_library(cs2_internal SHARED
     src/dllmain.cpp
     src/core/hooks.cpp
     src/features/bhop.cpp
+    src/features/chams.cpp
+    src/sdk/entities.cpp
+    src/sdk/material.cpp
+    src/sdk/pattern.cpp
     src/ui/menu.cpp
 
     ${IMGUI_DIR}/imgui.cpp

@@ -76,6 +76,10 @@
     <ClCompile Include="src\dllmain.cpp" />
     <ClCompile Include="src\core\hooks.cpp" />
     <ClCompile Include="src\features\bhop.cpp" />
+    <ClCompile Include="src\features\chams.cpp" />
+    <ClCompile Include="src\sdk\entities.cpp" />
+    <ClCompile Include="src\sdk\material.cpp" />
+    <ClCompile Include="src\sdk\pattern.cpp" />
     <ClCompile Include="src\ui\menu.cpp" />
     <ClCompile Include="ext\imgui\imgui.cpp" />
     <ClCompile Include="ext\imgui\imgui_draw.cpp" />
@@ -92,6 +96,10 @@
     <ClInclude Include="src\core\config.h" />
     <ClInclude Include="src\core\hooks.h" />
     <ClInclude Include="src\features\bhop.h" />
+    <ClInclude Include="src\features\chams.h" />
+    <ClInclude Include="src\sdk\entities.h" />
+    <ClInclude Include="src\sdk\material.h" />
+    <ClInclude Include="src\sdk\pattern.h" />
     <ClInclude Include="src\sdk\globals.h" />
     <ClInclude Include="src\sdk\memory.h" />
     <ClInclude Include="src\sdk\offsets.h" />
