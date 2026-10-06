@@ -31,15 +31,15 @@ namespace offsets::manual
 	constexpr std::ptrdiff_t sceneObjectOwner = 0xB8;   // CSceneObject::m_hOwner
 }
 
-// IDA-style signatures
+// IDA-style signatures - from https://cspatterns.dev/cpp (last updated 24/09/2026)
 namespace patterns
 {
-	// scenesystem.dll - CAnimatableSceneObjectDesc vtable[1] (renders player/weapon models)
-	constexpr const char* drawObject = "48 8B C4 53 57 41 54 48 81 EC ?? ?? ?? ?? 49 63 F9 49";
+	// scenesystem.dll - CANIMATABLESCENEOBJECTDESCRENDER (renders player/weapon models)
+	constexpr const char* drawObject = "48 8B C4 48 89 50 ? 48 89 48 ? 53 56";
 
-	// materialsystem2.dll - CMaterialSystem2::CreateMaterial
-	constexpr const char* createMaterial = "48 89 5C 24 08 48 89 6C 24 10 48 89 74 24 18 48 89 7C 24 20 41 56 48 81 EC 10 01 00 00 48 8B 05 ?? ?? ?? ?? 48";
+	// materialsystem2.dll - CREATEMATERIAL
+	constexpr const char* createMaterial = "48 89 5C 24 ? 48 89 6C 24 ? 48 89 74 24 ? 48 89 7C 24 ? 41 56 48 81 EC ? ? ? ? 48 8B 05 ? ? ? ? 48 8B F2";
 
-	// tier0.dll export
+	// tier0.dll export - LOADKV3_PROC_ADDRESS
 	constexpr const char* loadKV3 = "?LoadKV3@@YA_NPEAVKeyValues3@@PEAVCUtlString@@PEBDAEBUKV3ID_t@@2I@Z";
 }
