@@ -30,13 +30,13 @@ namespace world_particles {
 	// Control point index whose position we drive.
 	constexpr int CP_POSITION = 0;
 
-	using get_mgr_fn = void* (__fastcall*)();
+	// GetGameParticleManager resolves to the global that holds the manager pointer
 	using create_fn  = int*  (__fastcall*)(void*, unsigned int*, const char*, int, std::int64_t, std::int64_t, std::int64_t, int);
 	using setvec_fn  = bool  (__fastcall*)(void*, unsigned int, int, void*, int);
 	using destroy_fn = void  (__fastcall*)(void*, unsigned int, bool, bool);
 
 	struct fns_t {
-		get_mgr_fn get_mgr = nullptr;
+		void** mgr_global = nullptr;
 		create_fn  create  = nullptr;
 		setvec_fn  setvec  = nullptr;
 		destroy_fn destroy = nullptr;
@@ -46,7 +46,7 @@ namespace world_particles {
 		static fns_t f;
 		static std::once_flag flag;
 		std::call_once(flag, [&]() {
-			f.get_mgr = reinterpret_cast<get_mgr_fn>(SIG("GetGameParticleManager"));
+			f.mgr_global = reinterpret_cast<void**>(SIG("GetGameParticleManager"));
 			f.create  = reinterpret_cast<create_fn>(SIG("CreateParticle"));
 			f.setvec  = reinterpret_cast<setvec_fn>(SIG("SetParticleSettings"));
 			f.destroy = reinterpret_cast<destroy_fn>(SIG("DestroyParticle"));
@@ -56,15 +56,15 @@ namespace world_particles {
 
 	inline bool available() {
 		auto& f = get();
-		return f.get_mgr && f.create && f.setvec && f.destroy;
+		return f.mgr_global && f.create && f.setvec && f.destroy;
 	}
 
 	inline void* manager() {
 		auto& f = get();
-		if (!f.get_mgr)
+		if (!f.mgr_global)
 			return nullptr;
 		__try {
-			return f.get_mgr();
+			return *f.mgr_global;
 		}
 		__except (EXCEPTION_EXECUTE_HANDLER) {
 			return nullptr;

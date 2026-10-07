@@ -150,6 +150,7 @@
     <ClInclude Include="src\sdk\client_dll.hpp" />
     <ClInclude Include="src\sdk\config_system\config_system.hpp" />
     <ClInclude Include="src\sdk\console\console.hpp" />
+    <ClInclude Include="src\sdk\console\debug_log.hpp" />
     <ClInclude Include="src\sdk\cs2sdk.hpp" />
     <ClInclude Include="src\sdk\cs2sdk_macros.hpp" />
     <ClInclude Include="src\sdk\diagnostics\diagnostics.hpp" />

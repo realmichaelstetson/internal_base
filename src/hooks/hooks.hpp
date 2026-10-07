@@ -17,13 +17,13 @@ public:
 
 		MH_STATUS create_status = MH_CreateHook(m_function, m_detour, &m_trampoline);
 		if (create_status != MH_OK) {
-			LOG_ERROR(xorstr_("[c_hook] MH_CreateHook failed: %d"), create_status);
+			LOG_ERROR(xorstr_("[c_hook] MH_CreateHook failed: %d (%s) at %s"), create_status, MH_StatusToString(create_status), dbg::addr(target).s);
 			return false;
 		}
 
 		MH_STATUS enable_status = MH_EnableHook(m_function);
 		if (enable_status != MH_OK) {
-			LOG_ERROR(xorstr_("[c_hook] MH_EnableHook failed: %d"), enable_status);
+			LOG_ERROR(xorstr_("[c_hook] MH_EnableHook failed: %d (%s) at %s"), enable_status, MH_StatusToString(enable_status), dbg::addr(target).s);
 			return false;
 		}
 

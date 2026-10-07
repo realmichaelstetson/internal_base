@@ -39,7 +39,7 @@ constexpr signature_entry_t entries[] = {
 	{ "GameEvent::GetString", "client.dll", "48 83 EC 38 8B 02 48 83 C1 58 89 44 24 20 8B 42 04 89 44 24 24 48 8B 42 08 48 8D 54 24 20 48 89 44 24 28 E8 ? ? ? ? 48 83 C4 38 C3 CC CC CC 33 C9"sv, signature_resolve_kind::raw, 0, 0 },
 	{ "GameEvent::SetString", "client.dll", "48 83 EC 38 8B 02 48 83 C1 58 89 44 24 20 41 B1 1A"sv, signature_resolve_kind::raw, 0, 0 },
 	{ "GameEvent::GetPlayerController", "client.dll", "48 83 EC 38 8B 02 4C 8D 44 24 20"sv, signature_resolve_kind::raw, 0, 0 },
-	{ "CSGOInput_ptr", "client.dll", "48 89 05 ? ? ? ? 0F 57 C0 0F 11 05"sv, signature_resolve_kind::riprel, 3, 0 },
+	{ "CSGOInput_ptr", "client.dll", "48 8B 0D ? ? ? ? 4C 8D 47 14"sv, signature_resolve_kind::riprel, 3, 0 },
 	{ "EntitySystem", "client.dll", "48 8B 1D ? ? ? ? 48 89 1D ? ? ? ?"sv, signature_resolve_kind::riprel, 3, 0 },
 	{ "view_matrix_ptr", "client.dll", "48 8D 0D ? ? ? ? 48 C1 E0 06"sv, signature_resolve_kind::riprel, 3, 0 },
 	{ "GetViewModelOffsets", "client.dll", "40 55 53 56 41 56 41 57 48 8B EC 48 83 EC 20 4D 8B F8 4C 8B F2 48 8B F1 E8"sv, signature_resolve_kind::raw, 0, 0 },
@@ -148,18 +148,23 @@ std::uint8_t* c_signatures::get(const char* module_name, const char* name)
 
 std::uint8_t* c_signatures::resolve(const signature_entry_t& entry)
 {
+	dbg::t_stage = entry.name;
 	std::uint8_t* address = g_opcodes->scan(entry.module_name, entry.pattern.data());
 	if (!address) {
 		LOG_ERROR("[signatures] couldn't find %s!%s (%s)", entry.module_name, entry.name, entry.pattern.data());
 		return nullptr;
 	}
 
-	if (entry.resolve == signature_resolve_kind::raw)
+	if (entry.resolve == signature_resolve_kind::raw) {
+		DBG_INFO("[sig] %s!%s -> %s", entry.module_name, entry.name, dbg::addr(address + entry.extra_offset).s);
 		return address + entry.extra_offset;
+	}
 
 	auto* resolved = resolve_relative(address, entry.rel_offset, entry.extra_offset);
 	if (!resolved)
 		LOG_ERROR("[signatures] couldn't resolve %s!%s", entry.module_name, entry.name);
+	else
+		DBG_INFO("[sig] %s!%s -> %s (match at %s)", entry.module_name, entry.name, dbg::addr(resolved).s, dbg::addr(address).s);
 
 	return resolved;
 }

@@ -16,7 +16,7 @@
     "GameEvent::GetString": "client::GetString",
     "GameEvent::SetString": "client::SetString",
     "GameEvent::GetPlayerController": "client::GetPlayerController",
-    "CSGOInput_ptr": "client::pCSGOInputInstance",
+    "CSGOInput_ptr": "client::CInputPtrGlobal",
     "EntitySystem": "client::pGameEntitySystem",
     "view_matrix_ptr": "client::pWorldToProjectionMatrix",
     "CUtlVector_CompositeMaterialInput_AddToTail": "client::CompositeMaterialInput_AddToTail",
