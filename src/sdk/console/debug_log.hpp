@@ -28,6 +28,7 @@ inline HANDLE g_file = INVALID_HANDLE_VALUE;
 inline bool g_console = false;
 inline LARGE_INTEGER g_start{}, g_freq{};
 inline char g_path[MAX_PATH] = {};
+inline const char* g_entry_via = "?";                    // which of the three entry paths fired first
 inline const char* g_init_step = "dll attach";            // last init step (any thread)
 inline const char* t_stage = nullptr;                       // last hook / signature entered (any thread)
 inline bool g_initialized = false;
@@ -542,10 +543,14 @@ inline HANDLE open_log(const char* dir) {
 	                   FILE_ATTRIBUTE_NORMAL | FILE_FLAG_WRITE_THROUGH, nullptr);
 }
 
-inline void init(HMODULE self) {
+// `via` names how we got here: TLS callback (earliest), static init, or DllMain.
+// Whichever runs first wins; the rest are no-ops. If the log says anything other
+// than "TLS callback", the injector does not call TLS callbacks.
+inline void init_from(HMODULE self, const char* via) {
 	if (g_initialized)
 		return;
 	g_initialized = true;
+	g_entry_via = via;
 	g_self = self;
 	if (self && readable(self, sizeof(IMAGE_DOS_HEADER))) {
 		const auto* dos = reinterpret_cast<const IMAGE_DOS_HEADER*>(self);
@@ -573,7 +578,7 @@ inline void init(HMODULE self) {
 	g_prev_filter = SetUnhandledExceptionFilter(unhandled_filter);
 
 	char path[MAX_PATH];
-	DBG_INFO("debug log started - dll built " __DATE__ " " __TIME__);
+	DBG_INFO("debug log started from %s - dll built " __DATE__ " " __TIME__, g_entry_via);
 	DBG_INFO("log file: %s", g_path[0] ? g_path : "<could not create>");
 	DBG_INFO("our dll: %s base %p size 0x%llX%s", module_name(self, path, MAX_PATH), static_cast<void*>(self),
 	         static_cast<unsigned long long>(g_self_size), module_of(self) ? "" : " (manual mapped)");
@@ -587,6 +592,10 @@ inline void init(HMODULE self) {
 	else
 		DBG_INFO("unwind    : exception table already resolvable");
 	report_tls(self);
+}
+
+inline void init(HMODULE self) {
+	init_from(self, "DllMain");
 }
 
 inline void set_console(bool on) {
