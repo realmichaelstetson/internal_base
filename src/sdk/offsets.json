@@ -1,44 +1,44 @@
 {
   "client.dll": {
-    "dwCSGOInput": "0x23DBC80",
-    "dwEntityList": "0x2571230",
-    "dwGameEntitySystem": "0x2571230",
-    "dwGameEntitySystem_highestEntityIndex": "0x2090",
-    "dwGameRules": "0x23C5D28",
-    "dwGlobalVars": "0x20AF5F0",
-    "dwGlowManager": "0x23C2A58",
-    "dwLocalPlayerController": "0x23A0F30",
-    "dwLocalPlayerPawn": "0x23C6268",
-    "dwPlantedC4": "0x2390A18",
-    "dwPrediction": "0x23C6170",
-    "dwSensitivity": "0x23C3578",
+    "dwCSGOInput": "0x2578160",
+    "dwEntityList": "0x2717828",
+    "dwGameEntitySystem": "0x2717828",
+    "dwGameEntitySystem_highestEntityIndex": "0x2120",
+    "dwGameRules": "0x255EE50",
+    "dwGlobalVars": "0x222DE98",
+    "dwGlowManager": "0x255EE60",
+    "dwLocalPlayerController": "0x253A068",
+    "dwLocalPlayerPawn": "0x2562808",
+    "dwPlantedC4": "0x24CA930",
+    "dwPrediction": "0x2562710",
+    "dwSensitivity": "0x255F998",
     "dwSensitivity_sensitivity": "0x58",
-    "dwViewAngles": "0x23DC308",
-    "dwViewMatrix": "0x23CB830",
-    "dwViewRender": "0x23CB898",
-    "dwWeaponC4": "0x233EF10"
+    "dwViewAngles": "0x25787E8",
+    "dwViewMatrix": "0x2567FA0",
+    "dwViewRender": "0x2568968",
+    "dwWeaponC4": "0x24C6AF0"
   },
   "engine2.dll": {
-    "dwBuildNumber": "0x60F594",
-    "dwNetworkGameClient": "0x90D4B0",
-    "dwNetworkGameClient_clientTickCount": "0x378",
+    "dwBuildNumber": "0x61CFE8",
+    "dwNetworkGameClient": "0x91AFC0",
+    "dwNetworkGameClient_clientTickCount": "0x398",
     "dwNetworkGameClient_deltaTick": "0x24C",
-    "dwNetworkGameClient_isBackgroundMap": "0x2C141F",
+    "dwNetworkGameClient_isBackgroundMap": "0x2C143F",
     "dwNetworkGameClient_localPlayer": "0xF8",
     "dwNetworkGameClient_maxClients": "0x240",
     "dwNetworkGameClient_serverTickCount": "0x24C",
     "dwNetworkGameClient_signOnState": "0x230",
-    "dwWindowHeight": "0x9118DC",
-    "dwWindowWidth": "0x9118D8"
+    "dwWindowHeight": "0x91F334",
+    "dwWindowWidth": "0x91F330"
   },
   "inputsystem.dll": {
-    "dwInputSystem": "0x45BA0"
+    "dwInputSystem": "0x46BC0"
   },
   "matchmaking.dll": {
-    "dwGameTypes": "0x1ADF80"
+    "dwGameTypes": "0x1B0FD0"
   },
   "soundsystem.dll": {
-    "dwSoundSystem": "0x54B5D0",
-    "dwSoundSystem_engineViewData": "0x7C"
+    "dwSoundSystem": "0x535350",
+    "dwSoundSystem_engineViewData": "0x6C"
   }
 }

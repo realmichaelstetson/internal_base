@@ -5,21 +5,21 @@
 
 namespace cs2_dumper {
     namespace buttons {
-        constexpr std::ptrdiff_t attack = 0x20B38F0;
-        constexpr std::ptrdiff_t attack2 = 0x20B3980;
-        constexpr std::ptrdiff_t back = 0x20B3BC0;
-        constexpr std::ptrdiff_t duck = 0x20B3E90;
-        constexpr std::ptrdiff_t forward = 0x20B3B30;
-        constexpr std::ptrdiff_t jump = 0x20B3E00;
-        constexpr std::ptrdiff_t left = 0x20B3C50;
-        constexpr std::ptrdiff_t lookatweapon = 0x23DBBA0;
-        constexpr std::ptrdiff_t reload = 0x20B3860;
-        constexpr std::ptrdiff_t right = 0x20B3CE0;
-        constexpr std::ptrdiff_t showscores = 0x23DBA80;
-        constexpr std::ptrdiff_t sprint = 0x20B37D0;
-        constexpr std::ptrdiff_t turnleft = 0x20B3A10;
-        constexpr std::ptrdiff_t turnright = 0x20B3AA0;
-        constexpr std::ptrdiff_t use = 0x20B3D70;
-        constexpr std::ptrdiff_t zoom = 0x23DBB10;
+        constexpr std::ptrdiff_t attack = 0x2231FD0;
+        constexpr std::ptrdiff_t attack2 = 0x2232060;
+        constexpr std::ptrdiff_t back = 0x22322A0;
+        constexpr std::ptrdiff_t duck = 0x2232570;
+        constexpr std::ptrdiff_t forward = 0x2232210;
+        constexpr std::ptrdiff_t jump = 0x22324E0;
+        constexpr std::ptrdiff_t left = 0x2232330;
+        constexpr std::ptrdiff_t lookatweapon = 0x2578080;
+        constexpr std::ptrdiff_t reload = 0x2231F40;
+        constexpr std::ptrdiff_t right = 0x22323C0;
+        constexpr std::ptrdiff_t showscores = 0x2577F60;
+        constexpr std::ptrdiff_t sprint = 0x2231EB0;
+        constexpr std::ptrdiff_t turnleft = 0x22320F0;
+        constexpr std::ptrdiff_t turnright = 0x2232180;
+        constexpr std::ptrdiff_t use = 0x2232450;
+        constexpr std::ptrdiff_t zoom = 0x2577FF0;
     }
 }

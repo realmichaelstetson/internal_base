@@ -4,7 +4,7 @@
 #include <cstddef>
 #include <cstdint>
 
-namespace cs2::vtables { inline constexpr std::uint32_t CS2_BUILD = 14160; }
+namespace cs2::vtables { inline constexpr std::uint32_t CS2_BUILD = 14189; }
 
 namespace cs2::vtables {
 
@@ -233,11 +233,45 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_213                                       =  213;
             inline constexpr std::ptrdiff_t method_214                                       =  214;
             inline constexpr std::ptrdiff_t method_215                                       =  215;
+            inline constexpr std::ptrdiff_t method_216                                       =  216;
+            inline constexpr std::ptrdiff_t method_217                                       =  217;
+            inline constexpr std::ptrdiff_t method_218                                       =  218;
+            inline constexpr std::ptrdiff_t method_219                                       =  219;
+            inline constexpr std::ptrdiff_t method_220                                       =  220;
+            inline constexpr std::ptrdiff_t method_221                                       =  221;
+            inline constexpr std::ptrdiff_t method_222                                       =  222;
+            inline constexpr std::ptrdiff_t method_223                                       =  223;
         }
 
     }
 
     namespace client_dll {
+
+        namespace CClientBugBugService {
+            inline constexpr std::ptrdiff_t method_0                                         =    0;
+            inline constexpr std::ptrdiff_t method_1                                         =    1;
+            inline constexpr std::ptrdiff_t method_2                                         =    2;
+            inline constexpr std::ptrdiff_t method_3                                         =    3;
+            inline constexpr std::ptrdiff_t method_4                                         =    4;
+            inline constexpr std::ptrdiff_t method_5                                         =    5;
+            inline constexpr std::ptrdiff_t method_6                                         =    6;
+            inline constexpr std::ptrdiff_t method_7                                         =    7;
+            inline constexpr std::ptrdiff_t method_8                                         =    8;
+            inline constexpr std::ptrdiff_t method_9                                         =    9;
+            inline constexpr std::ptrdiff_t method_10                                        =   10;
+            inline constexpr std::ptrdiff_t method_11                                        =   11;
+            inline constexpr std::ptrdiff_t method_12                                        =   12;
+            inline constexpr std::ptrdiff_t method_13                                        =   13;
+            inline constexpr std::ptrdiff_t method_14                                        =   14;
+            inline constexpr std::ptrdiff_t method_15                                        =   15;
+            inline constexpr std::ptrdiff_t method_16                                        =   16;
+            inline constexpr std::ptrdiff_t method_17                                        =   17;
+            inline constexpr std::ptrdiff_t method_18                                        =   18;
+            inline constexpr std::ptrdiff_t method_19                                        =   19;
+            inline constexpr std::ptrdiff_t method_20                                        =   20;
+            inline constexpr std::ptrdiff_t method_21                                        =   21;
+            inline constexpr std::ptrdiff_t method_22                                        =   22;
+        }
 
         namespace CClientToolsInfo {
             inline constexpr std::ptrdiff_t method_0                                         =    0;
@@ -378,7 +412,7 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_33                                        =   33;
             inline constexpr std::ptrdiff_t method_34                                        =   34;
             inline constexpr std::ptrdiff_t method_35                                        =   35;
-            inline constexpr std::ptrdiff_t method_36                                        =   36;
+            inline constexpr std::ptrdiff_t FrameStageNotify                                 =   36;
             inline constexpr std::ptrdiff_t method_37                                        =   37;
             inline constexpr std::ptrdiff_t method_38                                        =   38;
             inline constexpr std::ptrdiff_t method_39                                        =   39;
@@ -573,6 +607,15 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_228                                       =  228;
             inline constexpr std::ptrdiff_t method_229                                       =  229;
             inline constexpr std::ptrdiff_t method_230                                       =  230;
+            inline constexpr std::ptrdiff_t method_231                                       =  231;
+            inline constexpr std::ptrdiff_t method_232                                       =  232;
+            inline constexpr std::ptrdiff_t method_233                                       =  233;
+            inline constexpr std::ptrdiff_t method_234                                       =  234;
+            inline constexpr std::ptrdiff_t method_235                                       =  235;
+            inline constexpr std::ptrdiff_t method_236                                       =  236;
+            inline constexpr std::ptrdiff_t method_237                                       =  237;
+            inline constexpr std::ptrdiff_t method_238                                       =  238;
+            inline constexpr std::ptrdiff_t method_239                                       =  239;
         }
 
         namespace CCSGameConfiguration {
@@ -658,7 +701,7 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_12                                        =   12;
             inline constexpr std::ptrdiff_t method_13                                        =   13;
             inline constexpr std::ptrdiff_t method_14                                        =   14;
-            inline constexpr std::ptrdiff_t method_15                                        =   15;
+            inline constexpr std::ptrdiff_t C_BaseEntity_PostNetworkDataReceived             =   15;
             inline constexpr std::ptrdiff_t method_16                                        =   16;
             inline constexpr std::ptrdiff_t method_17                                        =   17;
             inline constexpr std::ptrdiff_t method_18                                        =   18;
@@ -740,6 +783,33 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_21                                        =   21;
             inline constexpr std::ptrdiff_t method_22                                        =   22;
             inline constexpr std::ptrdiff_t method_23                                        =   23;
+        }
+
+        namespace CBugBugService {
+            inline constexpr std::ptrdiff_t method_0                                         =    0;
+            inline constexpr std::ptrdiff_t method_1                                         =    1;
+            inline constexpr std::ptrdiff_t method_2                                         =    2;
+            inline constexpr std::ptrdiff_t method_3                                         =    3;
+            inline constexpr std::ptrdiff_t method_4                                         =    4;
+            inline constexpr std::ptrdiff_t method_5                                         =    5;
+            inline constexpr std::ptrdiff_t method_6                                         =    6;
+            inline constexpr std::ptrdiff_t method_7                                         =    7;
+            inline constexpr std::ptrdiff_t method_8                                         =    8;
+            inline constexpr std::ptrdiff_t method_9                                         =    9;
+            inline constexpr std::ptrdiff_t method_10                                        =   10;
+            inline constexpr std::ptrdiff_t method_11                                        =   11;
+            inline constexpr std::ptrdiff_t method_12                                        =   12;
+            inline constexpr std::ptrdiff_t method_13                                        =   13;
+            inline constexpr std::ptrdiff_t method_14                                        =   14;
+            inline constexpr std::ptrdiff_t method_15                                        =   15;
+            inline constexpr std::ptrdiff_t method_16                                        =   16;
+            inline constexpr std::ptrdiff_t method_17                                        =   17;
+            inline constexpr std::ptrdiff_t method_18                                        =   18;
+            inline constexpr std::ptrdiff_t method_19                                        =   19;
+            inline constexpr std::ptrdiff_t method_20                                        =   20;
+            inline constexpr std::ptrdiff_t method_21                                        =   21;
+            inline constexpr std::ptrdiff_t method_22                                        =   22;
+            inline constexpr std::ptrdiff_t method_23                                        =   23;
             inline constexpr std::ptrdiff_t method_24                                        =   24;
             inline constexpr std::ptrdiff_t method_25                                        =   25;
             inline constexpr std::ptrdiff_t method_26                                        =   26;
@@ -774,66 +844,6 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_55                                        =   55;
             inline constexpr std::ptrdiff_t method_56                                        =   56;
             inline constexpr std::ptrdiff_t method_57                                        =   57;
-            inline constexpr std::ptrdiff_t method_58                                        =   58;
-            inline constexpr std::ptrdiff_t method_59                                        =   59;
-            inline constexpr std::ptrdiff_t method_60                                        =   60;
-            inline constexpr std::ptrdiff_t method_61                                        =   61;
-            inline constexpr std::ptrdiff_t method_62                                        =   62;
-            inline constexpr std::ptrdiff_t method_63                                        =   63;
-            inline constexpr std::ptrdiff_t method_64                                        =   64;
-            inline constexpr std::ptrdiff_t method_65                                        =   65;
-            inline constexpr std::ptrdiff_t method_66                                        =   66;
-            inline constexpr std::ptrdiff_t method_67                                        =   67;
-            inline constexpr std::ptrdiff_t method_68                                        =   68;
-            inline constexpr std::ptrdiff_t method_69                                        =   69;
-            inline constexpr std::ptrdiff_t method_70                                        =   70;
-            inline constexpr std::ptrdiff_t method_71                                        =   71;
-            inline constexpr std::ptrdiff_t method_72                                        =   72;
-            inline constexpr std::ptrdiff_t method_73                                        =   73;
-            inline constexpr std::ptrdiff_t method_74                                        =   74;
-            inline constexpr std::ptrdiff_t method_75                                        =   75;
-            inline constexpr std::ptrdiff_t method_76                                        =   76;
-            inline constexpr std::ptrdiff_t method_77                                        =   77;
-            inline constexpr std::ptrdiff_t method_78                                        =   78;
-            inline constexpr std::ptrdiff_t method_79                                        =   79;
-            inline constexpr std::ptrdiff_t method_80                                        =   80;
-            inline constexpr std::ptrdiff_t method_81                                        =   81;
-            inline constexpr std::ptrdiff_t method_82                                        =   82;
-            inline constexpr std::ptrdiff_t method_83                                        =   83;
-            inline constexpr std::ptrdiff_t method_84                                        =   84;
-            inline constexpr std::ptrdiff_t method_85                                        =   85;
-            inline constexpr std::ptrdiff_t method_86                                        =   86;
-            inline constexpr std::ptrdiff_t method_87                                        =   87;
-            inline constexpr std::ptrdiff_t method_88                                        =   88;
-            inline constexpr std::ptrdiff_t method_89                                        =   89;
-            inline constexpr std::ptrdiff_t method_90                                        =   90;
-            inline constexpr std::ptrdiff_t method_91                                        =   91;
-            inline constexpr std::ptrdiff_t method_92                                        =   92;
-            inline constexpr std::ptrdiff_t method_93                                        =   93;
-            inline constexpr std::ptrdiff_t method_94                                        =   94;
-            inline constexpr std::ptrdiff_t method_95                                        =   95;
-            inline constexpr std::ptrdiff_t method_96                                        =   96;
-            inline constexpr std::ptrdiff_t method_97                                        =   97;
-            inline constexpr std::ptrdiff_t method_98                                        =   98;
-            inline constexpr std::ptrdiff_t method_99                                        =   99;
-            inline constexpr std::ptrdiff_t method_100                                       =  100;
-            inline constexpr std::ptrdiff_t method_101                                       =  101;
-            inline constexpr std::ptrdiff_t method_102                                       =  102;
-            inline constexpr std::ptrdiff_t method_103                                       =  103;
-            inline constexpr std::ptrdiff_t method_104                                       =  104;
-            inline constexpr std::ptrdiff_t method_105                                       =  105;
-            inline constexpr std::ptrdiff_t method_106                                       =  106;
-            inline constexpr std::ptrdiff_t method_107                                       =  107;
-            inline constexpr std::ptrdiff_t method_108                                       =  108;
-            inline constexpr std::ptrdiff_t method_109                                       =  109;
-            inline constexpr std::ptrdiff_t method_110                                       =  110;
-            inline constexpr std::ptrdiff_t method_111                                       =  111;
-            inline constexpr std::ptrdiff_t method_112                                       =  112;
-            inline constexpr std::ptrdiff_t method_113                                       =  113;
-            inline constexpr std::ptrdiff_t method_114                                       =  114;
-            inline constexpr std::ptrdiff_t method_115                                       =  115;
-            inline constexpr std::ptrdiff_t method_116                                       =  116;
-            inline constexpr std::ptrdiff_t method_117                                       =  117;
         }
 
         namespace CBugService {
@@ -860,6 +870,14 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_20                                        =   20;
             inline constexpr std::ptrdiff_t method_21                                        =   21;
             inline constexpr std::ptrdiff_t method_22                                        =   22;
+            inline constexpr std::ptrdiff_t method_23                                        =   23;
+            inline constexpr std::ptrdiff_t method_24                                        =   24;
+            inline constexpr std::ptrdiff_t method_25                                        =   25;
+            inline constexpr std::ptrdiff_t method_26                                        =   26;
+            inline constexpr std::ptrdiff_t method_27                                        =   27;
+            inline constexpr std::ptrdiff_t method_28                                        =   28;
+            inline constexpr std::ptrdiff_t method_29                                        =   29;
+            inline constexpr std::ptrdiff_t method_30                                        =   30;
         }
 
         namespace CLoopTypeClientServerService {
@@ -895,6 +913,8 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_29                                        =   29;
             inline constexpr std::ptrdiff_t method_30                                        =   30;
             inline constexpr std::ptrdiff_t method_31                                        =   31;
+            inline constexpr std::ptrdiff_t method_32                                        =   32;
+            inline constexpr std::ptrdiff_t method_33                                        =   33;
         }
 
         namespace CClientServerSharedHandleSystem {
@@ -1013,6 +1033,24 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_61                                        =   61;
             inline constexpr std::ptrdiff_t method_62                                        =   62;
             inline constexpr std::ptrdiff_t method_63                                        =   63;
+            inline constexpr std::ptrdiff_t method_64                                        =   64;
+            inline constexpr std::ptrdiff_t method_65                                        =   65;
+            inline constexpr std::ptrdiff_t method_66                                        =   66;
+            inline constexpr std::ptrdiff_t method_67                                        =   67;
+            inline constexpr std::ptrdiff_t method_68                                        =   68;
+            inline constexpr std::ptrdiff_t method_69                                        =   69;
+            inline constexpr std::ptrdiff_t method_70                                        =   70;
+            inline constexpr std::ptrdiff_t method_71                                        =   71;
+            inline constexpr std::ptrdiff_t method_72                                        =   72;
+            inline constexpr std::ptrdiff_t method_73                                        =   73;
+            inline constexpr std::ptrdiff_t method_74                                        =   74;
+            inline constexpr std::ptrdiff_t method_75                                        =   75;
+            inline constexpr std::ptrdiff_t method_76                                        =   76;
+            inline constexpr std::ptrdiff_t method_77                                        =   77;
+            inline constexpr std::ptrdiff_t method_78                                        =   78;
+            inline constexpr std::ptrdiff_t method_79                                        =   79;
+            inline constexpr std::ptrdiff_t method_80                                        =   80;
+            inline constexpr std::ptrdiff_t method_81                                        =   81;
         }
 
         namespace CGameEventSystem {
@@ -1109,8 +1147,6 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_90                                        =   90;
             inline constexpr std::ptrdiff_t method_91                                        =   91;
             inline constexpr std::ptrdiff_t method_92                                        =   92;
-            inline constexpr std::ptrdiff_t method_93                                        =   93;
-            inline constexpr std::ptrdiff_t method_94                                        =   94;
         }
 
         namespace CGameEventSystem {
@@ -1207,8 +1243,6 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_90                                        =   90;
             inline constexpr std::ptrdiff_t method_91                                        =   91;
             inline constexpr std::ptrdiff_t method_92                                        =   92;
-            inline constexpr std::ptrdiff_t method_93                                        =   93;
-            inline constexpr std::ptrdiff_t method_94                                        =   94;
         }
 
         namespace CGameResourceService {
@@ -1436,11 +1470,6 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_37                                        =   37;
             inline constexpr std::ptrdiff_t method_38                                        =   38;
             inline constexpr std::ptrdiff_t method_39                                        =   39;
-            inline constexpr std::ptrdiff_t method_40                                        =   40;
-            inline constexpr std::ptrdiff_t method_41                                        =   41;
-            inline constexpr std::ptrdiff_t method_42                                        =   42;
-            inline constexpr std::ptrdiff_t method_43                                        =   43;
-            inline constexpr std::ptrdiff_t method_44                                        =   44;
         }
 
         namespace CHostStateMgr {
@@ -1469,6 +1498,8 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_22                                        =   22;
             inline constexpr std::ptrdiff_t method_23                                        =   23;
             inline constexpr std::ptrdiff_t method_24                                        =   24;
+            inline constexpr std::ptrdiff_t method_25                                        =   25;
+            inline constexpr std::ptrdiff_t method_26                                        =   26;
         }
 
         namespace CNetSupportImpl {
@@ -1494,124 +1525,6 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_19                                        =   19;
             inline constexpr std::ptrdiff_t method_20                                        =   20;
             inline constexpr std::ptrdiff_t method_21                                        =   21;
-            inline constexpr std::ptrdiff_t method_22                                        =   22;
-            inline constexpr std::ptrdiff_t method_23                                        =   23;
-            inline constexpr std::ptrdiff_t method_24                                        =   24;
-            inline constexpr std::ptrdiff_t method_25                                        =   25;
-            inline constexpr std::ptrdiff_t method_26                                        =   26;
-            inline constexpr std::ptrdiff_t method_27                                        =   27;
-            inline constexpr std::ptrdiff_t method_28                                        =   28;
-            inline constexpr std::ptrdiff_t method_29                                        =   29;
-            inline constexpr std::ptrdiff_t method_30                                        =   30;
-            inline constexpr std::ptrdiff_t method_31                                        =   31;
-            inline constexpr std::ptrdiff_t method_32                                        =   32;
-            inline constexpr std::ptrdiff_t method_33                                        =   33;
-            inline constexpr std::ptrdiff_t method_34                                        =   34;
-            inline constexpr std::ptrdiff_t method_35                                        =   35;
-            inline constexpr std::ptrdiff_t method_36                                        =   36;
-            inline constexpr std::ptrdiff_t method_37                                        =   37;
-            inline constexpr std::ptrdiff_t method_38                                        =   38;
-            inline constexpr std::ptrdiff_t method_39                                        =   39;
-            inline constexpr std::ptrdiff_t method_40                                        =   40;
-            inline constexpr std::ptrdiff_t method_41                                        =   41;
-            inline constexpr std::ptrdiff_t method_42                                        =   42;
-            inline constexpr std::ptrdiff_t method_43                                        =   43;
-            inline constexpr std::ptrdiff_t method_44                                        =   44;
-            inline constexpr std::ptrdiff_t method_45                                        =   45;
-            inline constexpr std::ptrdiff_t method_46                                        =   46;
-            inline constexpr std::ptrdiff_t method_47                                        =   47;
-            inline constexpr std::ptrdiff_t method_48                                        =   48;
-            inline constexpr std::ptrdiff_t method_49                                        =   49;
-            inline constexpr std::ptrdiff_t method_50                                        =   50;
-            inline constexpr std::ptrdiff_t method_51                                        =   51;
-            inline constexpr std::ptrdiff_t method_52                                        =   52;
-            inline constexpr std::ptrdiff_t method_53                                        =   53;
-            inline constexpr std::ptrdiff_t method_54                                        =   54;
-            inline constexpr std::ptrdiff_t method_55                                        =   55;
-            inline constexpr std::ptrdiff_t method_56                                        =   56;
-            inline constexpr std::ptrdiff_t method_57                                        =   57;
-            inline constexpr std::ptrdiff_t method_58                                        =   58;
-            inline constexpr std::ptrdiff_t Engine__CNetworkStringTableContainer_CreateStringTable =   59;
-            inline constexpr std::ptrdiff_t method_60                                        =   60;
-            inline constexpr std::ptrdiff_t method_61                                        =   61;
-            inline constexpr std::ptrdiff_t method_62                                        =   62;
-            inline constexpr std::ptrdiff_t method_63                                        =   63;
-            inline constexpr std::ptrdiff_t method_64                                        =   64;
-            inline constexpr std::ptrdiff_t method_65                                        =   65;
-            inline constexpr std::ptrdiff_t method_66                                        =   66;
-            inline constexpr std::ptrdiff_t method_67                                        =   67;
-            inline constexpr std::ptrdiff_t method_68                                        =   68;
-            inline constexpr std::ptrdiff_t method_69                                        =   69;
-            inline constexpr std::ptrdiff_t method_70                                        =   70;
-            inline constexpr std::ptrdiff_t method_71                                        =   71;
-            inline constexpr std::ptrdiff_t method_72                                        =   72;
-            inline constexpr std::ptrdiff_t method_73                                        =   73;
-            inline constexpr std::ptrdiff_t method_74                                        =   74;
-            inline constexpr std::ptrdiff_t method_75                                        =   75;
-            inline constexpr std::ptrdiff_t method_76                                        =   76;
-            inline constexpr std::ptrdiff_t method_77                                        =   77;
-            inline constexpr std::ptrdiff_t method_78                                        =   78;
-            inline constexpr std::ptrdiff_t method_79                                        =   79;
-            inline constexpr std::ptrdiff_t method_80                                        =   80;
-            inline constexpr std::ptrdiff_t method_81                                        =   81;
-            inline constexpr std::ptrdiff_t method_82                                        =   82;
-            inline constexpr std::ptrdiff_t method_83                                        =   83;
-            inline constexpr std::ptrdiff_t method_84                                        =   84;
-            inline constexpr std::ptrdiff_t method_85                                        =   85;
-            inline constexpr std::ptrdiff_t method_86                                        =   86;
-            inline constexpr std::ptrdiff_t method_87                                        =   87;
-            inline constexpr std::ptrdiff_t method_88                                        =   88;
-            inline constexpr std::ptrdiff_t method_89                                        =   89;
-            inline constexpr std::ptrdiff_t method_90                                        =   90;
-            inline constexpr std::ptrdiff_t method_91                                        =   91;
-            inline constexpr std::ptrdiff_t method_92                                        =   92;
-            inline constexpr std::ptrdiff_t method_93                                        =   93;
-            inline constexpr std::ptrdiff_t method_94                                        =   94;
-            inline constexpr std::ptrdiff_t method_95                                        =   95;
-            inline constexpr std::ptrdiff_t method_96                                        =   96;
-            inline constexpr std::ptrdiff_t method_97                                        =   97;
-            inline constexpr std::ptrdiff_t method_98                                        =   98;
-            inline constexpr std::ptrdiff_t method_99                                        =   99;
-            inline constexpr std::ptrdiff_t method_100                                       =  100;
-            inline constexpr std::ptrdiff_t method_101                                       =  101;
-            inline constexpr std::ptrdiff_t method_102                                       =  102;
-            inline constexpr std::ptrdiff_t method_103                                       =  103;
-            inline constexpr std::ptrdiff_t method_104                                       =  104;
-            inline constexpr std::ptrdiff_t method_105                                       =  105;
-            inline constexpr std::ptrdiff_t method_106                                       =  106;
-            inline constexpr std::ptrdiff_t method_107                                       =  107;
-            inline constexpr std::ptrdiff_t method_108                                       =  108;
-            inline constexpr std::ptrdiff_t method_109                                       =  109;
-            inline constexpr std::ptrdiff_t method_110                                       =  110;
-            inline constexpr std::ptrdiff_t method_111                                       =  111;
-            inline constexpr std::ptrdiff_t method_112                                       =  112;
-            inline constexpr std::ptrdiff_t method_113                                       =  113;
-            inline constexpr std::ptrdiff_t method_114                                       =  114;
-            inline constexpr std::ptrdiff_t method_115                                       =  115;
-            inline constexpr std::ptrdiff_t method_116                                       =  116;
-            inline constexpr std::ptrdiff_t method_117                                       =  117;
-            inline constexpr std::ptrdiff_t method_118                                       =  118;
-            inline constexpr std::ptrdiff_t method_119                                       =  119;
-            inline constexpr std::ptrdiff_t method_120                                       =  120;
-            inline constexpr std::ptrdiff_t method_121                                       =  121;
-            inline constexpr std::ptrdiff_t method_122                                       =  122;
-            inline constexpr std::ptrdiff_t method_123                                       =  123;
-            inline constexpr std::ptrdiff_t method_124                                       =  124;
-            inline constexpr std::ptrdiff_t method_125                                       =  125;
-            inline constexpr std::ptrdiff_t method_126                                       =  126;
-            inline constexpr std::ptrdiff_t method_127                                       =  127;
-            inline constexpr std::ptrdiff_t method_128                                       =  128;
-            inline constexpr std::ptrdiff_t method_129                                       =  129;
-            inline constexpr std::ptrdiff_t method_130                                       =  130;
-            inline constexpr std::ptrdiff_t method_131                                       =  131;
-            inline constexpr std::ptrdiff_t method_132                                       =  132;
-            inline constexpr std::ptrdiff_t method_133                                       =  133;
-            inline constexpr std::ptrdiff_t method_134                                       =  134;
-            inline constexpr std::ptrdiff_t method_135                                       =  135;
-            inline constexpr std::ptrdiff_t method_136                                       =  136;
-            inline constexpr std::ptrdiff_t method_137                                       =  137;
-            inline constexpr std::ptrdiff_t method_138                                       =  138;
-            inline constexpr std::ptrdiff_t method_139                                       =  139;
         }
 
         namespace CInputService {
@@ -1679,6 +1592,7 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_61                                        =   61;
             inline constexpr std::ptrdiff_t method_62                                        =   62;
             inline constexpr std::ptrdiff_t method_63                                        =   63;
+            inline constexpr std::ptrdiff_t method_64                                        =   64;
         }
 
         namespace CKeyValueCache {
@@ -1795,9 +1709,197 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_61                                        =   61;
             inline constexpr std::ptrdiff_t method_62                                        =   62;
             inline constexpr std::ptrdiff_t method_63                                        =   63;
+            inline constexpr std::ptrdiff_t method_64                                        =   64;
+            inline constexpr std::ptrdiff_t method_65                                        =   65;
         }
 
         namespace CNetworkP2PService {
+            inline constexpr std::ptrdiff_t method_0                                         =    0;
+            inline constexpr std::ptrdiff_t method_1                                         =    1;
+            inline constexpr std::ptrdiff_t method_2                                         =    2;
+            inline constexpr std::ptrdiff_t method_3                                         =    3;
+            inline constexpr std::ptrdiff_t method_4                                         =    4;
+            inline constexpr std::ptrdiff_t method_5                                         =    5;
+            inline constexpr std::ptrdiff_t method_6                                         =    6;
+            inline constexpr std::ptrdiff_t method_7                                         =    7;
+            inline constexpr std::ptrdiff_t method_8                                         =    8;
+            inline constexpr std::ptrdiff_t method_9                                         =    9;
+            inline constexpr std::ptrdiff_t method_10                                        =   10;
+            inline constexpr std::ptrdiff_t method_11                                        =   11;
+            inline constexpr std::ptrdiff_t method_12                                        =   12;
+            inline constexpr std::ptrdiff_t method_13                                        =   13;
+            inline constexpr std::ptrdiff_t method_14                                        =   14;
+            inline constexpr std::ptrdiff_t method_15                                        =   15;
+            inline constexpr std::ptrdiff_t method_16                                        =   16;
+            inline constexpr std::ptrdiff_t method_17                                        =   17;
+            inline constexpr std::ptrdiff_t method_18                                        =   18;
+            inline constexpr std::ptrdiff_t method_19                                        =   19;
+            inline constexpr std::ptrdiff_t method_20                                        =   20;
+            inline constexpr std::ptrdiff_t method_21                                        =   21;
+            inline constexpr std::ptrdiff_t method_22                                        =   22;
+            inline constexpr std::ptrdiff_t method_23                                        =   23;
+            inline constexpr std::ptrdiff_t method_24                                        =   24;
+            inline constexpr std::ptrdiff_t method_25                                        =   25;
+            inline constexpr std::ptrdiff_t method_26                                        =   26;
+            inline constexpr std::ptrdiff_t method_27                                        =   27;
+            inline constexpr std::ptrdiff_t method_28                                        =   28;
+            inline constexpr std::ptrdiff_t method_29                                        =   29;
+            inline constexpr std::ptrdiff_t method_30                                        =   30;
+            inline constexpr std::ptrdiff_t method_31                                        =   31;
+            inline constexpr std::ptrdiff_t method_32                                        =   32;
+        }
+
+        namespace CNetworkServerService {
+            inline constexpr std::ptrdiff_t method_0                                         =    0;
+            inline constexpr std::ptrdiff_t method_1                                         =    1;
+            inline constexpr std::ptrdiff_t method_2                                         =    2;
+            inline constexpr std::ptrdiff_t method_3                                         =    3;
+            inline constexpr std::ptrdiff_t method_4                                         =    4;
+            inline constexpr std::ptrdiff_t method_5                                         =    5;
+            inline constexpr std::ptrdiff_t method_6                                         =    6;
+            inline constexpr std::ptrdiff_t method_7                                         =    7;
+            inline constexpr std::ptrdiff_t method_8                                         =    8;
+            inline constexpr std::ptrdiff_t method_9                                         =    9;
+            inline constexpr std::ptrdiff_t method_10                                        =   10;
+            inline constexpr std::ptrdiff_t method_11                                        =   11;
+            inline constexpr std::ptrdiff_t method_12                                        =   12;
+            inline constexpr std::ptrdiff_t method_13                                        =   13;
+            inline constexpr std::ptrdiff_t method_14                                        =   14;
+            inline constexpr std::ptrdiff_t method_15                                        =   15;
+            inline constexpr std::ptrdiff_t method_16                                        =   16;
+            inline constexpr std::ptrdiff_t method_17                                        =   17;
+            inline constexpr std::ptrdiff_t method_18                                        =   18;
+            inline constexpr std::ptrdiff_t method_19                                        =   19;
+            inline constexpr std::ptrdiff_t method_20                                        =   20;
+            inline constexpr std::ptrdiff_t method_21                                        =   21;
+            inline constexpr std::ptrdiff_t method_22                                        =   22;
+            inline constexpr std::ptrdiff_t method_23                                        =   23;
+            inline constexpr std::ptrdiff_t method_24                                        =   24;
+            inline constexpr std::ptrdiff_t method_25                                        =   25;
+            inline constexpr std::ptrdiff_t method_26                                        =   26;
+            inline constexpr std::ptrdiff_t method_27                                        =   27;
+            inline constexpr std::ptrdiff_t method_28                                        =   28;
+            inline constexpr std::ptrdiff_t method_29                                        =   29;
+            inline constexpr std::ptrdiff_t method_30                                        =   30;
+            inline constexpr std::ptrdiff_t method_31                                        =   31;
+            inline constexpr std::ptrdiff_t method_32                                        =   32;
+            inline constexpr std::ptrdiff_t method_33                                        =   33;
+            inline constexpr std::ptrdiff_t method_34                                        =   34;
+            inline constexpr std::ptrdiff_t method_35                                        =   35;
+            inline constexpr std::ptrdiff_t method_36                                        =   36;
+            inline constexpr std::ptrdiff_t method_37                                        =   37;
+            inline constexpr std::ptrdiff_t method_38                                        =   38;
+            inline constexpr std::ptrdiff_t method_39                                        =   39;
+            inline constexpr std::ptrdiff_t method_40                                        =   40;
+            inline constexpr std::ptrdiff_t method_41                                        =   41;
+            inline constexpr std::ptrdiff_t method_42                                        =   42;
+            inline constexpr std::ptrdiff_t method_43                                        =   43;
+            inline constexpr std::ptrdiff_t method_44                                        =   44;
+            inline constexpr std::ptrdiff_t method_45                                        =   45;
+            inline constexpr std::ptrdiff_t method_46                                        =   46;
+            inline constexpr std::ptrdiff_t method_47                                        =   47;
+            inline constexpr std::ptrdiff_t method_48                                        =   48;
+            inline constexpr std::ptrdiff_t method_49                                        =   49;
+            inline constexpr std::ptrdiff_t method_50                                        =   50;
+            inline constexpr std::ptrdiff_t method_51                                        =   51;
+            inline constexpr std::ptrdiff_t method_52                                        =   52;
+            inline constexpr std::ptrdiff_t method_53                                        =   53;
+            inline constexpr std::ptrdiff_t method_54                                        =   54;
+            inline constexpr std::ptrdiff_t method_55                                        =   55;
+            inline constexpr std::ptrdiff_t method_56                                        =   56;
+            inline constexpr std::ptrdiff_t method_57                                        =   57;
+            inline constexpr std::ptrdiff_t method_58                                        =   58;
+            inline constexpr std::ptrdiff_t method_59                                        =   59;
+            inline constexpr std::ptrdiff_t method_60                                        =   60;
+            inline constexpr std::ptrdiff_t method_61                                        =   61;
+            inline constexpr std::ptrdiff_t method_62                                        =   62;
+            inline constexpr std::ptrdiff_t method_63                                        =   63;
+            inline constexpr std::ptrdiff_t method_64                                        =   64;
+            inline constexpr std::ptrdiff_t method_65                                        =   65;
+            inline constexpr std::ptrdiff_t method_66                                        =   66;
+            inline constexpr std::ptrdiff_t method_67                                        =   67;
+            inline constexpr std::ptrdiff_t method_68                                        =   68;
+            inline constexpr std::ptrdiff_t method_69                                        =   69;
+            inline constexpr std::ptrdiff_t method_70                                        =   70;
+            inline constexpr std::ptrdiff_t method_71                                        =   71;
+            inline constexpr std::ptrdiff_t method_72                                        =   72;
+            inline constexpr std::ptrdiff_t method_73                                        =   73;
+            inline constexpr std::ptrdiff_t method_74                                        =   74;
+            inline constexpr std::ptrdiff_t method_75                                        =   75;
+            inline constexpr std::ptrdiff_t method_76                                        =   76;
+            inline constexpr std::ptrdiff_t method_77                                        =   77;
+        }
+
+        namespace CNetworkService {
+            inline constexpr std::ptrdiff_t method_0                                         =    0;
+            inline constexpr std::ptrdiff_t method_1                                         =    1;
+            inline constexpr std::ptrdiff_t method_2                                         =    2;
+            inline constexpr std::ptrdiff_t method_3                                         =    3;
+            inline constexpr std::ptrdiff_t method_4                                         =    4;
+            inline constexpr std::ptrdiff_t method_5                                         =    5;
+            inline constexpr std::ptrdiff_t method_6                                         =    6;
+            inline constexpr std::ptrdiff_t method_7                                         =    7;
+            inline constexpr std::ptrdiff_t method_8                                         =    8;
+            inline constexpr std::ptrdiff_t method_9                                         =    9;
+            inline constexpr std::ptrdiff_t method_10                                        =   10;
+            inline constexpr std::ptrdiff_t method_11                                        =   11;
+            inline constexpr std::ptrdiff_t method_12                                        =   12;
+            inline constexpr std::ptrdiff_t method_13                                        =   13;
+            inline constexpr std::ptrdiff_t method_14                                        =   14;
+            inline constexpr std::ptrdiff_t method_15                                        =   15;
+            inline constexpr std::ptrdiff_t method_16                                        =   16;
+            inline constexpr std::ptrdiff_t method_17                                        =   17;
+            inline constexpr std::ptrdiff_t method_18                                        =   18;
+            inline constexpr std::ptrdiff_t method_19                                        =   19;
+            inline constexpr std::ptrdiff_t method_20                                        =   20;
+            inline constexpr std::ptrdiff_t method_21                                        =   21;
+            inline constexpr std::ptrdiff_t method_22                                        =   22;
+            inline constexpr std::ptrdiff_t method_23                                        =   23;
+        }
+
+        namespace CRenderService {
+            inline constexpr std::ptrdiff_t method_0                                         =    0;
+            inline constexpr std::ptrdiff_t method_1                                         =    1;
+            inline constexpr std::ptrdiff_t method_2                                         =    2;
+            inline constexpr std::ptrdiff_t method_3                                         =    3;
+            inline constexpr std::ptrdiff_t method_4                                         =    4;
+            inline constexpr std::ptrdiff_t method_5                                         =    5;
+            inline constexpr std::ptrdiff_t method_6                                         =    6;
+            inline constexpr std::ptrdiff_t method_7                                         =    7;
+            inline constexpr std::ptrdiff_t method_8                                         =    8;
+            inline constexpr std::ptrdiff_t method_9                                         =    9;
+            inline constexpr std::ptrdiff_t method_10                                        =   10;
+            inline constexpr std::ptrdiff_t method_11                                        =   11;
+            inline constexpr std::ptrdiff_t method_12                                        =   12;
+            inline constexpr std::ptrdiff_t method_13                                        =   13;
+            inline constexpr std::ptrdiff_t method_14                                        =   14;
+            inline constexpr std::ptrdiff_t method_15                                        =   15;
+            inline constexpr std::ptrdiff_t method_16                                        =   16;
+            inline constexpr std::ptrdiff_t method_17                                        =   17;
+            inline constexpr std::ptrdiff_t method_18                                        =   18;
+            inline constexpr std::ptrdiff_t method_19                                        =   19;
+            inline constexpr std::ptrdiff_t method_20                                        =   20;
+            inline constexpr std::ptrdiff_t method_21                                        =   21;
+            inline constexpr std::ptrdiff_t method_22                                        =   22;
+            inline constexpr std::ptrdiff_t method_23                                        =   23;
+            inline constexpr std::ptrdiff_t method_24                                        =   24;
+            inline constexpr std::ptrdiff_t method_25                                        =   25;
+            inline constexpr std::ptrdiff_t method_26                                        =   26;
+            inline constexpr std::ptrdiff_t method_27                                        =   27;
+            inline constexpr std::ptrdiff_t method_28                                        =   28;
+            inline constexpr std::ptrdiff_t method_29                                        =   29;
+            inline constexpr std::ptrdiff_t method_30                                        =   30;
+            inline constexpr std::ptrdiff_t method_31                                        =   31;
+            inline constexpr std::ptrdiff_t method_32                                        =   32;
+            inline constexpr std::ptrdiff_t method_33                                        =   33;
+            inline constexpr std::ptrdiff_t method_34                                        =   34;
+            inline constexpr std::ptrdiff_t method_35                                        =   35;
+            inline constexpr std::ptrdiff_t method_36                                        =   36;
+            inline constexpr std::ptrdiff_t method_37                                        =   37;
+            inline constexpr std::ptrdiff_t method_38                                        =   38;
+        }
+
+        namespace CScreenshotService {
             inline constexpr std::ptrdiff_t method_0                                         =    0;
             inline constexpr std::ptrdiff_t method_1                                         =    1;
             inline constexpr std::ptrdiff_t method_2                                         =    2;
@@ -1898,192 +2000,25 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_97                                        =   97;
             inline constexpr std::ptrdiff_t method_98                                        =   98;
             inline constexpr std::ptrdiff_t method_99                                        =   99;
-        }
-
-        namespace CNetworkServerService {
-            inline constexpr std::ptrdiff_t method_0                                         =    0;
-            inline constexpr std::ptrdiff_t method_1                                         =    1;
-            inline constexpr std::ptrdiff_t method_2                                         =    2;
-            inline constexpr std::ptrdiff_t method_3                                         =    3;
-            inline constexpr std::ptrdiff_t method_4                                         =    4;
-            inline constexpr std::ptrdiff_t method_5                                         =    5;
-            inline constexpr std::ptrdiff_t method_6                                         =    6;
-            inline constexpr std::ptrdiff_t method_7                                         =    7;
-            inline constexpr std::ptrdiff_t method_8                                         =    8;
-            inline constexpr std::ptrdiff_t method_9                                         =    9;
-            inline constexpr std::ptrdiff_t method_10                                        =   10;
-            inline constexpr std::ptrdiff_t method_11                                        =   11;
-            inline constexpr std::ptrdiff_t method_12                                        =   12;
-            inline constexpr std::ptrdiff_t method_13                                        =   13;
-            inline constexpr std::ptrdiff_t method_14                                        =   14;
-            inline constexpr std::ptrdiff_t method_15                                        =   15;
-            inline constexpr std::ptrdiff_t method_16                                        =   16;
-            inline constexpr std::ptrdiff_t method_17                                        =   17;
-            inline constexpr std::ptrdiff_t method_18                                        =   18;
-            inline constexpr std::ptrdiff_t method_19                                        =   19;
-            inline constexpr std::ptrdiff_t method_20                                        =   20;
-            inline constexpr std::ptrdiff_t method_21                                        =   21;
-            inline constexpr std::ptrdiff_t method_22                                        =   22;
-            inline constexpr std::ptrdiff_t method_23                                        =   23;
-            inline constexpr std::ptrdiff_t method_24                                        =   24;
-            inline constexpr std::ptrdiff_t method_25                                        =   25;
-            inline constexpr std::ptrdiff_t method_26                                        =   26;
-            inline constexpr std::ptrdiff_t method_27                                        =   27;
-            inline constexpr std::ptrdiff_t method_28                                        =   28;
-            inline constexpr std::ptrdiff_t method_29                                        =   29;
-            inline constexpr std::ptrdiff_t method_30                                        =   30;
-            inline constexpr std::ptrdiff_t method_31                                        =   31;
-            inline constexpr std::ptrdiff_t method_32                                        =   32;
-            inline constexpr std::ptrdiff_t method_33                                        =   33;
-            inline constexpr std::ptrdiff_t method_34                                        =   34;
-            inline constexpr std::ptrdiff_t method_35                                        =   35;
-            inline constexpr std::ptrdiff_t method_36                                        =   36;
-            inline constexpr std::ptrdiff_t method_37                                        =   37;
-            inline constexpr std::ptrdiff_t method_38                                        =   38;
-            inline constexpr std::ptrdiff_t method_39                                        =   39;
-            inline constexpr std::ptrdiff_t method_40                                        =   40;
-            inline constexpr std::ptrdiff_t method_41                                        =   41;
-            inline constexpr std::ptrdiff_t method_42                                        =   42;
-            inline constexpr std::ptrdiff_t method_43                                        =   43;
-            inline constexpr std::ptrdiff_t method_44                                        =   44;
-            inline constexpr std::ptrdiff_t method_45                                        =   45;
-            inline constexpr std::ptrdiff_t method_46                                        =   46;
-            inline constexpr std::ptrdiff_t method_47                                        =   47;
-            inline constexpr std::ptrdiff_t method_48                                        =   48;
-            inline constexpr std::ptrdiff_t method_49                                        =   49;
-            inline constexpr std::ptrdiff_t method_50                                        =   50;
-            inline constexpr std::ptrdiff_t method_51                                        =   51;
-            inline constexpr std::ptrdiff_t method_52                                        =   52;
-            inline constexpr std::ptrdiff_t method_53                                        =   53;
-            inline constexpr std::ptrdiff_t method_54                                        =   54;
-            inline constexpr std::ptrdiff_t method_55                                        =   55;
-            inline constexpr std::ptrdiff_t method_56                                        =   56;
-            inline constexpr std::ptrdiff_t method_57                                        =   57;
-            inline constexpr std::ptrdiff_t method_58                                        =   58;
-            inline constexpr std::ptrdiff_t method_59                                        =   59;
-            inline constexpr std::ptrdiff_t method_60                                        =   60;
-            inline constexpr std::ptrdiff_t method_61                                        =   61;
-            inline constexpr std::ptrdiff_t method_62                                        =   62;
-            inline constexpr std::ptrdiff_t method_63                                        =   63;
-            inline constexpr std::ptrdiff_t method_64                                        =   64;
-            inline constexpr std::ptrdiff_t method_65                                        =   65;
-            inline constexpr std::ptrdiff_t method_66                                        =   66;
-            inline constexpr std::ptrdiff_t method_67                                        =   67;
-            inline constexpr std::ptrdiff_t method_68                                        =   68;
-            inline constexpr std::ptrdiff_t method_69                                        =   69;
-        }
-
-        namespace CNetworkService {
-            inline constexpr std::ptrdiff_t method_0                                         =    0;
-            inline constexpr std::ptrdiff_t method_1                                         =    1;
-            inline constexpr std::ptrdiff_t method_2                                         =    2;
-            inline constexpr std::ptrdiff_t method_3                                         =    3;
-            inline constexpr std::ptrdiff_t method_4                                         =    4;
-            inline constexpr std::ptrdiff_t method_5                                         =    5;
-            inline constexpr std::ptrdiff_t method_6                                         =    6;
-            inline constexpr std::ptrdiff_t method_7                                         =    7;
-            inline constexpr std::ptrdiff_t method_8                                         =    8;
-            inline constexpr std::ptrdiff_t method_9                                         =    9;
-            inline constexpr std::ptrdiff_t method_10                                        =   10;
-            inline constexpr std::ptrdiff_t method_11                                        =   11;
-            inline constexpr std::ptrdiff_t method_12                                        =   12;
-            inline constexpr std::ptrdiff_t method_13                                        =   13;
-            inline constexpr std::ptrdiff_t method_14                                        =   14;
-            inline constexpr std::ptrdiff_t method_15                                        =   15;
-            inline constexpr std::ptrdiff_t method_16                                        =   16;
-            inline constexpr std::ptrdiff_t method_17                                        =   17;
-            inline constexpr std::ptrdiff_t method_18                                        =   18;
-            inline constexpr std::ptrdiff_t method_19                                        =   19;
-            inline constexpr std::ptrdiff_t method_20                                        =   20;
-            inline constexpr std::ptrdiff_t method_21                                        =   21;
-            inline constexpr std::ptrdiff_t method_22                                        =   22;
-            inline constexpr std::ptrdiff_t method_23                                        =   23;
-        }
-
-        namespace CRenderService {
-            inline constexpr std::ptrdiff_t method_0                                         =    0;
-            inline constexpr std::ptrdiff_t method_1                                         =    1;
-            inline constexpr std::ptrdiff_t method_2                                         =    2;
-            inline constexpr std::ptrdiff_t method_3                                         =    3;
-            inline constexpr std::ptrdiff_t method_4                                         =    4;
-            inline constexpr std::ptrdiff_t method_5                                         =    5;
-            inline constexpr std::ptrdiff_t method_6                                         =    6;
-            inline constexpr std::ptrdiff_t method_7                                         =    7;
-            inline constexpr std::ptrdiff_t method_8                                         =    8;
-            inline constexpr std::ptrdiff_t method_9                                         =    9;
-            inline constexpr std::ptrdiff_t method_10                                        =   10;
-            inline constexpr std::ptrdiff_t method_11                                        =   11;
-            inline constexpr std::ptrdiff_t method_12                                        =   12;
-            inline constexpr std::ptrdiff_t method_13                                        =   13;
-            inline constexpr std::ptrdiff_t method_14                                        =   14;
-            inline constexpr std::ptrdiff_t method_15                                        =   15;
-            inline constexpr std::ptrdiff_t method_16                                        =   16;
-            inline constexpr std::ptrdiff_t method_17                                        =   17;
-            inline constexpr std::ptrdiff_t method_18                                        =   18;
-            inline constexpr std::ptrdiff_t method_19                                        =   19;
-            inline constexpr std::ptrdiff_t method_20                                        =   20;
-            inline constexpr std::ptrdiff_t method_21                                        =   21;
-            inline constexpr std::ptrdiff_t method_22                                        =   22;
-            inline constexpr std::ptrdiff_t method_23                                        =   23;
-            inline constexpr std::ptrdiff_t method_24                                        =   24;
-            inline constexpr std::ptrdiff_t method_25                                        =   25;
-            inline constexpr std::ptrdiff_t method_26                                        =   26;
-            inline constexpr std::ptrdiff_t method_27                                        =   27;
-            inline constexpr std::ptrdiff_t method_28                                        =   28;
-            inline constexpr std::ptrdiff_t method_29                                        =   29;
-            inline constexpr std::ptrdiff_t method_30                                        =   30;
-            inline constexpr std::ptrdiff_t method_31                                        =   31;
-            inline constexpr std::ptrdiff_t method_32                                        =   32;
-            inline constexpr std::ptrdiff_t method_33                                        =   33;
-            inline constexpr std::ptrdiff_t method_34                                        =   34;
-            inline constexpr std::ptrdiff_t method_35                                        =   35;
-            inline constexpr std::ptrdiff_t method_36                                        =   36;
-            inline constexpr std::ptrdiff_t method_37                                        =   37;
-            inline constexpr std::ptrdiff_t method_38                                        =   38;
-            inline constexpr std::ptrdiff_t method_39                                        =   39;
-            inline constexpr std::ptrdiff_t method_40                                        =   40;
-            inline constexpr std::ptrdiff_t method_41                                        =   41;
-            inline constexpr std::ptrdiff_t method_42                                        =   42;
-            inline constexpr std::ptrdiff_t method_43                                        =   43;
-        }
-
-        namespace CScreenshotService {
-            inline constexpr std::ptrdiff_t method_0                                         =    0;
-            inline constexpr std::ptrdiff_t method_1                                         =    1;
-            inline constexpr std::ptrdiff_t method_2                                         =    2;
-            inline constexpr std::ptrdiff_t method_3                                         =    3;
-            inline constexpr std::ptrdiff_t method_4                                         =    4;
-            inline constexpr std::ptrdiff_t method_5                                         =    5;
-            inline constexpr std::ptrdiff_t method_6                                         =    6;
-            inline constexpr std::ptrdiff_t method_7                                         =    7;
-            inline constexpr std::ptrdiff_t method_8                                         =    8;
-            inline constexpr std::ptrdiff_t method_9                                         =    9;
-            inline constexpr std::ptrdiff_t method_10                                        =   10;
-            inline constexpr std::ptrdiff_t method_11                                        =   11;
-            inline constexpr std::ptrdiff_t method_12                                        =   12;
-            inline constexpr std::ptrdiff_t method_13                                        =   13;
-            inline constexpr std::ptrdiff_t method_14                                        =   14;
-            inline constexpr std::ptrdiff_t method_15                                        =   15;
-            inline constexpr std::ptrdiff_t method_16                                        =   16;
-            inline constexpr std::ptrdiff_t method_17                                        =   17;
-            inline constexpr std::ptrdiff_t method_18                                        =   18;
-            inline constexpr std::ptrdiff_t method_19                                        =   19;
-            inline constexpr std::ptrdiff_t method_20                                        =   20;
-            inline constexpr std::ptrdiff_t method_21                                        =   21;
-            inline constexpr std::ptrdiff_t method_22                                        =   22;
-            inline constexpr std::ptrdiff_t method_23                                        =   23;
-            inline constexpr std::ptrdiff_t method_24                                        =   24;
-            inline constexpr std::ptrdiff_t method_25                                        =   25;
-            inline constexpr std::ptrdiff_t method_26                                        =   26;
-            inline constexpr std::ptrdiff_t method_27                                        =   27;
-            inline constexpr std::ptrdiff_t method_28                                        =   28;
-            inline constexpr std::ptrdiff_t method_29                                        =   29;
-            inline constexpr std::ptrdiff_t method_30                                        =   30;
-            inline constexpr std::ptrdiff_t method_31                                        =   31;
-            inline constexpr std::ptrdiff_t method_32                                        =   32;
-            inline constexpr std::ptrdiff_t method_33                                        =   33;
-            inline constexpr std::ptrdiff_t method_34                                        =   34;
-            inline constexpr std::ptrdiff_t method_35                                        =   35;
+            inline constexpr std::ptrdiff_t method_100                                       =  100;
+            inline constexpr std::ptrdiff_t method_101                                       =  101;
+            inline constexpr std::ptrdiff_t method_102                                       =  102;
+            inline constexpr std::ptrdiff_t method_103                                       =  103;
+            inline constexpr std::ptrdiff_t method_104                                       =  104;
+            inline constexpr std::ptrdiff_t method_105                                       =  105;
+            inline constexpr std::ptrdiff_t method_106                                       =  106;
+            inline constexpr std::ptrdiff_t method_107                                       =  107;
+            inline constexpr std::ptrdiff_t method_108                                       =  108;
+            inline constexpr std::ptrdiff_t method_109                                       =  109;
+            inline constexpr std::ptrdiff_t method_110                                       =  110;
+            inline constexpr std::ptrdiff_t method_111                                       =  111;
+            inline constexpr std::ptrdiff_t method_112                                       =  112;
+            inline constexpr std::ptrdiff_t method_113                                       =  113;
+            inline constexpr std::ptrdiff_t method_114                                       =  114;
+            inline constexpr std::ptrdiff_t method_115                                       =  115;
+            inline constexpr std::ptrdiff_t method_116                                       =  116;
+            inline constexpr std::ptrdiff_t method_117                                       =  117;
+            inline constexpr std::ptrdiff_t method_118                                       =  118;
         }
 
         namespace CLoopTypeSimpleService {
@@ -2112,8 +2047,6 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_22                                        =   22;
             inline constexpr std::ptrdiff_t method_23                                        =   23;
             inline constexpr std::ptrdiff_t method_24                                        =   24;
-            inline constexpr std::ptrdiff_t method_25                                        =   25;
-            inline constexpr std::ptrdiff_t method_26                                        =   26;
         }
 
         namespace CSoundService {
@@ -2197,8 +2130,8 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_37                                        =   37;
             inline constexpr std::ptrdiff_t method_38                                        =   38;
             inline constexpr std::ptrdiff_t IsInGame                                         =   39;
-            inline constexpr std::ptrdiff_t method_40                                        =   40;
-            inline constexpr std::ptrdiff_t method_41                                        =   41;
+            inline constexpr std::ptrdiff_t Engine_IsConnected                               =   40;
+            inline constexpr std::ptrdiff_t GetNetChannelInfo                                =   41;
             inline constexpr std::ptrdiff_t method_42                                        =   42;
             inline constexpr std::ptrdiff_t method_43                                        =   43;
             inline constexpr std::ptrdiff_t method_44                                        =   44;
@@ -2208,7 +2141,7 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_48                                        =   48;
             inline constexpr std::ptrdiff_t method_49                                        =   49;
             inline constexpr std::ptrdiff_t method_50                                        =   50;
-            inline constexpr std::ptrdiff_t method_51                                        =   51;
+            inline constexpr std::ptrdiff_t ExecuteClientCmd                                 =   51;
             inline constexpr std::ptrdiff_t method_52                                        =   52;
             inline constexpr std::ptrdiff_t method_53                                        =   53;
             inline constexpr std::ptrdiff_t method_54                                        =   54;
@@ -2221,8 +2154,8 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_61                                        =   61;
             inline constexpr std::ptrdiff_t method_62                                        =   62;
             inline constexpr std::ptrdiff_t method_63                                        =   63;
-            inline constexpr std::ptrdiff_t method_64                                        =   64;
-            inline constexpr std::ptrdiff_t method_65                                        =   65;
+            inline constexpr std::ptrdiff_t Engine_GetLevelName                              =   64;
+            inline constexpr std::ptrdiff_t Engine_GetLevelNameShort                         =   65;
             inline constexpr std::ptrdiff_t method_66                                        =   66;
             inline constexpr std::ptrdiff_t method_67                                        =   67;
             inline constexpr std::ptrdiff_t method_68                                        =   68;
@@ -2244,8 +2177,8 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_84                                        =   84;
             inline constexpr std::ptrdiff_t method_85                                        =   85;
             inline constexpr std::ptrdiff_t method_86                                        =   86;
-            inline constexpr std::ptrdiff_t Engine__GetScreenAspectRatio                     =   87;
-            inline constexpr std::ptrdiff_t method_88                                        =   88;
+            inline constexpr std::ptrdiff_t method_87                                        =   87;
+            inline constexpr std::ptrdiff_t Engine__GetScreenAspectRatio                     =   88;
             inline constexpr std::ptrdiff_t method_89                                        =   89;
             inline constexpr std::ptrdiff_t method_90                                        =   90;
             inline constexpr std::ptrdiff_t method_91                                        =   91;
@@ -2342,12 +2275,6 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_182                                       =  182;
             inline constexpr std::ptrdiff_t method_183                                       =  183;
             inline constexpr std::ptrdiff_t method_184                                       =  184;
-            inline constexpr std::ptrdiff_t method_185                                       =  185;
-            inline constexpr std::ptrdiff_t method_186                                       =  186;
-            inline constexpr std::ptrdiff_t method_187                                       =  187;
-            inline constexpr std::ptrdiff_t method_188                                       =  188;
-            inline constexpr std::ptrdiff_t method_189                                       =  189;
-            inline constexpr std::ptrdiff_t method_190                                       =  190;
         }
 
         namespace CNetworkStringTableContainer {
@@ -2595,22 +2522,6 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_145                                       =  145;
             inline constexpr std::ptrdiff_t method_146                                       =  146;
             inline constexpr std::ptrdiff_t method_147                                       =  147;
-            inline constexpr std::ptrdiff_t method_148                                       =  148;
-            inline constexpr std::ptrdiff_t method_149                                       =  149;
-            inline constexpr std::ptrdiff_t method_150                                       =  150;
-            inline constexpr std::ptrdiff_t method_151                                       =  151;
-            inline constexpr std::ptrdiff_t method_152                                       =  152;
-            inline constexpr std::ptrdiff_t method_153                                       =  153;
-            inline constexpr std::ptrdiff_t method_154                                       =  154;
-            inline constexpr std::ptrdiff_t method_155                                       =  155;
-            inline constexpr std::ptrdiff_t method_156                                       =  156;
-            inline constexpr std::ptrdiff_t method_157                                       =  157;
-            inline constexpr std::ptrdiff_t method_158                                       =  158;
-            inline constexpr std::ptrdiff_t method_159                                       =  159;
-            inline constexpr std::ptrdiff_t method_160                                       =  160;
-            inline constexpr std::ptrdiff_t method_161                                       =  161;
-            inline constexpr std::ptrdiff_t method_162                                       =  162;
-            inline constexpr std::ptrdiff_t method_163                                       =  163;
         }
 
         namespace CNetworkStringTableContainer {
@@ -2753,11 +2664,6 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_40                                        =   40;
             inline constexpr std::ptrdiff_t method_41                                        =   41;
             inline constexpr std::ptrdiff_t method_42                                        =   42;
-            inline constexpr std::ptrdiff_t method_43                                        =   43;
-            inline constexpr std::ptrdiff_t method_44                                        =   44;
-            inline constexpr std::ptrdiff_t method_45                                        =   45;
-            inline constexpr std::ptrdiff_t method_46                                        =   46;
-            inline constexpr std::ptrdiff_t method_47                                        =   47;
         }
 
         namespace CStatsService {
@@ -2795,6 +2701,183 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_31                                        =   31;
             inline constexpr std::ptrdiff_t method_32                                        =   32;
             inline constexpr std::ptrdiff_t method_33                                        =   33;
+            inline constexpr std::ptrdiff_t method_34                                        =   34;
+            inline constexpr std::ptrdiff_t method_35                                        =   35;
+            inline constexpr std::ptrdiff_t method_36                                        =   36;
+            inline constexpr std::ptrdiff_t method_37                                        =   37;
+            inline constexpr std::ptrdiff_t method_38                                        =   38;
+            inline constexpr std::ptrdiff_t method_39                                        =   39;
+            inline constexpr std::ptrdiff_t method_40                                        =   40;
+            inline constexpr std::ptrdiff_t method_41                                        =   41;
+            inline constexpr std::ptrdiff_t method_42                                        =   42;
+            inline constexpr std::ptrdiff_t method_43                                        =   43;
+            inline constexpr std::ptrdiff_t method_44                                        =   44;
+            inline constexpr std::ptrdiff_t method_45                                        =   45;
+            inline constexpr std::ptrdiff_t method_46                                        =   46;
+            inline constexpr std::ptrdiff_t method_47                                        =   47;
+            inline constexpr std::ptrdiff_t method_48                                        =   48;
+            inline constexpr std::ptrdiff_t method_49                                        =   49;
+            inline constexpr std::ptrdiff_t method_50                                        =   50;
+            inline constexpr std::ptrdiff_t method_51                                        =   51;
+            inline constexpr std::ptrdiff_t method_52                                        =   52;
+            inline constexpr std::ptrdiff_t method_53                                        =   53;
+            inline constexpr std::ptrdiff_t method_54                                        =   54;
+            inline constexpr std::ptrdiff_t method_55                                        =   55;
+            inline constexpr std::ptrdiff_t method_56                                        =   56;
+            inline constexpr std::ptrdiff_t method_57                                        =   57;
+            inline constexpr std::ptrdiff_t method_58                                        =   58;
+            inline constexpr std::ptrdiff_t method_59                                        =   59;
+            inline constexpr std::ptrdiff_t method_60                                        =   60;
+            inline constexpr std::ptrdiff_t method_61                                        =   61;
+            inline constexpr std::ptrdiff_t method_62                                        =   62;
+            inline constexpr std::ptrdiff_t method_63                                        =   63;
+            inline constexpr std::ptrdiff_t method_64                                        =   64;
+            inline constexpr std::ptrdiff_t method_65                                        =   65;
+            inline constexpr std::ptrdiff_t method_66                                        =   66;
+            inline constexpr std::ptrdiff_t method_67                                        =   67;
+            inline constexpr std::ptrdiff_t method_68                                        =   68;
+            inline constexpr std::ptrdiff_t method_69                                        =   69;
+            inline constexpr std::ptrdiff_t method_70                                        =   70;
+            inline constexpr std::ptrdiff_t method_71                                        =   71;
+            inline constexpr std::ptrdiff_t method_72                                        =   72;
+            inline constexpr std::ptrdiff_t method_73                                        =   73;
+            inline constexpr std::ptrdiff_t method_74                                        =   74;
+            inline constexpr std::ptrdiff_t method_75                                        =   75;
+            inline constexpr std::ptrdiff_t method_76                                        =   76;
+            inline constexpr std::ptrdiff_t method_77                                        =   77;
+            inline constexpr std::ptrdiff_t method_78                                        =   78;
+            inline constexpr std::ptrdiff_t method_79                                        =   79;
+            inline constexpr std::ptrdiff_t method_80                                        =   80;
+            inline constexpr std::ptrdiff_t method_81                                        =   81;
+            inline constexpr std::ptrdiff_t method_82                                        =   82;
+            inline constexpr std::ptrdiff_t method_83                                        =   83;
+            inline constexpr std::ptrdiff_t method_84                                        =   84;
+            inline constexpr std::ptrdiff_t method_85                                        =   85;
+            inline constexpr std::ptrdiff_t method_86                                        =   86;
+            inline constexpr std::ptrdiff_t method_87                                        =   87;
+            inline constexpr std::ptrdiff_t method_88                                        =   88;
+            inline constexpr std::ptrdiff_t method_89                                        =   89;
+            inline constexpr std::ptrdiff_t method_90                                        =   90;
+            inline constexpr std::ptrdiff_t method_91                                        =   91;
+            inline constexpr std::ptrdiff_t method_92                                        =   92;
+            inline constexpr std::ptrdiff_t method_93                                        =   93;
+            inline constexpr std::ptrdiff_t method_94                                        =   94;
+            inline constexpr std::ptrdiff_t method_95                                        =   95;
+            inline constexpr std::ptrdiff_t method_96                                        =   96;
+            inline constexpr std::ptrdiff_t method_97                                        =   97;
+            inline constexpr std::ptrdiff_t method_98                                        =   98;
+            inline constexpr std::ptrdiff_t method_99                                        =   99;
+            inline constexpr std::ptrdiff_t method_100                                       =  100;
+            inline constexpr std::ptrdiff_t method_101                                       =  101;
+            inline constexpr std::ptrdiff_t method_102                                       =  102;
+            inline constexpr std::ptrdiff_t method_103                                       =  103;
+            inline constexpr std::ptrdiff_t method_104                                       =  104;
+            inline constexpr std::ptrdiff_t method_105                                       =  105;
+            inline constexpr std::ptrdiff_t method_106                                       =  106;
+            inline constexpr std::ptrdiff_t method_107                                       =  107;
+            inline constexpr std::ptrdiff_t method_108                                       =  108;
+            inline constexpr std::ptrdiff_t method_109                                       =  109;
+            inline constexpr std::ptrdiff_t method_110                                       =  110;
+            inline constexpr std::ptrdiff_t method_111                                       =  111;
+            inline constexpr std::ptrdiff_t method_112                                       =  112;
+            inline constexpr std::ptrdiff_t method_113                                       =  113;
+            inline constexpr std::ptrdiff_t method_114                                       =  114;
+            inline constexpr std::ptrdiff_t method_115                                       =  115;
+            inline constexpr std::ptrdiff_t method_116                                       =  116;
+            inline constexpr std::ptrdiff_t method_117                                       =  117;
+            inline constexpr std::ptrdiff_t method_118                                       =  118;
+            inline constexpr std::ptrdiff_t method_119                                       =  119;
+            inline constexpr std::ptrdiff_t method_120                                       =  120;
+            inline constexpr std::ptrdiff_t method_121                                       =  121;
+            inline constexpr std::ptrdiff_t method_122                                       =  122;
+            inline constexpr std::ptrdiff_t method_123                                       =  123;
+            inline constexpr std::ptrdiff_t method_124                                       =  124;
+            inline constexpr std::ptrdiff_t method_125                                       =  125;
+            inline constexpr std::ptrdiff_t method_126                                       =  126;
+            inline constexpr std::ptrdiff_t method_127                                       =  127;
+            inline constexpr std::ptrdiff_t method_128                                       =  128;
+            inline constexpr std::ptrdiff_t method_129                                       =  129;
+            inline constexpr std::ptrdiff_t method_130                                       =  130;
+            inline constexpr std::ptrdiff_t method_131                                       =  131;
+            inline constexpr std::ptrdiff_t method_132                                       =  132;
+            inline constexpr std::ptrdiff_t method_133                                       =  133;
+            inline constexpr std::ptrdiff_t method_134                                       =  134;
+            inline constexpr std::ptrdiff_t method_135                                       =  135;
+            inline constexpr std::ptrdiff_t method_136                                       =  136;
+            inline constexpr std::ptrdiff_t method_137                                       =  137;
+            inline constexpr std::ptrdiff_t method_138                                       =  138;
+            inline constexpr std::ptrdiff_t method_139                                       =  139;
+            inline constexpr std::ptrdiff_t method_140                                       =  140;
+            inline constexpr std::ptrdiff_t method_141                                       =  141;
+            inline constexpr std::ptrdiff_t method_142                                       =  142;
+            inline constexpr std::ptrdiff_t method_143                                       =  143;
+            inline constexpr std::ptrdiff_t method_144                                       =  144;
+            inline constexpr std::ptrdiff_t method_145                                       =  145;
+            inline constexpr std::ptrdiff_t method_146                                       =  146;
+            inline constexpr std::ptrdiff_t method_147                                       =  147;
+            inline constexpr std::ptrdiff_t method_148                                       =  148;
+            inline constexpr std::ptrdiff_t method_149                                       =  149;
+            inline constexpr std::ptrdiff_t method_150                                       =  150;
+            inline constexpr std::ptrdiff_t method_151                                       =  151;
+            inline constexpr std::ptrdiff_t method_152                                       =  152;
+            inline constexpr std::ptrdiff_t method_153                                       =  153;
+            inline constexpr std::ptrdiff_t method_154                                       =  154;
+            inline constexpr std::ptrdiff_t method_155                                       =  155;
+            inline constexpr std::ptrdiff_t method_156                                       =  156;
+            inline constexpr std::ptrdiff_t method_157                                       =  157;
+            inline constexpr std::ptrdiff_t method_158                                       =  158;
+            inline constexpr std::ptrdiff_t method_159                                       =  159;
+            inline constexpr std::ptrdiff_t method_160                                       =  160;
+            inline constexpr std::ptrdiff_t method_161                                       =  161;
+            inline constexpr std::ptrdiff_t method_162                                       =  162;
+            inline constexpr std::ptrdiff_t method_163                                       =  163;
+            inline constexpr std::ptrdiff_t method_164                                       =  164;
+            inline constexpr std::ptrdiff_t method_165                                       =  165;
+            inline constexpr std::ptrdiff_t method_166                                       =  166;
+            inline constexpr std::ptrdiff_t method_167                                       =  167;
+            inline constexpr std::ptrdiff_t method_168                                       =  168;
+            inline constexpr std::ptrdiff_t method_169                                       =  169;
+            inline constexpr std::ptrdiff_t method_170                                       =  170;
+            inline constexpr std::ptrdiff_t method_171                                       =  171;
+            inline constexpr std::ptrdiff_t method_172                                       =  172;
+            inline constexpr std::ptrdiff_t method_173                                       =  173;
+            inline constexpr std::ptrdiff_t method_174                                       =  174;
+            inline constexpr std::ptrdiff_t method_175                                       =  175;
+            inline constexpr std::ptrdiff_t method_176                                       =  176;
+            inline constexpr std::ptrdiff_t method_177                                       =  177;
+            inline constexpr std::ptrdiff_t method_178                                       =  178;
+            inline constexpr std::ptrdiff_t method_179                                       =  179;
+            inline constexpr std::ptrdiff_t method_180                                       =  180;
+            inline constexpr std::ptrdiff_t method_181                                       =  181;
+            inline constexpr std::ptrdiff_t method_182                                       =  182;
+            inline constexpr std::ptrdiff_t method_183                                       =  183;
+            inline constexpr std::ptrdiff_t method_184                                       =  184;
+            inline constexpr std::ptrdiff_t method_185                                       =  185;
+            inline constexpr std::ptrdiff_t method_186                                       =  186;
+            inline constexpr std::ptrdiff_t method_187                                       =  187;
+            inline constexpr std::ptrdiff_t method_188                                       =  188;
+            inline constexpr std::ptrdiff_t method_189                                       =  189;
+            inline constexpr std::ptrdiff_t method_190                                       =  190;
+            inline constexpr std::ptrdiff_t method_191                                       =  191;
+            inline constexpr std::ptrdiff_t method_192                                       =  192;
+            inline constexpr std::ptrdiff_t method_193                                       =  193;
+            inline constexpr std::ptrdiff_t method_194                                       =  194;
+            inline constexpr std::ptrdiff_t method_195                                       =  195;
+            inline constexpr std::ptrdiff_t method_196                                       =  196;
+            inline constexpr std::ptrdiff_t method_197                                       =  197;
+            inline constexpr std::ptrdiff_t method_198                                       =  198;
+            inline constexpr std::ptrdiff_t method_199                                       =  199;
+            inline constexpr std::ptrdiff_t method_200                                       =  200;
+            inline constexpr std::ptrdiff_t method_201                                       =  201;
+            inline constexpr std::ptrdiff_t method_202                                       =  202;
+            inline constexpr std::ptrdiff_t method_203                                       =  203;
+            inline constexpr std::ptrdiff_t method_204                                       =  204;
+            inline constexpr std::ptrdiff_t method_205                                       =  205;
+            inline constexpr std::ptrdiff_t method_206                                       =  206;
+            inline constexpr std::ptrdiff_t method_207                                       =  207;
+            inline constexpr std::ptrdiff_t method_208                                       =  208;
+            inline constexpr std::ptrdiff_t method_209                                       =  209;
+            inline constexpr std::ptrdiff_t method_210                                       =  210;
         }
 
         namespace CToolService {
@@ -2909,6 +2992,12 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_14                                        =   14;
             inline constexpr std::ptrdiff_t method_15                                        =   15;
             inline constexpr std::ptrdiff_t method_16                                        =   16;
+            inline constexpr std::ptrdiff_t method_17                                        =   17;
+            inline constexpr std::ptrdiff_t method_18                                        =   18;
+            inline constexpr std::ptrdiff_t method_19                                        =   19;
+            inline constexpr std::ptrdiff_t method_20                                        =   20;
+            inline constexpr std::ptrdiff_t method_21                                        =   21;
+            inline constexpr std::ptrdiff_t method_22                                        =   22;
         }
 
         namespace CVProfService {
@@ -2937,6 +3026,7 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_22                                        =   22;
             inline constexpr std::ptrdiff_t method_23                                        =   23;
             inline constexpr std::ptrdiff_t method_24                                        =   24;
+            inline constexpr std::ptrdiff_t method_25                                        =   25;
         }
 
     }
@@ -3112,7 +3202,6 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_137                                       =  137;
             inline constexpr std::ptrdiff_t method_138                                       =  138;
             inline constexpr std::ptrdiff_t method_139                                       =  139;
-            inline constexpr std::ptrdiff_t method_140                                       =  140;
         }
 
     }
@@ -3154,6 +3243,24 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_14                                        =   14;
             inline constexpr std::ptrdiff_t method_15                                        =   15;
             inline constexpr std::ptrdiff_t method_16                                        =   16;
+            inline constexpr std::ptrdiff_t method_17                                        =   17;
+            inline constexpr std::ptrdiff_t method_18                                        =   18;
+            inline constexpr std::ptrdiff_t method_19                                        =   19;
+            inline constexpr std::ptrdiff_t method_20                                        =   20;
+            inline constexpr std::ptrdiff_t method_21                                        =   21;
+            inline constexpr std::ptrdiff_t method_22                                        =   22;
+            inline constexpr std::ptrdiff_t method_23                                        =   23;
+            inline constexpr std::ptrdiff_t method_24                                        =   24;
+            inline constexpr std::ptrdiff_t method_25                                        =   25;
+            inline constexpr std::ptrdiff_t method_26                                        =   26;
+            inline constexpr std::ptrdiff_t method_27                                        =   27;
+            inline constexpr std::ptrdiff_t method_28                                        =   28;
+            inline constexpr std::ptrdiff_t method_29                                        =   29;
+            inline constexpr std::ptrdiff_t method_30                                        =   30;
+            inline constexpr std::ptrdiff_t method_31                                        =   31;
+            inline constexpr std::ptrdiff_t method_32                                        =   32;
+            inline constexpr std::ptrdiff_t method_33                                        =   33;
+            inline constexpr std::ptrdiff_t method_34                                        =   34;
         }
 
         namespace CGameSystem2HostHook {
@@ -3457,7 +3564,6 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_103                                       =  103;
             inline constexpr std::ptrdiff_t method_104                                       =  104;
             inline constexpr std::ptrdiff_t method_105                                       =  105;
-            inline constexpr std::ptrdiff_t method_106                                       =  106;
         }
 
     }
@@ -3580,8 +3686,6 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_112                                       =  112;
             inline constexpr std::ptrdiff_t method_113                                       =  113;
             inline constexpr std::ptrdiff_t method_114                                       =  114;
-            inline constexpr std::ptrdiff_t method_115                                       =  115;
-            inline constexpr std::ptrdiff_t method_116                                       =  116;
         }
 
     }
@@ -3665,6 +3769,8 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_73                                        =   73;
             inline constexpr std::ptrdiff_t method_74                                        =   74;
             inline constexpr std::ptrdiff_t method_75                                        =   75;
+            inline constexpr std::ptrdiff_t method_76                                        =   76;
+            inline constexpr std::ptrdiff_t method_77                                        =   77;
         }
 
         namespace CMatchFramework {
@@ -3881,117 +3987,6 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_18                                        =   18;
             inline constexpr std::ptrdiff_t method_19                                        =   19;
             inline constexpr std::ptrdiff_t method_20                                        =   20;
-            inline constexpr std::ptrdiff_t method_21                                        =   21;
-            inline constexpr std::ptrdiff_t method_22                                        =   22;
-            inline constexpr std::ptrdiff_t method_23                                        =   23;
-            inline constexpr std::ptrdiff_t method_24                                        =   24;
-            inline constexpr std::ptrdiff_t method_25                                        =   25;
-            inline constexpr std::ptrdiff_t method_26                                        =   26;
-            inline constexpr std::ptrdiff_t method_27                                        =   27;
-            inline constexpr std::ptrdiff_t method_28                                        =   28;
-            inline constexpr std::ptrdiff_t method_29                                        =   29;
-            inline constexpr std::ptrdiff_t method_30                                        =   30;
-            inline constexpr std::ptrdiff_t method_31                                        =   31;
-            inline constexpr std::ptrdiff_t method_32                                        =   32;
-            inline constexpr std::ptrdiff_t method_33                                        =   33;
-            inline constexpr std::ptrdiff_t method_34                                        =   34;
-            inline constexpr std::ptrdiff_t method_35                                        =   35;
-            inline constexpr std::ptrdiff_t method_36                                        =   36;
-            inline constexpr std::ptrdiff_t method_37                                        =   37;
-            inline constexpr std::ptrdiff_t method_38                                        =   38;
-            inline constexpr std::ptrdiff_t method_39                                        =   39;
-            inline constexpr std::ptrdiff_t method_40                                        =   40;
-            inline constexpr std::ptrdiff_t method_41                                        =   41;
-            inline constexpr std::ptrdiff_t method_42                                        =   42;
-            inline constexpr std::ptrdiff_t method_43                                        =   43;
-            inline constexpr std::ptrdiff_t method_44                                        =   44;
-            inline constexpr std::ptrdiff_t method_45                                        =   45;
-            inline constexpr std::ptrdiff_t method_46                                        =   46;
-            inline constexpr std::ptrdiff_t method_47                                        =   47;
-            inline constexpr std::ptrdiff_t method_48                                        =   48;
-            inline constexpr std::ptrdiff_t method_49                                        =   49;
-            inline constexpr std::ptrdiff_t method_50                                        =   50;
-            inline constexpr std::ptrdiff_t method_51                                        =   51;
-            inline constexpr std::ptrdiff_t method_52                                        =   52;
-            inline constexpr std::ptrdiff_t method_53                                        =   53;
-            inline constexpr std::ptrdiff_t method_54                                        =   54;
-            inline constexpr std::ptrdiff_t method_55                                        =   55;
-            inline constexpr std::ptrdiff_t method_56                                        =   56;
-            inline constexpr std::ptrdiff_t method_57                                        =   57;
-            inline constexpr std::ptrdiff_t method_58                                        =   58;
-            inline constexpr std::ptrdiff_t method_59                                        =   59;
-            inline constexpr std::ptrdiff_t method_60                                        =   60;
-            inline constexpr std::ptrdiff_t method_61                                        =   61;
-            inline constexpr std::ptrdiff_t method_62                                        =   62;
-            inline constexpr std::ptrdiff_t method_63                                        =   63;
-            inline constexpr std::ptrdiff_t method_64                                        =   64;
-            inline constexpr std::ptrdiff_t method_65                                        =   65;
-            inline constexpr std::ptrdiff_t method_66                                        =   66;
-            inline constexpr std::ptrdiff_t method_67                                        =   67;
-            inline constexpr std::ptrdiff_t method_68                                        =   68;
-            inline constexpr std::ptrdiff_t method_69                                        =   69;
-            inline constexpr std::ptrdiff_t method_70                                        =   70;
-            inline constexpr std::ptrdiff_t method_71                                        =   71;
-            inline constexpr std::ptrdiff_t method_72                                        =   72;
-            inline constexpr std::ptrdiff_t method_73                                        =   73;
-            inline constexpr std::ptrdiff_t method_74                                        =   74;
-            inline constexpr std::ptrdiff_t method_75                                        =   75;
-            inline constexpr std::ptrdiff_t method_76                                        =   76;
-            inline constexpr std::ptrdiff_t method_77                                        =   77;
-            inline constexpr std::ptrdiff_t method_78                                        =   78;
-            inline constexpr std::ptrdiff_t method_79                                        =   79;
-            inline constexpr std::ptrdiff_t method_80                                        =   80;
-            inline constexpr std::ptrdiff_t method_81                                        =   81;
-            inline constexpr std::ptrdiff_t method_82                                        =   82;
-            inline constexpr std::ptrdiff_t method_83                                        =   83;
-            inline constexpr std::ptrdiff_t method_84                                        =   84;
-            inline constexpr std::ptrdiff_t method_85                                        =   85;
-            inline constexpr std::ptrdiff_t method_86                                        =   86;
-            inline constexpr std::ptrdiff_t method_87                                        =   87;
-            inline constexpr std::ptrdiff_t method_88                                        =   88;
-            inline constexpr std::ptrdiff_t method_89                                        =   89;
-            inline constexpr std::ptrdiff_t method_90                                        =   90;
-            inline constexpr std::ptrdiff_t method_91                                        =   91;
-            inline constexpr std::ptrdiff_t method_92                                        =   92;
-            inline constexpr std::ptrdiff_t method_93                                        =   93;
-            inline constexpr std::ptrdiff_t method_94                                        =   94;
-            inline constexpr std::ptrdiff_t method_95                                        =   95;
-            inline constexpr std::ptrdiff_t method_96                                        =   96;
-            inline constexpr std::ptrdiff_t method_97                                        =   97;
-            inline constexpr std::ptrdiff_t method_98                                        =   98;
-            inline constexpr std::ptrdiff_t method_99                                        =   99;
-            inline constexpr std::ptrdiff_t method_100                                       =  100;
-            inline constexpr std::ptrdiff_t method_101                                       =  101;
-            inline constexpr std::ptrdiff_t method_102                                       =  102;
-            inline constexpr std::ptrdiff_t method_103                                       =  103;
-            inline constexpr std::ptrdiff_t method_104                                       =  104;
-            inline constexpr std::ptrdiff_t method_105                                       =  105;
-            inline constexpr std::ptrdiff_t method_106                                       =  106;
-            inline constexpr std::ptrdiff_t method_107                                       =  107;
-            inline constexpr std::ptrdiff_t method_108                                       =  108;
-            inline constexpr std::ptrdiff_t method_109                                       =  109;
-            inline constexpr std::ptrdiff_t method_110                                       =  110;
-            inline constexpr std::ptrdiff_t method_111                                       =  111;
-            inline constexpr std::ptrdiff_t method_112                                       =  112;
-            inline constexpr std::ptrdiff_t method_113                                       =  113;
-            inline constexpr std::ptrdiff_t method_114                                       =  114;
-            inline constexpr std::ptrdiff_t method_115                                       =  115;
-            inline constexpr std::ptrdiff_t method_116                                       =  116;
-            inline constexpr std::ptrdiff_t method_117                                       =  117;
-            inline constexpr std::ptrdiff_t method_118                                       =  118;
-            inline constexpr std::ptrdiff_t method_119                                       =  119;
-            inline constexpr std::ptrdiff_t method_120                                       =  120;
-            inline constexpr std::ptrdiff_t method_121                                       =  121;
-            inline constexpr std::ptrdiff_t method_122                                       =  122;
-            inline constexpr std::ptrdiff_t method_123                                       =  123;
-            inline constexpr std::ptrdiff_t method_124                                       =  124;
-            inline constexpr std::ptrdiff_t method_125                                       =  125;
-            inline constexpr std::ptrdiff_t method_126                                       =  126;
-            inline constexpr std::ptrdiff_t method_127                                       =  127;
-            inline constexpr std::ptrdiff_t method_128                                       =  128;
-            inline constexpr std::ptrdiff_t method_129                                       =  129;
-            inline constexpr std::ptrdiff_t method_130                                       =  130;
-            inline constexpr std::ptrdiff_t method_131                                       =  131;
         }
 
         namespace CMaterialSystem2 {
@@ -4024,8 +4019,8 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_26                                        =   26;
             inline constexpr std::ptrdiff_t method_27                                        =   27;
             inline constexpr std::ptrdiff_t method_28                                        =   28;
-            inline constexpr std::ptrdiff_t method_29                                        =   29;
-            inline constexpr std::ptrdiff_t method_30                                        =   30;
+            inline constexpr std::ptrdiff_t CreateMaterialFromKV3                            =   29;
+            inline constexpr std::ptrdiff_t CreateMaterial                                   =   30;
             inline constexpr std::ptrdiff_t method_31                                        =   31;
             inline constexpr std::ptrdiff_t method_32                                        =   32;
             inline constexpr std::ptrdiff_t method_33                                        =   33;
@@ -4315,6 +4310,8 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_84                                        =   84;
             inline constexpr std::ptrdiff_t method_85                                        =   85;
             inline constexpr std::ptrdiff_t method_86                                        =   86;
+            inline constexpr std::ptrdiff_t method_87                                        =   87;
+            inline constexpr std::ptrdiff_t method_88                                        =   88;
         }
 
         namespace CNetworkSystem {
@@ -4380,6 +4377,8 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_59                                        =   59;
             inline constexpr std::ptrdiff_t method_60                                        =   60;
             inline constexpr std::ptrdiff_t method_61                                        =   61;
+            inline constexpr std::ptrdiff_t method_62                                        =   62;
+            inline constexpr std::ptrdiff_t method_63                                        =   63;
         }
 
         namespace CSerializedEntities {
@@ -4439,7 +4438,7 @@ namespace cs2::vtables {
 
     namespace panorama_text_pango_dll {
 
-        namespace panorama__CUITextServicesPango {
+        namespace panorama::CUITextServicesPango {
             inline constexpr std::ptrdiff_t method_0                                         =    0;
             inline constexpr std::ptrdiff_t method_1                                         =    1;
             inline constexpr std::ptrdiff_t method_2                                         =    2;
@@ -4487,6 +4486,8 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_44                                        =   44;
             inline constexpr std::ptrdiff_t method_45                                        =   45;
             inline constexpr std::ptrdiff_t method_46                                        =   46;
+            inline constexpr std::ptrdiff_t method_47                                        =   47;
+            inline constexpr std::ptrdiff_t method_48                                        =   48;
         }
 
     }
@@ -4599,6 +4600,7 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_60                                        =   60;
             inline constexpr std::ptrdiff_t method_61                                        =   61;
             inline constexpr std::ptrdiff_t method_62                                        =   62;
+            inline constexpr std::ptrdiff_t method_63                                        =   63;
         }
 
     }
@@ -4682,6 +4684,7 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_73                                        =   73;
             inline constexpr std::ptrdiff_t method_74                                        =   74;
             inline constexpr std::ptrdiff_t method_75                                        =   75;
+            inline constexpr std::ptrdiff_t method_76                                        =   76;
         }
 
     }
@@ -4731,6 +4734,22 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_39                                        =   39;
             inline constexpr std::ptrdiff_t method_40                                        =   40;
             inline constexpr std::ptrdiff_t method_41                                        =   41;
+            inline constexpr std::ptrdiff_t method_42                                        =   42;
+            inline constexpr std::ptrdiff_t method_43                                        =   43;
+            inline constexpr std::ptrdiff_t method_44                                        =   44;
+            inline constexpr std::ptrdiff_t method_45                                        =   45;
+            inline constexpr std::ptrdiff_t method_46                                        =   46;
+            inline constexpr std::ptrdiff_t method_47                                        =   47;
+            inline constexpr std::ptrdiff_t method_48                                        =   48;
+            inline constexpr std::ptrdiff_t method_49                                        =   49;
+            inline constexpr std::ptrdiff_t method_50                                        =   50;
+            inline constexpr std::ptrdiff_t method_51                                        =   51;
+            inline constexpr std::ptrdiff_t method_52                                        =   52;
+            inline constexpr std::ptrdiff_t method_53                                        =   53;
+            inline constexpr std::ptrdiff_t method_54                                        =   54;
+            inline constexpr std::ptrdiff_t method_55                                        =   55;
+            inline constexpr std::ptrdiff_t method_56                                        =   56;
+            inline constexpr std::ptrdiff_t method_57                                        =   57;
         }
 
         namespace CRenderUtils {
@@ -4799,6 +4818,22 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_42                                        =   42;
             inline constexpr std::ptrdiff_t method_43                                        =   43;
             inline constexpr std::ptrdiff_t method_44                                        =   44;
+            inline constexpr std::ptrdiff_t method_45                                        =   45;
+            inline constexpr std::ptrdiff_t method_46                                        =   46;
+            inline constexpr std::ptrdiff_t method_47                                        =   47;
+            inline constexpr std::ptrdiff_t method_48                                        =   48;
+            inline constexpr std::ptrdiff_t method_49                                        =   49;
+            inline constexpr std::ptrdiff_t method_50                                        =   50;
+            inline constexpr std::ptrdiff_t method_51                                        =   51;
+            inline constexpr std::ptrdiff_t method_52                                        =   52;
+            inline constexpr std::ptrdiff_t method_53                                        =   53;
+            inline constexpr std::ptrdiff_t method_54                                        =   54;
+            inline constexpr std::ptrdiff_t method_55                                        =   55;
+            inline constexpr std::ptrdiff_t method_56                                        =   56;
+            inline constexpr std::ptrdiff_t method_57                                        =   57;
+            inline constexpr std::ptrdiff_t method_58                                        =   58;
+            inline constexpr std::ptrdiff_t method_59                                        =   59;
+            inline constexpr std::ptrdiff_t method_60                                        =   60;
         }
 
     }
@@ -4923,6 +4958,33 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_114                                       =  114;
             inline constexpr std::ptrdiff_t method_115                                       =  115;
             inline constexpr std::ptrdiff_t method_116                                       =  116;
+            inline constexpr std::ptrdiff_t method_117                                       =  117;
+            inline constexpr std::ptrdiff_t method_118                                       =  118;
+            inline constexpr std::ptrdiff_t method_119                                       =  119;
+            inline constexpr std::ptrdiff_t method_120                                       =  120;
+            inline constexpr std::ptrdiff_t method_121                                       =  121;
+            inline constexpr std::ptrdiff_t method_122                                       =  122;
+            inline constexpr std::ptrdiff_t method_123                                       =  123;
+            inline constexpr std::ptrdiff_t method_124                                       =  124;
+            inline constexpr std::ptrdiff_t method_125                                       =  125;
+            inline constexpr std::ptrdiff_t method_126                                       =  126;
+            inline constexpr std::ptrdiff_t method_127                                       =  127;
+            inline constexpr std::ptrdiff_t method_128                                       =  128;
+            inline constexpr std::ptrdiff_t method_129                                       =  129;
+            inline constexpr std::ptrdiff_t method_130                                       =  130;
+            inline constexpr std::ptrdiff_t method_131                                       =  131;
+            inline constexpr std::ptrdiff_t method_132                                       =  132;
+            inline constexpr std::ptrdiff_t method_133                                       =  133;
+            inline constexpr std::ptrdiff_t method_134                                       =  134;
+            inline constexpr std::ptrdiff_t method_135                                       =  135;
+            inline constexpr std::ptrdiff_t method_136                                       =  136;
+            inline constexpr std::ptrdiff_t method_137                                       =  137;
+            inline constexpr std::ptrdiff_t method_138                                       =  138;
+            inline constexpr std::ptrdiff_t method_139                                       =  139;
+            inline constexpr std::ptrdiff_t method_140                                       =  140;
+            inline constexpr std::ptrdiff_t method_141                                       =  141;
+            inline constexpr std::ptrdiff_t method_142                                       =  142;
+            inline constexpr std::ptrdiff_t method_143                                       =  143;
         }
 
     }
@@ -5108,11 +5170,11 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_118                                       =  118;
             inline constexpr std::ptrdiff_t method_119                                       =  119;
             inline constexpr std::ptrdiff_t method_120                                       =  120;
-            inline constexpr std::ptrdiff_t AllocateAttributeListFunctionPointer             =  121;
+            inline constexpr std::ptrdiff_t method_121                                       =  121;
             inline constexpr std::ptrdiff_t method_122                                       =  122;
             inline constexpr std::ptrdiff_t method_123                                       =  123;
             inline constexpr std::ptrdiff_t method_124                                       =  124;
-            inline constexpr std::ptrdiff_t method_125                                       =  125;
+            inline constexpr std::ptrdiff_t AllocateAttributeListFunctionPointer             =  125;
             inline constexpr std::ptrdiff_t method_126                                       =  126;
             inline constexpr std::ptrdiff_t method_127                                       =  127;
             inline constexpr std::ptrdiff_t method_128                                       =  128;
@@ -5182,6 +5244,18 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_192                                       =  192;
             inline constexpr std::ptrdiff_t method_193                                       =  193;
             inline constexpr std::ptrdiff_t method_194                                       =  194;
+            inline constexpr std::ptrdiff_t method_195                                       =  195;
+            inline constexpr std::ptrdiff_t method_196                                       =  196;
+            inline constexpr std::ptrdiff_t method_197                                       =  197;
+            inline constexpr std::ptrdiff_t method_198                                       =  198;
+            inline constexpr std::ptrdiff_t method_199                                       =  199;
+            inline constexpr std::ptrdiff_t method_200                                       =  200;
+            inline constexpr std::ptrdiff_t method_201                                       =  201;
+            inline constexpr std::ptrdiff_t method_202                                       =  202;
+            inline constexpr std::ptrdiff_t method_203                                       =  203;
+            inline constexpr std::ptrdiff_t method_204                                       =  204;
+            inline constexpr std::ptrdiff_t method_205                                       =  205;
+            inline constexpr std::ptrdiff_t method_206                                       =  206;
         }
 
         namespace CSceneUtils {
@@ -5262,12 +5336,6 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_74                                        =   74;
             inline constexpr std::ptrdiff_t method_75                                        =   75;
             inline constexpr std::ptrdiff_t method_76                                        =   76;
-            inline constexpr std::ptrdiff_t method_77                                        =   77;
-            inline constexpr std::ptrdiff_t method_78                                        =   78;
-            inline constexpr std::ptrdiff_t method_79                                        =   79;
-            inline constexpr std::ptrdiff_t method_80                                        =   80;
-            inline constexpr std::ptrdiff_t method_81                                        =   81;
-            inline constexpr std::ptrdiff_t method_82                                        =   82;
         }
 
     }
@@ -5554,71 +5622,6 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_21                                        =   21;
             inline constexpr std::ptrdiff_t method_22                                        =   22;
             inline constexpr std::ptrdiff_t method_23                                        =   23;
-            inline constexpr std::ptrdiff_t method_24                                        =   24;
-            inline constexpr std::ptrdiff_t method_25                                        =   25;
-            inline constexpr std::ptrdiff_t method_26                                        =   26;
-            inline constexpr std::ptrdiff_t method_27                                        =   27;
-            inline constexpr std::ptrdiff_t method_28                                        =   28;
-            inline constexpr std::ptrdiff_t method_29                                        =   29;
-            inline constexpr std::ptrdiff_t method_30                                        =   30;
-            inline constexpr std::ptrdiff_t method_31                                        =   31;
-            inline constexpr std::ptrdiff_t method_32                                        =   32;
-            inline constexpr std::ptrdiff_t method_33                                        =   33;
-            inline constexpr std::ptrdiff_t method_34                                        =   34;
-            inline constexpr std::ptrdiff_t method_35                                        =   35;
-            inline constexpr std::ptrdiff_t method_36                                        =   36;
-            inline constexpr std::ptrdiff_t method_37                                        =   37;
-            inline constexpr std::ptrdiff_t method_38                                        =   38;
-            inline constexpr std::ptrdiff_t method_39                                        =   39;
-            inline constexpr std::ptrdiff_t method_40                                        =   40;
-            inline constexpr std::ptrdiff_t method_41                                        =   41;
-            inline constexpr std::ptrdiff_t method_42                                        =   42;
-            inline constexpr std::ptrdiff_t method_43                                        =   43;
-            inline constexpr std::ptrdiff_t method_44                                        =   44;
-            inline constexpr std::ptrdiff_t method_45                                        =   45;
-            inline constexpr std::ptrdiff_t method_46                                        =   46;
-            inline constexpr std::ptrdiff_t method_47                                        =   47;
-            inline constexpr std::ptrdiff_t method_48                                        =   48;
-            inline constexpr std::ptrdiff_t method_49                                        =   49;
-            inline constexpr std::ptrdiff_t method_50                                        =   50;
-            inline constexpr std::ptrdiff_t method_51                                        =   51;
-            inline constexpr std::ptrdiff_t method_52                                        =   52;
-            inline constexpr std::ptrdiff_t method_53                                        =   53;
-            inline constexpr std::ptrdiff_t method_54                                        =   54;
-            inline constexpr std::ptrdiff_t method_55                                        =   55;
-            inline constexpr std::ptrdiff_t method_56                                        =   56;
-            inline constexpr std::ptrdiff_t method_57                                        =   57;
-            inline constexpr std::ptrdiff_t method_58                                        =   58;
-            inline constexpr std::ptrdiff_t method_59                                        =   59;
-            inline constexpr std::ptrdiff_t method_60                                        =   60;
-            inline constexpr std::ptrdiff_t method_61                                        =   61;
-            inline constexpr std::ptrdiff_t method_62                                        =   62;
-            inline constexpr std::ptrdiff_t method_63                                        =   63;
-            inline constexpr std::ptrdiff_t method_64                                        =   64;
-            inline constexpr std::ptrdiff_t method_65                                        =   65;
-            inline constexpr std::ptrdiff_t method_66                                        =   66;
-            inline constexpr std::ptrdiff_t method_67                                        =   67;
-            inline constexpr std::ptrdiff_t method_68                                        =   68;
-            inline constexpr std::ptrdiff_t method_69                                        =   69;
-            inline constexpr std::ptrdiff_t method_70                                        =   70;
-            inline constexpr std::ptrdiff_t method_71                                        =   71;
-            inline constexpr std::ptrdiff_t method_72                                        =   72;
-            inline constexpr std::ptrdiff_t method_73                                        =   73;
-            inline constexpr std::ptrdiff_t method_74                                        =   74;
-            inline constexpr std::ptrdiff_t method_75                                        =   75;
-            inline constexpr std::ptrdiff_t method_76                                        =   76;
-            inline constexpr std::ptrdiff_t method_77                                        =   77;
-            inline constexpr std::ptrdiff_t method_78                                        =   78;
-            inline constexpr std::ptrdiff_t method_79                                        =   79;
-            inline constexpr std::ptrdiff_t method_80                                        =   80;
-            inline constexpr std::ptrdiff_t method_81                                        =   81;
-            inline constexpr std::ptrdiff_t method_82                                        =   82;
-            inline constexpr std::ptrdiff_t method_83                                        =   83;
-            inline constexpr std::ptrdiff_t method_84                                        =   84;
-            inline constexpr std::ptrdiff_t method_85                                        =   85;
-            inline constexpr std::ptrdiff_t method_86                                        =   86;
-            inline constexpr std::ptrdiff_t method_87                                        =   87;
-            inline constexpr std::ptrdiff_t method_88                                        =   88;
         }
 
         namespace CNavGameTest {
@@ -5945,7 +5948,7 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_9                                         =    9;
             inline constexpr std::ptrdiff_t method_10                                        =   10;
             inline constexpr std::ptrdiff_t method_11                                        =   11;
-            inline constexpr std::ptrdiff_t method_12                                        =   12;
+            inline constexpr std::ptrdiff_t CheckTransmit                                    =   12;
             inline constexpr std::ptrdiff_t method_13                                        =   13;
             inline constexpr std::ptrdiff_t method_14                                        =   14;
             inline constexpr std::ptrdiff_t method_15                                        =   15;
@@ -5956,8 +5959,6 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_20                                        =   20;
             inline constexpr std::ptrdiff_t method_21                                        =   21;
             inline constexpr std::ptrdiff_t method_22                                        =   22;
-            inline constexpr std::ptrdiff_t method_23                                        =   23;
-            inline constexpr std::ptrdiff_t method_24                                        =   24;
         }
 
         namespace CSource2Server {
@@ -6061,6 +6062,11 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_97                                        =   97;
             inline constexpr std::ptrdiff_t method_98                                        =   98;
             inline constexpr std::ptrdiff_t method_99                                        =   99;
+            inline constexpr std::ptrdiff_t method_100                                       =  100;
+            inline constexpr std::ptrdiff_t method_101                                       =  101;
+            inline constexpr std::ptrdiff_t method_102                                       =  102;
+            inline constexpr std::ptrdiff_t method_103                                       =  103;
+            inline constexpr std::ptrdiff_t method_104                                       =  104;
         }
 
         namespace CCSGameConfiguration {
@@ -6115,6 +6121,56 @@ namespace cs2::vtables {
     }
 
     namespace soundsystem_dll {
+
+        namespace CSoundBugBugService {
+            inline constexpr std::ptrdiff_t method_0                                         =    0;
+            inline constexpr std::ptrdiff_t method_1                                         =    1;
+            inline constexpr std::ptrdiff_t method_2                                         =    2;
+            inline constexpr std::ptrdiff_t method_3                                         =    3;
+            inline constexpr std::ptrdiff_t method_4                                         =    4;
+            inline constexpr std::ptrdiff_t method_5                                         =    5;
+            inline constexpr std::ptrdiff_t method_6                                         =    6;
+            inline constexpr std::ptrdiff_t method_7                                         =    7;
+            inline constexpr std::ptrdiff_t method_8                                         =    8;
+            inline constexpr std::ptrdiff_t method_9                                         =    9;
+            inline constexpr std::ptrdiff_t method_10                                        =   10;
+            inline constexpr std::ptrdiff_t method_11                                        =   11;
+            inline constexpr std::ptrdiff_t method_12                                        =   12;
+            inline constexpr std::ptrdiff_t method_13                                        =   13;
+            inline constexpr std::ptrdiff_t method_14                                        =   14;
+            inline constexpr std::ptrdiff_t method_15                                        =   15;
+            inline constexpr std::ptrdiff_t method_16                                        =   16;
+            inline constexpr std::ptrdiff_t method_17                                        =   17;
+            inline constexpr std::ptrdiff_t method_18                                        =   18;
+            inline constexpr std::ptrdiff_t method_19                                        =   19;
+            inline constexpr std::ptrdiff_t method_20                                        =   20;
+            inline constexpr std::ptrdiff_t method_21                                        =   21;
+            inline constexpr std::ptrdiff_t method_22                                        =   22;
+            inline constexpr std::ptrdiff_t method_23                                        =   23;
+            inline constexpr std::ptrdiff_t method_24                                        =   24;
+            inline constexpr std::ptrdiff_t method_25                                        =   25;
+            inline constexpr std::ptrdiff_t method_26                                        =   26;
+            inline constexpr std::ptrdiff_t method_27                                        =   27;
+            inline constexpr std::ptrdiff_t method_28                                        =   28;
+            inline constexpr std::ptrdiff_t method_29                                        =   29;
+            inline constexpr std::ptrdiff_t method_30                                        =   30;
+            inline constexpr std::ptrdiff_t method_31                                        =   31;
+            inline constexpr std::ptrdiff_t method_32                                        =   32;
+            inline constexpr std::ptrdiff_t method_33                                        =   33;
+            inline constexpr std::ptrdiff_t method_34                                        =   34;
+            inline constexpr std::ptrdiff_t method_35                                        =   35;
+            inline constexpr std::ptrdiff_t method_36                                        =   36;
+            inline constexpr std::ptrdiff_t method_37                                        =   37;
+            inline constexpr std::ptrdiff_t method_38                                        =   38;
+            inline constexpr std::ptrdiff_t method_39                                        =   39;
+            inline constexpr std::ptrdiff_t method_40                                        =   40;
+            inline constexpr std::ptrdiff_t method_41                                        =   41;
+            inline constexpr std::ptrdiff_t method_42                                        =   42;
+            inline constexpr std::ptrdiff_t method_43                                        =   43;
+            inline constexpr std::ptrdiff_t method_44                                        =   44;
+            inline constexpr std::ptrdiff_t method_45                                        =   45;
+            inline constexpr std::ptrdiff_t method_46                                        =   46;
+        }
 
         namespace CSoundOpSystem {
             inline constexpr std::ptrdiff_t method_0                                         =    0;
@@ -6249,6 +6305,130 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_129                                       =  129;
             inline constexpr std::ptrdiff_t method_130                                       =  130;
             inline constexpr std::ptrdiff_t method_131                                       =  131;
+            inline constexpr std::ptrdiff_t method_132                                       =  132;
+            inline constexpr std::ptrdiff_t method_133                                       =  133;
+            inline constexpr std::ptrdiff_t method_134                                       =  134;
+            inline constexpr std::ptrdiff_t method_135                                       =  135;
+            inline constexpr std::ptrdiff_t method_136                                       =  136;
+            inline constexpr std::ptrdiff_t method_137                                       =  137;
+            inline constexpr std::ptrdiff_t method_138                                       =  138;
+            inline constexpr std::ptrdiff_t method_139                                       =  139;
+            inline constexpr std::ptrdiff_t method_140                                       =  140;
+            inline constexpr std::ptrdiff_t method_141                                       =  141;
+            inline constexpr std::ptrdiff_t method_142                                       =  142;
+            inline constexpr std::ptrdiff_t method_143                                       =  143;
+            inline constexpr std::ptrdiff_t method_144                                       =  144;
+            inline constexpr std::ptrdiff_t method_145                                       =  145;
+            inline constexpr std::ptrdiff_t method_146                                       =  146;
+            inline constexpr std::ptrdiff_t method_147                                       =  147;
+            inline constexpr std::ptrdiff_t method_148                                       =  148;
+            inline constexpr std::ptrdiff_t method_149                                       =  149;
+            inline constexpr std::ptrdiff_t method_150                                       =  150;
+            inline constexpr std::ptrdiff_t method_151                                       =  151;
+            inline constexpr std::ptrdiff_t method_152                                       =  152;
+            inline constexpr std::ptrdiff_t method_153                                       =  153;
+            inline constexpr std::ptrdiff_t method_154                                       =  154;
+            inline constexpr std::ptrdiff_t method_155                                       =  155;
+            inline constexpr std::ptrdiff_t method_156                                       =  156;
+            inline constexpr std::ptrdiff_t method_157                                       =  157;
+            inline constexpr std::ptrdiff_t method_158                                       =  158;
+            inline constexpr std::ptrdiff_t method_159                                       =  159;
+            inline constexpr std::ptrdiff_t method_160                                       =  160;
+            inline constexpr std::ptrdiff_t method_161                                       =  161;
+            inline constexpr std::ptrdiff_t method_162                                       =  162;
+            inline constexpr std::ptrdiff_t method_163                                       =  163;
+            inline constexpr std::ptrdiff_t method_164                                       =  164;
+            inline constexpr std::ptrdiff_t method_165                                       =  165;
+            inline constexpr std::ptrdiff_t method_166                                       =  166;
+            inline constexpr std::ptrdiff_t method_167                                       =  167;
+            inline constexpr std::ptrdiff_t method_168                                       =  168;
+            inline constexpr std::ptrdiff_t method_169                                       =  169;
+            inline constexpr std::ptrdiff_t method_170                                       =  170;
+            inline constexpr std::ptrdiff_t method_171                                       =  171;
+            inline constexpr std::ptrdiff_t method_172                                       =  172;
+            inline constexpr std::ptrdiff_t method_173                                       =  173;
+            inline constexpr std::ptrdiff_t method_174                                       =  174;
+            inline constexpr std::ptrdiff_t method_175                                       =  175;
+            inline constexpr std::ptrdiff_t method_176                                       =  176;
+            inline constexpr std::ptrdiff_t method_177                                       =  177;
+            inline constexpr std::ptrdiff_t method_178                                       =  178;
+            inline constexpr std::ptrdiff_t method_179                                       =  179;
+            inline constexpr std::ptrdiff_t method_180                                       =  180;
+            inline constexpr std::ptrdiff_t method_181                                       =  181;
+            inline constexpr std::ptrdiff_t method_182                                       =  182;
+            inline constexpr std::ptrdiff_t method_183                                       =  183;
+            inline constexpr std::ptrdiff_t method_184                                       =  184;
+            inline constexpr std::ptrdiff_t method_185                                       =  185;
+            inline constexpr std::ptrdiff_t method_186                                       =  186;
+            inline constexpr std::ptrdiff_t method_187                                       =  187;
+            inline constexpr std::ptrdiff_t method_188                                       =  188;
+            inline constexpr std::ptrdiff_t method_189                                       =  189;
+            inline constexpr std::ptrdiff_t method_190                                       =  190;
+            inline constexpr std::ptrdiff_t method_191                                       =  191;
+            inline constexpr std::ptrdiff_t method_192                                       =  192;
+            inline constexpr std::ptrdiff_t method_193                                       =  193;
+            inline constexpr std::ptrdiff_t method_194                                       =  194;
+            inline constexpr std::ptrdiff_t method_195                                       =  195;
+            inline constexpr std::ptrdiff_t method_196                                       =  196;
+            inline constexpr std::ptrdiff_t method_197                                       =  197;
+            inline constexpr std::ptrdiff_t method_198                                       =  198;
+            inline constexpr std::ptrdiff_t method_199                                       =  199;
+            inline constexpr std::ptrdiff_t method_200                                       =  200;
+            inline constexpr std::ptrdiff_t method_201                                       =  201;
+            inline constexpr std::ptrdiff_t method_202                                       =  202;
+            inline constexpr std::ptrdiff_t method_203                                       =  203;
+            inline constexpr std::ptrdiff_t method_204                                       =  204;
+            inline constexpr std::ptrdiff_t method_205                                       =  205;
+            inline constexpr std::ptrdiff_t method_206                                       =  206;
+            inline constexpr std::ptrdiff_t method_207                                       =  207;
+            inline constexpr std::ptrdiff_t method_208                                       =  208;
+            inline constexpr std::ptrdiff_t method_209                                       =  209;
+            inline constexpr std::ptrdiff_t method_210                                       =  210;
+            inline constexpr std::ptrdiff_t method_211                                       =  211;
+            inline constexpr std::ptrdiff_t method_212                                       =  212;
+            inline constexpr std::ptrdiff_t method_213                                       =  213;
+            inline constexpr std::ptrdiff_t method_214                                       =  214;
+            inline constexpr std::ptrdiff_t method_215                                       =  215;
+            inline constexpr std::ptrdiff_t method_216                                       =  216;
+            inline constexpr std::ptrdiff_t method_217                                       =  217;
+            inline constexpr std::ptrdiff_t method_218                                       =  218;
+            inline constexpr std::ptrdiff_t method_219                                       =  219;
+            inline constexpr std::ptrdiff_t method_220                                       =  220;
+            inline constexpr std::ptrdiff_t method_221                                       =  221;
+            inline constexpr std::ptrdiff_t method_222                                       =  222;
+            inline constexpr std::ptrdiff_t method_223                                       =  223;
+            inline constexpr std::ptrdiff_t method_224                                       =  224;
+            inline constexpr std::ptrdiff_t method_225                                       =  225;
+            inline constexpr std::ptrdiff_t method_226                                       =  226;
+            inline constexpr std::ptrdiff_t method_227                                       =  227;
+            inline constexpr std::ptrdiff_t method_228                                       =  228;
+            inline constexpr std::ptrdiff_t method_229                                       =  229;
+            inline constexpr std::ptrdiff_t method_230                                       =  230;
+            inline constexpr std::ptrdiff_t method_231                                       =  231;
+            inline constexpr std::ptrdiff_t method_232                                       =  232;
+            inline constexpr std::ptrdiff_t method_233                                       =  233;
+            inline constexpr std::ptrdiff_t method_234                                       =  234;
+            inline constexpr std::ptrdiff_t method_235                                       =  235;
+            inline constexpr std::ptrdiff_t method_236                                       =  236;
+            inline constexpr std::ptrdiff_t method_237                                       =  237;
+            inline constexpr std::ptrdiff_t method_238                                       =  238;
+            inline constexpr std::ptrdiff_t method_239                                       =  239;
+            inline constexpr std::ptrdiff_t method_240                                       =  240;
+            inline constexpr std::ptrdiff_t method_241                                       =  241;
+            inline constexpr std::ptrdiff_t method_242                                       =  242;
+            inline constexpr std::ptrdiff_t method_243                                       =  243;
+            inline constexpr std::ptrdiff_t method_244                                       =  244;
+            inline constexpr std::ptrdiff_t method_245                                       =  245;
+            inline constexpr std::ptrdiff_t method_246                                       =  246;
+            inline constexpr std::ptrdiff_t method_247                                       =  247;
+            inline constexpr std::ptrdiff_t method_248                                       =  248;
+            inline constexpr std::ptrdiff_t method_249                                       =  249;
+            inline constexpr std::ptrdiff_t method_250                                       =  250;
+            inline constexpr std::ptrdiff_t method_251                                       =  251;
+            inline constexpr std::ptrdiff_t method_252                                       =  252;
+            inline constexpr std::ptrdiff_t method_253                                       =  253;
+            inline constexpr std::ptrdiff_t method_254                                       =  254;
+            inline constexpr std::ptrdiff_t method_255                                       =  255;
         }
 
         namespace CSosEdit {
@@ -6488,6 +6668,7 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_130                                       =  130;
             inline constexpr std::ptrdiff_t method_131                                       =  131;
             inline constexpr std::ptrdiff_t method_132                                       =  132;
+            inline constexpr std::ptrdiff_t method_133                                       =  133;
         }
 
     }
@@ -6594,6 +6775,551 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_96                                        =   96;
             inline constexpr std::ptrdiff_t method_97                                        =   97;
             inline constexpr std::ptrdiff_t method_98                                        =   98;
+            inline constexpr std::ptrdiff_t method_99                                        =   99;
+            inline constexpr std::ptrdiff_t method_100                                       =  100;
+        }
+
+    }
+
+    namespace tier0_dll {
+
+        namespace CTestScriptMgr {
+            inline constexpr std::ptrdiff_t method_0                                         =    0;
+            inline constexpr std::ptrdiff_t method_1                                         =    1;
+            inline constexpr std::ptrdiff_t method_2                                         =    2;
+            inline constexpr std::ptrdiff_t method_3                                         =    3;
+            inline constexpr std::ptrdiff_t method_4                                         =    4;
+            inline constexpr std::ptrdiff_t method_5                                         =    5;
+            inline constexpr std::ptrdiff_t method_6                                         =    6;
+            inline constexpr std::ptrdiff_t method_7                                         =    7;
+            inline constexpr std::ptrdiff_t method_8                                         =    8;
+            inline constexpr std::ptrdiff_t method_9                                         =    9;
+            inline constexpr std::ptrdiff_t method_10                                        =   10;
+            inline constexpr std::ptrdiff_t method_11                                        =   11;
+            inline constexpr std::ptrdiff_t method_12                                        =   12;
+            inline constexpr std::ptrdiff_t method_13                                        =   13;
+            inline constexpr std::ptrdiff_t method_14                                        =   14;
+            inline constexpr std::ptrdiff_t method_15                                        =   15;
+            inline constexpr std::ptrdiff_t method_16                                        =   16;
+            inline constexpr std::ptrdiff_t method_17                                        =   17;
+        }
+
+        namespace CCvar {
+            inline constexpr std::ptrdiff_t method_0                                         =    0;
+            inline constexpr std::ptrdiff_t method_1                                         =    1;
+            inline constexpr std::ptrdiff_t method_2                                         =    2;
+            inline constexpr std::ptrdiff_t method_3                                         =    3;
+            inline constexpr std::ptrdiff_t method_4                                         =    4;
+            inline constexpr std::ptrdiff_t method_5                                         =    5;
+            inline constexpr std::ptrdiff_t method_6                                         =    6;
+            inline constexpr std::ptrdiff_t method_7                                         =    7;
+            inline constexpr std::ptrdiff_t method_8                                         =    8;
+            inline constexpr std::ptrdiff_t method_9                                         =    9;
+            inline constexpr std::ptrdiff_t method_10                                        =   10;
+            inline constexpr std::ptrdiff_t method_11                                        =   11;
+            inline constexpr std::ptrdiff_t method_12                                        =   12;
+            inline constexpr std::ptrdiff_t method_13                                        =   13;
+            inline constexpr std::ptrdiff_t method_14                                        =   14;
+            inline constexpr std::ptrdiff_t method_15                                        =   15;
+            inline constexpr std::ptrdiff_t method_16                                        =   16;
+            inline constexpr std::ptrdiff_t method_17                                        =   17;
+            inline constexpr std::ptrdiff_t method_18                                        =   18;
+            inline constexpr std::ptrdiff_t method_19                                        =   19;
+            inline constexpr std::ptrdiff_t method_20                                        =   20;
+            inline constexpr std::ptrdiff_t method_21                                        =   21;
+            inline constexpr std::ptrdiff_t method_22                                        =   22;
+            inline constexpr std::ptrdiff_t method_23                                        =   23;
+            inline constexpr std::ptrdiff_t method_24                                        =   24;
+            inline constexpr std::ptrdiff_t method_25                                        =   25;
+            inline constexpr std::ptrdiff_t method_26                                        =   26;
+            inline constexpr std::ptrdiff_t method_27                                        =   27;
+            inline constexpr std::ptrdiff_t method_28                                        =   28;
+            inline constexpr std::ptrdiff_t method_29                                        =   29;
+            inline constexpr std::ptrdiff_t method_30                                        =   30;
+            inline constexpr std::ptrdiff_t method_31                                        =   31;
+            inline constexpr std::ptrdiff_t method_32                                        =   32;
+            inline constexpr std::ptrdiff_t method_33                                        =   33;
+            inline constexpr std::ptrdiff_t method_34                                        =   34;
+            inline constexpr std::ptrdiff_t method_35                                        =   35;
+            inline constexpr std::ptrdiff_t method_36                                        =   36;
+            inline constexpr std::ptrdiff_t method_37                                        =   37;
+            inline constexpr std::ptrdiff_t method_38                                        =   38;
+            inline constexpr std::ptrdiff_t method_39                                        =   39;
+            inline constexpr std::ptrdiff_t method_40                                        =   40;
+            inline constexpr std::ptrdiff_t method_41                                        =   41;
+            inline constexpr std::ptrdiff_t method_42                                        =   42;
+            inline constexpr std::ptrdiff_t method_43                                        =   43;
+            inline constexpr std::ptrdiff_t method_44                                        =   44;
+            inline constexpr std::ptrdiff_t method_45                                        =   45;
+            inline constexpr std::ptrdiff_t method_46                                        =   46;
+            inline constexpr std::ptrdiff_t method_47                                        =   47;
+        }
+
+        namespace CProcessUtils {
+            inline constexpr std::ptrdiff_t method_0                                         =    0;
+            inline constexpr std::ptrdiff_t method_1                                         =    1;
+            inline constexpr std::ptrdiff_t method_2                                         =    2;
+            inline constexpr std::ptrdiff_t method_3                                         =    3;
+            inline constexpr std::ptrdiff_t method_4                                         =    4;
+            inline constexpr std::ptrdiff_t method_5                                         =    5;
+            inline constexpr std::ptrdiff_t method_6                                         =    6;
+            inline constexpr std::ptrdiff_t method_7                                         =    7;
+            inline constexpr std::ptrdiff_t method_8                                         =    8;
+            inline constexpr std::ptrdiff_t method_9                                         =    9;
+            inline constexpr std::ptrdiff_t method_10                                        =   10;
+            inline constexpr std::ptrdiff_t method_11                                        =   11;
+            inline constexpr std::ptrdiff_t method_12                                        =   12;
+            inline constexpr std::ptrdiff_t method_13                                        =   13;
+            inline constexpr std::ptrdiff_t method_14                                        =   14;
+            inline constexpr std::ptrdiff_t method_15                                        =   15;
+            inline constexpr std::ptrdiff_t method_16                                        =   16;
+            inline constexpr std::ptrdiff_t method_17                                        =   17;
+            inline constexpr std::ptrdiff_t method_18                                        =   18;
+            inline constexpr std::ptrdiff_t method_19                                        =   19;
+            inline constexpr std::ptrdiff_t method_20                                        =   20;
+            inline constexpr std::ptrdiff_t method_21                                        =   21;
+            inline constexpr std::ptrdiff_t method_22                                        =   22;
+            inline constexpr std::ptrdiff_t method_23                                        =   23;
+            inline constexpr std::ptrdiff_t method_24                                        =   24;
+            inline constexpr std::ptrdiff_t method_25                                        =   25;
+            inline constexpr std::ptrdiff_t method_26                                        =   26;
+            inline constexpr std::ptrdiff_t method_27                                        =   27;
+            inline constexpr std::ptrdiff_t method_28                                        =   28;
+            inline constexpr std::ptrdiff_t method_29                                        =   29;
+            inline constexpr std::ptrdiff_t method_30                                        =   30;
+            inline constexpr std::ptrdiff_t method_31                                        =   31;
+            inline constexpr std::ptrdiff_t method_32                                        =   32;
+            inline constexpr std::ptrdiff_t method_33                                        =   33;
+            inline constexpr std::ptrdiff_t method_34                                        =   34;
+            inline constexpr std::ptrdiff_t method_35                                        =   35;
+            inline constexpr std::ptrdiff_t method_36                                        =   36;
+            inline constexpr std::ptrdiff_t method_37                                        =   37;
+            inline constexpr std::ptrdiff_t method_38                                        =   38;
+            inline constexpr std::ptrdiff_t method_39                                        =   39;
+            inline constexpr std::ptrdiff_t method_40                                        =   40;
+            inline constexpr std::ptrdiff_t method_41                                        =   41;
+            inline constexpr std::ptrdiff_t method_42                                        =   42;
+            inline constexpr std::ptrdiff_t method_43                                        =   43;
+            inline constexpr std::ptrdiff_t method_44                                        =   44;
+            inline constexpr std::ptrdiff_t method_45                                        =   45;
+            inline constexpr std::ptrdiff_t method_46                                        =   46;
+            inline constexpr std::ptrdiff_t method_47                                        =   47;
+            inline constexpr std::ptrdiff_t method_48                                        =   48;
+            inline constexpr std::ptrdiff_t method_49                                        =   49;
+            inline constexpr std::ptrdiff_t method_50                                        =   50;
+            inline constexpr std::ptrdiff_t method_51                                        =   51;
+            inline constexpr std::ptrdiff_t method_52                                        =   52;
+            inline constexpr std::ptrdiff_t method_53                                        =   53;
+            inline constexpr std::ptrdiff_t method_54                                        =   54;
+            inline constexpr std::ptrdiff_t method_55                                        =   55;
+            inline constexpr std::ptrdiff_t method_56                                        =   56;
+            inline constexpr std::ptrdiff_t method_57                                        =   57;
+            inline constexpr std::ptrdiff_t method_58                                        =   58;
+        }
+
+        namespace CUtlStringTokenSystem {
+            inline constexpr std::ptrdiff_t method_0                                         =    0;
+            inline constexpr std::ptrdiff_t method_1                                         =    1;
+            inline constexpr std::ptrdiff_t method_2                                         =    2;
+            inline constexpr std::ptrdiff_t method_3                                         =    3;
+            inline constexpr std::ptrdiff_t method_4                                         =    4;
+            inline constexpr std::ptrdiff_t method_5                                         =    5;
+            inline constexpr std::ptrdiff_t method_6                                         =    6;
+            inline constexpr std::ptrdiff_t method_7                                         =    7;
+            inline constexpr std::ptrdiff_t method_8                                         =    8;
+            inline constexpr std::ptrdiff_t method_9                                         =    9;
+            inline constexpr std::ptrdiff_t method_10                                        =   10;
+            inline constexpr std::ptrdiff_t method_11                                        =   11;
+        }
+
+    }
+
+    namespace v8system_dll {
+
+        namespace CSource2V8System {
+            inline constexpr std::ptrdiff_t method_0                                         =    0;
+            inline constexpr std::ptrdiff_t method_1                                         =    1;
+            inline constexpr std::ptrdiff_t method_2                                         =    2;
+            inline constexpr std::ptrdiff_t method_3                                         =    3;
+            inline constexpr std::ptrdiff_t method_4                                         =    4;
+            inline constexpr std::ptrdiff_t method_5                                         =    5;
+            inline constexpr std::ptrdiff_t method_6                                         =    6;
+            inline constexpr std::ptrdiff_t method_7                                         =    7;
+            inline constexpr std::ptrdiff_t method_8                                         =    8;
+            inline constexpr std::ptrdiff_t method_9                                         =    9;
+            inline constexpr std::ptrdiff_t method_10                                        =   10;
+            inline constexpr std::ptrdiff_t method_11                                        =   11;
+            inline constexpr std::ptrdiff_t method_12                                        =   12;
+            inline constexpr std::ptrdiff_t method_13                                        =   13;
+            inline constexpr std::ptrdiff_t method_14                                        =   14;
+            inline constexpr std::ptrdiff_t method_15                                        =   15;
+            inline constexpr std::ptrdiff_t method_16                                        =   16;
+            inline constexpr std::ptrdiff_t method_17                                        =   17;
+            inline constexpr std::ptrdiff_t method_18                                        =   18;
+            inline constexpr std::ptrdiff_t method_19                                        =   19;
+            inline constexpr std::ptrdiff_t method_20                                        =   20;
+        }
+
+    }
+
+    namespace vphysics2_dll {
+
+        namespace CVPhysics2Interface {
+            inline constexpr std::ptrdiff_t method_0                                         =    0;
+            inline constexpr std::ptrdiff_t method_1                                         =    1;
+            inline constexpr std::ptrdiff_t method_2                                         =    2;
+            inline constexpr std::ptrdiff_t VPhysics2_Startup                                =    3;
+            inline constexpr std::ptrdiff_t method_4                                         =    4;
+            inline constexpr std::ptrdiff_t method_5                                         =    5;
+            inline constexpr std::ptrdiff_t method_6                                         =    6;
+            inline constexpr std::ptrdiff_t method_7                                         =    7;
+            inline constexpr std::ptrdiff_t method_8                                         =    8;
+            inline constexpr std::ptrdiff_t method_9                                         =    9;
+            inline constexpr std::ptrdiff_t method_10                                        =   10;
+            inline constexpr std::ptrdiff_t method_11                                        =   11;
+            inline constexpr std::ptrdiff_t method_12                                        =   12;
+            inline constexpr std::ptrdiff_t method_13                                        =   13;
+            inline constexpr std::ptrdiff_t method_14                                        =   14;
+            inline constexpr std::ptrdiff_t method_15                                        =   15;
+            inline constexpr std::ptrdiff_t method_16                                        =   16;
+            inline constexpr std::ptrdiff_t method_17                                        =   17;
+            inline constexpr std::ptrdiff_t method_18                                        =   18;
+            inline constexpr std::ptrdiff_t method_19                                        =   19;
+            inline constexpr std::ptrdiff_t method_20                                        =   20;
+            inline constexpr std::ptrdiff_t method_21                                        =   21;
+            inline constexpr std::ptrdiff_t method_22                                        =   22;
+            inline constexpr std::ptrdiff_t method_23                                        =   23;
+            inline constexpr std::ptrdiff_t method_24                                        =   24;
+            inline constexpr std::ptrdiff_t method_25                                        =   25;
+            inline constexpr std::ptrdiff_t method_26                                        =   26;
+            inline constexpr std::ptrdiff_t method_27                                        =   27;
+            inline constexpr std::ptrdiff_t method_28                                        =   28;
+            inline constexpr std::ptrdiff_t method_29                                        =   29;
+            inline constexpr std::ptrdiff_t method_30                                        =   30;
+            inline constexpr std::ptrdiff_t method_31                                        =   31;
+            inline constexpr std::ptrdiff_t method_32                                        =   32;
+            inline constexpr std::ptrdiff_t method_33                                        =   33;
+            inline constexpr std::ptrdiff_t method_34                                        =   34;
+            inline constexpr std::ptrdiff_t method_35                                        =   35;
+            inline constexpr std::ptrdiff_t method_36                                        =   36;
+            inline constexpr std::ptrdiff_t method_37                                        =   37;
+            inline constexpr std::ptrdiff_t method_38                                        =   38;
+            inline constexpr std::ptrdiff_t method_39                                        =   39;
+            inline constexpr std::ptrdiff_t method_40                                        =   40;
+            inline constexpr std::ptrdiff_t method_41                                        =   41;
+            inline constexpr std::ptrdiff_t method_42                                        =   42;
+            inline constexpr std::ptrdiff_t method_43                                        =   43;
+            inline constexpr std::ptrdiff_t method_44                                        =   44;
+            inline constexpr std::ptrdiff_t method_45                                        =   45;
+            inline constexpr std::ptrdiff_t method_46                                        =   46;
+            inline constexpr std::ptrdiff_t method_47                                        =   47;
+            inline constexpr std::ptrdiff_t method_48                                        =   48;
+            inline constexpr std::ptrdiff_t method_49                                        =   49;
+            inline constexpr std::ptrdiff_t method_50                                        =   50;
+            inline constexpr std::ptrdiff_t method_51                                        =   51;
+            inline constexpr std::ptrdiff_t method_52                                        =   52;
+            inline constexpr std::ptrdiff_t method_53                                        =   53;
+            inline constexpr std::ptrdiff_t method_54                                        =   54;
+            inline constexpr std::ptrdiff_t method_55                                        =   55;
+            inline constexpr std::ptrdiff_t method_56                                        =   56;
+            inline constexpr std::ptrdiff_t method_57                                        =   57;
+            inline constexpr std::ptrdiff_t method_58                                        =   58;
+            inline constexpr std::ptrdiff_t method_59                                        =   59;
+            inline constexpr std::ptrdiff_t method_60                                        =   60;
+            inline constexpr std::ptrdiff_t method_61                                        =   61;
+            inline constexpr std::ptrdiff_t method_62                                        =   62;
+            inline constexpr std::ptrdiff_t method_63                                        =   63;
+            inline constexpr std::ptrdiff_t method_64                                        =   64;
+            inline constexpr std::ptrdiff_t method_65                                        =   65;
+            inline constexpr std::ptrdiff_t method_66                                        =   66;
+            inline constexpr std::ptrdiff_t method_67                                        =   67;
+            inline constexpr std::ptrdiff_t method_68                                        =   68;
+            inline constexpr std::ptrdiff_t method_69                                        =   69;
+            inline constexpr std::ptrdiff_t method_70                                        =   70;
+            inline constexpr std::ptrdiff_t method_71                                        =   71;
+            inline constexpr std::ptrdiff_t method_72                                        =   72;
+            inline constexpr std::ptrdiff_t method_73                                        =   73;
+            inline constexpr std::ptrdiff_t method_74                                        =   74;
+            inline constexpr std::ptrdiff_t method_75                                        =   75;
+            inline constexpr std::ptrdiff_t method_76                                        =   76;
+            inline constexpr std::ptrdiff_t method_77                                        =   77;
+            inline constexpr std::ptrdiff_t method_78                                        =   78;
+            inline constexpr std::ptrdiff_t method_79                                        =   79;
+            inline constexpr std::ptrdiff_t method_80                                        =   80;
+            inline constexpr std::ptrdiff_t method_81                                        =   81;
+            inline constexpr std::ptrdiff_t method_82                                        =   82;
+            inline constexpr std::ptrdiff_t method_83                                        =   83;
+            inline constexpr std::ptrdiff_t method_84                                        =   84;
+            inline constexpr std::ptrdiff_t method_85                                        =   85;
+            inline constexpr std::ptrdiff_t method_86                                        =   86;
+            inline constexpr std::ptrdiff_t method_87                                        =   87;
+            inline constexpr std::ptrdiff_t method_88                                        =   88;
+            inline constexpr std::ptrdiff_t method_89                                        =   89;
+            inline constexpr std::ptrdiff_t method_90                                        =   90;
+            inline constexpr std::ptrdiff_t method_91                                        =   91;
+            inline constexpr std::ptrdiff_t method_92                                        =   92;
+            inline constexpr std::ptrdiff_t method_93                                        =   93;
+            inline constexpr std::ptrdiff_t method_94                                        =   94;
+            inline constexpr std::ptrdiff_t method_95                                        =   95;
+            inline constexpr std::ptrdiff_t method_96                                        =   96;
+            inline constexpr std::ptrdiff_t method_97                                        =   97;
+            inline constexpr std::ptrdiff_t method_98                                        =   98;
+            inline constexpr std::ptrdiff_t method_99                                        =   99;
+            inline constexpr std::ptrdiff_t method_100                                       =  100;
+            inline constexpr std::ptrdiff_t method_101                                       =  101;
+            inline constexpr std::ptrdiff_t method_102                                       =  102;
+            inline constexpr std::ptrdiff_t method_103                                       =  103;
+            inline constexpr std::ptrdiff_t method_104                                       =  104;
+            inline constexpr std::ptrdiff_t method_105                                       =  105;
+            inline constexpr std::ptrdiff_t method_106                                       =  106;
+            inline constexpr std::ptrdiff_t method_107                                       =  107;
+            inline constexpr std::ptrdiff_t method_108                                       =  108;
+            inline constexpr std::ptrdiff_t method_109                                       =  109;
+            inline constexpr std::ptrdiff_t method_110                                       =  110;
+            inline constexpr std::ptrdiff_t method_111                                       =  111;
+            inline constexpr std::ptrdiff_t method_112                                       =  112;
+            inline constexpr std::ptrdiff_t method_113                                       =  113;
+            inline constexpr std::ptrdiff_t method_114                                       =  114;
+            inline constexpr std::ptrdiff_t method_115                                       =  115;
+            inline constexpr std::ptrdiff_t method_116                                       =  116;
+            inline constexpr std::ptrdiff_t method_117                                       =  117;
+            inline constexpr std::ptrdiff_t method_118                                       =  118;
+            inline constexpr std::ptrdiff_t method_119                                       =  119;
+            inline constexpr std::ptrdiff_t method_120                                       =  120;
+            inline constexpr std::ptrdiff_t method_121                                       =  121;
+            inline constexpr std::ptrdiff_t method_122                                       =  122;
+            inline constexpr std::ptrdiff_t method_123                                       =  123;
+            inline constexpr std::ptrdiff_t method_124                                       =  124;
+            inline constexpr std::ptrdiff_t method_125                                       =  125;
+            inline constexpr std::ptrdiff_t method_126                                       =  126;
+            inline constexpr std::ptrdiff_t method_127                                       =  127;
+            inline constexpr std::ptrdiff_t method_128                                       =  128;
+            inline constexpr std::ptrdiff_t method_129                                       =  129;
+            inline constexpr std::ptrdiff_t method_130                                       =  130;
+            inline constexpr std::ptrdiff_t method_131                                       =  131;
+            inline constexpr std::ptrdiff_t method_132                                       =  132;
+            inline constexpr std::ptrdiff_t method_133                                       =  133;
+            inline constexpr std::ptrdiff_t method_134                                       =  134;
+            inline constexpr std::ptrdiff_t method_135                                       =  135;
+            inline constexpr std::ptrdiff_t method_136                                       =  136;
+            inline constexpr std::ptrdiff_t method_137                                       =  137;
+            inline constexpr std::ptrdiff_t method_138                                       =  138;
+            inline constexpr std::ptrdiff_t method_139                                       =  139;
+            inline constexpr std::ptrdiff_t method_140                                       =  140;
+            inline constexpr std::ptrdiff_t method_141                                       =  141;
+            inline constexpr std::ptrdiff_t method_142                                       =  142;
+            inline constexpr std::ptrdiff_t method_143                                       =  143;
+            inline constexpr std::ptrdiff_t method_144                                       =  144;
+            inline constexpr std::ptrdiff_t method_145                                       =  145;
+            inline constexpr std::ptrdiff_t method_146                                       =  146;
+            inline constexpr std::ptrdiff_t method_147                                       =  147;
+            inline constexpr std::ptrdiff_t method_148                                       =  148;
+            inline constexpr std::ptrdiff_t method_149                                       =  149;
+            inline constexpr std::ptrdiff_t method_150                                       =  150;
+            inline constexpr std::ptrdiff_t method_151                                       =  151;
+            inline constexpr std::ptrdiff_t method_152                                       =  152;
+            inline constexpr std::ptrdiff_t method_153                                       =  153;
+            inline constexpr std::ptrdiff_t method_154                                       =  154;
+            inline constexpr std::ptrdiff_t method_155                                       =  155;
+            inline constexpr std::ptrdiff_t method_156                                       =  156;
+            inline constexpr std::ptrdiff_t method_157                                       =  157;
+            inline constexpr std::ptrdiff_t method_158                                       =  158;
+            inline constexpr std::ptrdiff_t method_159                                       =  159;
+            inline constexpr std::ptrdiff_t method_160                                       =  160;
+            inline constexpr std::ptrdiff_t method_161                                       =  161;
+            inline constexpr std::ptrdiff_t method_162                                       =  162;
+            inline constexpr std::ptrdiff_t method_163                                       =  163;
+            inline constexpr std::ptrdiff_t method_164                                       =  164;
+            inline constexpr std::ptrdiff_t method_165                                       =  165;
+            inline constexpr std::ptrdiff_t method_166                                       =  166;
+            inline constexpr std::ptrdiff_t method_167                                       =  167;
+            inline constexpr std::ptrdiff_t method_168                                       =  168;
+            inline constexpr std::ptrdiff_t method_169                                       =  169;
+            inline constexpr std::ptrdiff_t method_170                                       =  170;
+            inline constexpr std::ptrdiff_t method_171                                       =  171;
+            inline constexpr std::ptrdiff_t method_172                                       =  172;
+            inline constexpr std::ptrdiff_t method_173                                       =  173;
+            inline constexpr std::ptrdiff_t method_174                                       =  174;
+            inline constexpr std::ptrdiff_t method_175                                       =  175;
+            inline constexpr std::ptrdiff_t method_176                                       =  176;
+            inline constexpr std::ptrdiff_t method_177                                       =  177;
+        }
+
+    }
+
+    namespace vscript_dll {
+
+        namespace CScriptManager {
+            inline constexpr std::ptrdiff_t method_0                                         =    0;
+            inline constexpr std::ptrdiff_t method_1                                         =    1;
+            inline constexpr std::ptrdiff_t method_2                                         =    2;
+            inline constexpr std::ptrdiff_t method_3                                         =    3;
+            inline constexpr std::ptrdiff_t method_4                                         =    4;
+            inline constexpr std::ptrdiff_t method_5                                         =    5;
+            inline constexpr std::ptrdiff_t method_6                                         =    6;
+            inline constexpr std::ptrdiff_t method_7                                         =    7;
+            inline constexpr std::ptrdiff_t method_8                                         =    8;
+            inline constexpr std::ptrdiff_t method_9                                         =    9;
+            inline constexpr std::ptrdiff_t method_10                                        =   10;
+            inline constexpr std::ptrdiff_t method_11                                        =   11;
+            inline constexpr std::ptrdiff_t method_12                                        =   12;
+            inline constexpr std::ptrdiff_t method_13                                        =   13;
+            inline constexpr std::ptrdiff_t method_14                                        =   14;
+            inline constexpr std::ptrdiff_t method_15                                        =   15;
+            inline constexpr std::ptrdiff_t method_16                                        =   16;
+            inline constexpr std::ptrdiff_t method_17                                        =   17;
+            inline constexpr std::ptrdiff_t method_18                                        =   18;
+            inline constexpr std::ptrdiff_t method_19                                        =   19;
+            inline constexpr std::ptrdiff_t method_20                                        =   20;
+            inline constexpr std::ptrdiff_t method_21                                        =   21;
+            inline constexpr std::ptrdiff_t method_22                                        =   22;
+            inline constexpr std::ptrdiff_t method_23                                        =   23;
+            inline constexpr std::ptrdiff_t method_24                                        =   24;
+            inline constexpr std::ptrdiff_t method_25                                        =   25;
+            inline constexpr std::ptrdiff_t method_26                                        =   26;
+            inline constexpr std::ptrdiff_t method_27                                        =   27;
+            inline constexpr std::ptrdiff_t method_28                                        =   28;
+            inline constexpr std::ptrdiff_t method_29                                        =   29;
+            inline constexpr std::ptrdiff_t method_30                                        =   30;
+            inline constexpr std::ptrdiff_t method_31                                        =   31;
+            inline constexpr std::ptrdiff_t method_32                                        =   32;
+            inline constexpr std::ptrdiff_t method_33                                        =   33;
+            inline constexpr std::ptrdiff_t method_34                                        =   34;
+            inline constexpr std::ptrdiff_t method_35                                        =   35;
+            inline constexpr std::ptrdiff_t method_36                                        =   36;
+            inline constexpr std::ptrdiff_t method_37                                        =   37;
+            inline constexpr std::ptrdiff_t method_38                                        =   38;
+            inline constexpr std::ptrdiff_t method_39                                        =   39;
+            inline constexpr std::ptrdiff_t method_40                                        =   40;
+            inline constexpr std::ptrdiff_t method_41                                        =   41;
+            inline constexpr std::ptrdiff_t method_42                                        =   42;
+            inline constexpr std::ptrdiff_t method_43                                        =   43;
+            inline constexpr std::ptrdiff_t method_44                                        =   44;
+            inline constexpr std::ptrdiff_t method_45                                        =   45;
+            inline constexpr std::ptrdiff_t method_46                                        =   46;
+            inline constexpr std::ptrdiff_t method_47                                        =   47;
+            inline constexpr std::ptrdiff_t method_48                                        =   48;
+            inline constexpr std::ptrdiff_t method_49                                        =   49;
+            inline constexpr std::ptrdiff_t method_50                                        =   50;
+            inline constexpr std::ptrdiff_t method_51                                        =   51;
+            inline constexpr std::ptrdiff_t method_52                                        =   52;
+            inline constexpr std::ptrdiff_t method_53                                        =   53;
+            inline constexpr std::ptrdiff_t method_54                                        =   54;
+            inline constexpr std::ptrdiff_t method_55                                        =   55;
+            inline constexpr std::ptrdiff_t method_56                                        =   56;
+            inline constexpr std::ptrdiff_t method_57                                        =   57;
+            inline constexpr std::ptrdiff_t method_58                                        =   58;
+        }
+
+    }
+
+    namespace worldrenderer_dll {
+
+        namespace CWorldRendererMgr {
+            inline constexpr std::ptrdiff_t method_0                                         =    0;
+            inline constexpr std::ptrdiff_t method_1                                         =    1;
+            inline constexpr std::ptrdiff_t method_2                                         =    2;
+            inline constexpr std::ptrdiff_t method_3                                         =    3;
+            inline constexpr std::ptrdiff_t method_4                                         =    4;
+            inline constexpr std::ptrdiff_t method_5                                         =    5;
+            inline constexpr std::ptrdiff_t method_6                                         =    6;
+            inline constexpr std::ptrdiff_t method_7                                         =    7;
+            inline constexpr std::ptrdiff_t method_8                                         =    8;
+            inline constexpr std::ptrdiff_t method_9                                         =    9;
+            inline constexpr std::ptrdiff_t method_10                                        =   10;
+            inline constexpr std::ptrdiff_t method_11                                        =   11;
+            inline constexpr std::ptrdiff_t method_12                                        =   12;
+            inline constexpr std::ptrdiff_t method_13                                        =   13;
+            inline constexpr std::ptrdiff_t method_14                                        =   14;
+            inline constexpr std::ptrdiff_t method_15                                        =   15;
+            inline constexpr std::ptrdiff_t method_16                                        =   16;
+            inline constexpr std::ptrdiff_t method_17                                        =   17;
+            inline constexpr std::ptrdiff_t method_18                                        =   18;
+            inline constexpr std::ptrdiff_t method_19                                        =   19;
+            inline constexpr std::ptrdiff_t method_20                                        =   20;
+            inline constexpr std::ptrdiff_t method_21                                        =   21;
+            inline constexpr std::ptrdiff_t method_22                                        =   22;
+            inline constexpr std::ptrdiff_t method_23                                        =   23;
+            inline constexpr std::ptrdiff_t method_24                                        =   24;
+            inline constexpr std::ptrdiff_t method_25                                        =   25;
+            inline constexpr std::ptrdiff_t method_26                                        =   26;
+            inline constexpr std::ptrdiff_t method_27                                        =   27;
+            inline constexpr std::ptrdiff_t method_28                                        =   28;
+            inline constexpr std::ptrdiff_t method_29                                        =   29;
+            inline constexpr std::ptrdiff_t method_30                                        =   30;
+            inline constexpr std::ptrdiff_t method_31                                        =   31;
+            inline constexpr std::ptrdiff_t CWorldRendererMgr_ServiceWorldRequests           =   32;
+            inline constexpr std::ptrdiff_t method_33                                        =   33;
+            inline constexpr std::ptrdiff_t method_34                                        =   34;
+            inline constexpr std::ptrdiff_t method_35                                        =   35;
+            inline constexpr std::ptrdiff_t method_36                                        =   36;
+            inline constexpr std::ptrdiff_t method_37                                        =   37;
+            inline constexpr std::ptrdiff_t method_38                                        =   38;
+            inline constexpr std::ptrdiff_t method_39                                        =   39;
+            inline constexpr std::ptrdiff_t method_40                                        =   40;
+            inline constexpr std::ptrdiff_t method_41                                        =   41;
+            inline constexpr std::ptrdiff_t method_42                                        =   42;
+            inline constexpr std::ptrdiff_t method_43                                        =   43;
+            inline constexpr std::ptrdiff_t method_44                                        =   44;
+            inline constexpr std::ptrdiff_t method_45                                        =   45;
+            inline constexpr std::ptrdiff_t method_46                                        =   46;
+            inline constexpr std::ptrdiff_t method_47                                        =   47;
+            inline constexpr std::ptrdiff_t method_48                                        =   48;
+            inline constexpr std::ptrdiff_t method_49                                        =   49;
+            inline constexpr std::ptrdiff_t method_50                                        =   50;
+            inline constexpr std::ptrdiff_t method_51                                        =   51;
+            inline constexpr std::ptrdiff_t method_52                                        =   52;
+            inline constexpr std::ptrdiff_t method_53                                        =   53;
+            inline constexpr std::ptrdiff_t method_54                                        =   54;
+            inline constexpr std::ptrdiff_t method_55                                        =   55;
+            inline constexpr std::ptrdiff_t method_56                                        =   56;
+            inline constexpr std::ptrdiff_t method_57                                        =   57;
+            inline constexpr std::ptrdiff_t method_58                                        =   58;
+            inline constexpr std::ptrdiff_t method_59                                        =   59;
+            inline constexpr std::ptrdiff_t method_60                                        =   60;
+            inline constexpr std::ptrdiff_t method_61                                        =   61;
+            inline constexpr std::ptrdiff_t method_62                                        =   62;
+            inline constexpr std::ptrdiff_t method_63                                        =   63;
+            inline constexpr std::ptrdiff_t method_64                                        =   64;
+            inline constexpr std::ptrdiff_t method_65                                        =   65;
+            inline constexpr std::ptrdiff_t method_66                                        =   66;
+            inline constexpr std::ptrdiff_t method_67                                        =   67;
+            inline constexpr std::ptrdiff_t method_68                                        =   68;
+            inline constexpr std::ptrdiff_t method_69                                        =   69;
+            inline constexpr std::ptrdiff_t method_70                                        =   70;
+            inline constexpr std::ptrdiff_t method_71                                        =   71;
+            inline constexpr std::ptrdiff_t method_72                                        =   72;
+            inline constexpr std::ptrdiff_t method_73                                        =   73;
+            inline constexpr std::ptrdiff_t method_74                                        =   74;
+            inline constexpr std::ptrdiff_t method_75                                        =   75;
+            inline constexpr std::ptrdiff_t method_76                                        =   76;
+            inline constexpr std::ptrdiff_t method_77                                        =   77;
+            inline constexpr std::ptrdiff_t method_78                                        =   78;
+            inline constexpr std::ptrdiff_t method_79                                        =   79;
+            inline constexpr std::ptrdiff_t method_80                                        =   80;
+            inline constexpr std::ptrdiff_t method_81                                        =   81;
+            inline constexpr std::ptrdiff_t method_82                                        =   82;
+            inline constexpr std::ptrdiff_t method_83                                        =   83;
+            inline constexpr std::ptrdiff_t method_84                                        =   84;
+            inline constexpr std::ptrdiff_t method_85                                        =   85;
+            inline constexpr std::ptrdiff_t method_86                                        =   86;
+            inline constexpr std::ptrdiff_t method_87                                        =   87;
+            inline constexpr std::ptrdiff_t method_88                                        =   88;
+            inline constexpr std::ptrdiff_t method_89                                        =   89;
+            inline constexpr std::ptrdiff_t method_90                                        =   90;
+            inline constexpr std::ptrdiff_t method_91                                        =   91;
+            inline constexpr std::ptrdiff_t method_92                                        =   92;
+            inline constexpr std::ptrdiff_t method_93                                        =   93;
+            inline constexpr std::ptrdiff_t method_94                                        =   94;
+            inline constexpr std::ptrdiff_t method_95                                        =   95;
+            inline constexpr std::ptrdiff_t method_96                                        =   96;
+            inline constexpr std::ptrdiff_t method_97                                        =   97;
+            inline constexpr std::ptrdiff_t method_98                                        =   98;
+            inline constexpr std::ptrdiff_t method_99                                        =   99;
+            inline constexpr std::ptrdiff_t method_100                                       =  100;
+            inline constexpr std::ptrdiff_t method_101                                       =  101;
+            inline constexpr std::ptrdiff_t method_102                                       =  102;
+            inline constexpr std::ptrdiff_t method_103                                       =  103;
         }
 
     }
@@ -7242,430 +7968,6 @@ namespace cs2::vtables {
 
     }
 
-    namespace tier0_dll {
-
-        namespace CTestScriptMgr {
-            inline constexpr std::ptrdiff_t method_0                                         =    0;
-            inline constexpr std::ptrdiff_t method_1                                         =    1;
-            inline constexpr std::ptrdiff_t method_2                                         =    2;
-            inline constexpr std::ptrdiff_t method_3                                         =    3;
-            inline constexpr std::ptrdiff_t method_4                                         =    4;
-            inline constexpr std::ptrdiff_t method_5                                         =    5;
-            inline constexpr std::ptrdiff_t method_6                                         =    6;
-            inline constexpr std::ptrdiff_t method_7                                         =    7;
-            inline constexpr std::ptrdiff_t method_8                                         =    8;
-            inline constexpr std::ptrdiff_t method_9                                         =    9;
-            inline constexpr std::ptrdiff_t method_10                                        =   10;
-            inline constexpr std::ptrdiff_t method_11                                        =   11;
-            inline constexpr std::ptrdiff_t method_12                                        =   12;
-            inline constexpr std::ptrdiff_t method_13                                        =   13;
-            inline constexpr std::ptrdiff_t method_14                                        =   14;
-            inline constexpr std::ptrdiff_t method_15                                        =   15;
-            inline constexpr std::ptrdiff_t method_16                                        =   16;
-            inline constexpr std::ptrdiff_t method_17                                        =   17;
-        }
-
-        namespace CCvar {
-            inline constexpr std::ptrdiff_t method_0                                         =    0;
-            inline constexpr std::ptrdiff_t method_1                                         =    1;
-            inline constexpr std::ptrdiff_t method_2                                         =    2;
-            inline constexpr std::ptrdiff_t method_3                                         =    3;
-            inline constexpr std::ptrdiff_t method_4                                         =    4;
-            inline constexpr std::ptrdiff_t method_5                                         =    5;
-            inline constexpr std::ptrdiff_t method_6                                         =    6;
-            inline constexpr std::ptrdiff_t method_7                                         =    7;
-            inline constexpr std::ptrdiff_t method_8                                         =    8;
-            inline constexpr std::ptrdiff_t method_9                                         =    9;
-            inline constexpr std::ptrdiff_t method_10                                        =   10;
-            inline constexpr std::ptrdiff_t method_11                                        =   11;
-            inline constexpr std::ptrdiff_t method_12                                        =   12;
-            inline constexpr std::ptrdiff_t method_13                                        =   13;
-            inline constexpr std::ptrdiff_t method_14                                        =   14;
-            inline constexpr std::ptrdiff_t method_15                                        =   15;
-            inline constexpr std::ptrdiff_t method_16                                        =   16;
-            inline constexpr std::ptrdiff_t method_17                                        =   17;
-            inline constexpr std::ptrdiff_t method_18                                        =   18;
-            inline constexpr std::ptrdiff_t method_19                                        =   19;
-            inline constexpr std::ptrdiff_t method_20                                        =   20;
-            inline constexpr std::ptrdiff_t method_21                                        =   21;
-            inline constexpr std::ptrdiff_t method_22                                        =   22;
-            inline constexpr std::ptrdiff_t method_23                                        =   23;
-            inline constexpr std::ptrdiff_t method_24                                        =   24;
-            inline constexpr std::ptrdiff_t method_25                                        =   25;
-            inline constexpr std::ptrdiff_t method_26                                        =   26;
-            inline constexpr std::ptrdiff_t method_27                                        =   27;
-            inline constexpr std::ptrdiff_t method_28                                        =   28;
-            inline constexpr std::ptrdiff_t method_29                                        =   29;
-            inline constexpr std::ptrdiff_t method_30                                        =   30;
-            inline constexpr std::ptrdiff_t method_31                                        =   31;
-            inline constexpr std::ptrdiff_t method_32                                        =   32;
-            inline constexpr std::ptrdiff_t method_33                                        =   33;
-            inline constexpr std::ptrdiff_t method_34                                        =   34;
-            inline constexpr std::ptrdiff_t method_35                                        =   35;
-            inline constexpr std::ptrdiff_t method_36                                        =   36;
-            inline constexpr std::ptrdiff_t method_37                                        =   37;
-            inline constexpr std::ptrdiff_t method_38                                        =   38;
-            inline constexpr std::ptrdiff_t method_39                                        =   39;
-            inline constexpr std::ptrdiff_t method_40                                        =   40;
-            inline constexpr std::ptrdiff_t method_41                                        =   41;
-            inline constexpr std::ptrdiff_t method_42                                        =   42;
-            inline constexpr std::ptrdiff_t method_43                                        =   43;
-            inline constexpr std::ptrdiff_t method_44                                        =   44;
-            inline constexpr std::ptrdiff_t method_45                                        =   45;
-            inline constexpr std::ptrdiff_t method_46                                        =   46;
-            inline constexpr std::ptrdiff_t method_47                                        =   47;
-            inline constexpr std::ptrdiff_t method_48                                        =   48;
-            inline constexpr std::ptrdiff_t method_49                                        =   49;
-        }
-
-        namespace CProcessUtils {
-            inline constexpr std::ptrdiff_t method_0                                         =    0;
-            inline constexpr std::ptrdiff_t method_1                                         =    1;
-            inline constexpr std::ptrdiff_t method_2                                         =    2;
-            inline constexpr std::ptrdiff_t method_3                                         =    3;
-            inline constexpr std::ptrdiff_t method_4                                         =    4;
-            inline constexpr std::ptrdiff_t method_5                                         =    5;
-            inline constexpr std::ptrdiff_t method_6                                         =    6;
-            inline constexpr std::ptrdiff_t method_7                                         =    7;
-            inline constexpr std::ptrdiff_t method_8                                         =    8;
-            inline constexpr std::ptrdiff_t method_9                                         =    9;
-            inline constexpr std::ptrdiff_t method_10                                        =   10;
-            inline constexpr std::ptrdiff_t method_11                                        =   11;
-            inline constexpr std::ptrdiff_t method_12                                        =   12;
-            inline constexpr std::ptrdiff_t method_13                                        =   13;
-            inline constexpr std::ptrdiff_t method_14                                        =   14;
-            inline constexpr std::ptrdiff_t method_15                                        =   15;
-            inline constexpr std::ptrdiff_t method_16                                        =   16;
-            inline constexpr std::ptrdiff_t method_17                                        =   17;
-            inline constexpr std::ptrdiff_t method_18                                        =   18;
-            inline constexpr std::ptrdiff_t method_19                                        =   19;
-            inline constexpr std::ptrdiff_t method_20                                        =   20;
-            inline constexpr std::ptrdiff_t method_21                                        =   21;
-            inline constexpr std::ptrdiff_t method_22                                        =   22;
-            inline constexpr std::ptrdiff_t method_23                                        =   23;
-            inline constexpr std::ptrdiff_t method_24                                        =   24;
-            inline constexpr std::ptrdiff_t method_25                                        =   25;
-            inline constexpr std::ptrdiff_t method_26                                        =   26;
-            inline constexpr std::ptrdiff_t method_27                                        =   27;
-            inline constexpr std::ptrdiff_t method_28                                        =   28;
-            inline constexpr std::ptrdiff_t method_29                                        =   29;
-            inline constexpr std::ptrdiff_t method_30                                        =   30;
-            inline constexpr std::ptrdiff_t method_31                                        =   31;
-            inline constexpr std::ptrdiff_t method_32                                        =   32;
-            inline constexpr std::ptrdiff_t method_33                                        =   33;
-            inline constexpr std::ptrdiff_t method_34                                        =   34;
-            inline constexpr std::ptrdiff_t method_35                                        =   35;
-            inline constexpr std::ptrdiff_t method_36                                        =   36;
-            inline constexpr std::ptrdiff_t method_37                                        =   37;
-            inline constexpr std::ptrdiff_t method_38                                        =   38;
-            inline constexpr std::ptrdiff_t method_39                                        =   39;
-            inline constexpr std::ptrdiff_t method_40                                        =   40;
-            inline constexpr std::ptrdiff_t method_41                                        =   41;
-            inline constexpr std::ptrdiff_t method_42                                        =   42;
-            inline constexpr std::ptrdiff_t method_43                                        =   43;
-            inline constexpr std::ptrdiff_t method_44                                        =   44;
-            inline constexpr std::ptrdiff_t method_45                                        =   45;
-            inline constexpr std::ptrdiff_t method_46                                        =   46;
-            inline constexpr std::ptrdiff_t method_47                                        =   47;
-            inline constexpr std::ptrdiff_t method_48                                        =   48;
-            inline constexpr std::ptrdiff_t method_49                                        =   49;
-            inline constexpr std::ptrdiff_t method_50                                        =   50;
-            inline constexpr std::ptrdiff_t method_51                                        =   51;
-            inline constexpr std::ptrdiff_t method_52                                        =   52;
-            inline constexpr std::ptrdiff_t method_53                                        =   53;
-            inline constexpr std::ptrdiff_t method_54                                        =   54;
-            inline constexpr std::ptrdiff_t method_55                                        =   55;
-            inline constexpr std::ptrdiff_t method_56                                        =   56;
-            inline constexpr std::ptrdiff_t method_57                                        =   57;
-            inline constexpr std::ptrdiff_t method_58                                        =   58;
-        }
-
-        namespace CUtlStringTokenSystem {
-            inline constexpr std::ptrdiff_t method_0                                         =    0;
-            inline constexpr std::ptrdiff_t method_1                                         =    1;
-            inline constexpr std::ptrdiff_t method_2                                         =    2;
-            inline constexpr std::ptrdiff_t method_3                                         =    3;
-            inline constexpr std::ptrdiff_t method_4                                         =    4;
-            inline constexpr std::ptrdiff_t method_5                                         =    5;
-            inline constexpr std::ptrdiff_t method_6                                         =    6;
-            inline constexpr std::ptrdiff_t method_7                                         =    7;
-            inline constexpr std::ptrdiff_t method_8                                         =    8;
-            inline constexpr std::ptrdiff_t method_9                                         =    9;
-            inline constexpr std::ptrdiff_t method_10                                        =   10;
-            inline constexpr std::ptrdiff_t method_11                                        =   11;
-            inline constexpr std::ptrdiff_t method_12                                        =   12;
-        }
-
-    }
-
-    namespace v8system_dll {
-
-        namespace CSource2V8System {
-            inline constexpr std::ptrdiff_t method_0                                         =    0;
-            inline constexpr std::ptrdiff_t method_1                                         =    1;
-            inline constexpr std::ptrdiff_t method_2                                         =    2;
-            inline constexpr std::ptrdiff_t method_3                                         =    3;
-            inline constexpr std::ptrdiff_t method_4                                         =    4;
-            inline constexpr std::ptrdiff_t method_5                                         =    5;
-            inline constexpr std::ptrdiff_t method_6                                         =    6;
-            inline constexpr std::ptrdiff_t method_7                                         =    7;
-            inline constexpr std::ptrdiff_t method_8                                         =    8;
-            inline constexpr std::ptrdiff_t method_9                                         =    9;
-            inline constexpr std::ptrdiff_t method_10                                        =   10;
-            inline constexpr std::ptrdiff_t method_11                                        =   11;
-            inline constexpr std::ptrdiff_t method_12                                        =   12;
-            inline constexpr std::ptrdiff_t method_13                                        =   13;
-            inline constexpr std::ptrdiff_t method_14                                        =   14;
-            inline constexpr std::ptrdiff_t method_15                                        =   15;
-            inline constexpr std::ptrdiff_t method_16                                        =   16;
-            inline constexpr std::ptrdiff_t method_17                                        =   17;
-            inline constexpr std::ptrdiff_t method_18                                        =   18;
-        }
-
-    }
-
-    namespace vphysics2_dll {
-
-        namespace CVPhysics2Interface {
-            inline constexpr std::ptrdiff_t method_0                                         =    0;
-            inline constexpr std::ptrdiff_t method_1                                         =    1;
-            inline constexpr std::ptrdiff_t method_2                                         =    2;
-            inline constexpr std::ptrdiff_t VPhysics2_Startup                                =    3;
-            inline constexpr std::ptrdiff_t method_4                                         =    4;
-            inline constexpr std::ptrdiff_t method_5                                         =    5;
-            inline constexpr std::ptrdiff_t method_6                                         =    6;
-            inline constexpr std::ptrdiff_t method_7                                         =    7;
-            inline constexpr std::ptrdiff_t method_8                                         =    8;
-            inline constexpr std::ptrdiff_t method_9                                         =    9;
-            inline constexpr std::ptrdiff_t method_10                                        =   10;
-            inline constexpr std::ptrdiff_t method_11                                        =   11;
-            inline constexpr std::ptrdiff_t method_12                                        =   12;
-            inline constexpr std::ptrdiff_t method_13                                        =   13;
-            inline constexpr std::ptrdiff_t method_14                                        =   14;
-            inline constexpr std::ptrdiff_t method_15                                        =   15;
-            inline constexpr std::ptrdiff_t method_16                                        =   16;
-            inline constexpr std::ptrdiff_t method_17                                        =   17;
-            inline constexpr std::ptrdiff_t method_18                                        =   18;
-            inline constexpr std::ptrdiff_t method_19                                        =   19;
-            inline constexpr std::ptrdiff_t method_20                                        =   20;
-            inline constexpr std::ptrdiff_t method_21                                        =   21;
-            inline constexpr std::ptrdiff_t method_22                                        =   22;
-            inline constexpr std::ptrdiff_t method_23                                        =   23;
-            inline constexpr std::ptrdiff_t method_24                                        =   24;
-            inline constexpr std::ptrdiff_t method_25                                        =   25;
-            inline constexpr std::ptrdiff_t method_26                                        =   26;
-            inline constexpr std::ptrdiff_t method_27                                        =   27;
-            inline constexpr std::ptrdiff_t method_28                                        =   28;
-            inline constexpr std::ptrdiff_t method_29                                        =   29;
-            inline constexpr std::ptrdiff_t method_30                                        =   30;
-            inline constexpr std::ptrdiff_t method_31                                        =   31;
-            inline constexpr std::ptrdiff_t method_32                                        =   32;
-            inline constexpr std::ptrdiff_t method_33                                        =   33;
-            inline constexpr std::ptrdiff_t method_34                                        =   34;
-            inline constexpr std::ptrdiff_t method_35                                        =   35;
-            inline constexpr std::ptrdiff_t method_36                                        =   36;
-            inline constexpr std::ptrdiff_t method_37                                        =   37;
-            inline constexpr std::ptrdiff_t method_38                                        =   38;
-            inline constexpr std::ptrdiff_t method_39                                        =   39;
-            inline constexpr std::ptrdiff_t method_40                                        =   40;
-            inline constexpr std::ptrdiff_t method_41                                        =   41;
-            inline constexpr std::ptrdiff_t method_42                                        =   42;
-            inline constexpr std::ptrdiff_t method_43                                        =   43;
-            inline constexpr std::ptrdiff_t method_44                                        =   44;
-            inline constexpr std::ptrdiff_t method_45                                        =   45;
-            inline constexpr std::ptrdiff_t method_46                                        =   46;
-            inline constexpr std::ptrdiff_t method_47                                        =   47;
-            inline constexpr std::ptrdiff_t method_48                                        =   48;
-            inline constexpr std::ptrdiff_t method_49                                        =   49;
-            inline constexpr std::ptrdiff_t method_50                                        =   50;
-            inline constexpr std::ptrdiff_t method_51                                        =   51;
-            inline constexpr std::ptrdiff_t method_52                                        =   52;
-            inline constexpr std::ptrdiff_t method_53                                        =   53;
-            inline constexpr std::ptrdiff_t method_54                                        =   54;
-            inline constexpr std::ptrdiff_t method_55                                        =   55;
-            inline constexpr std::ptrdiff_t method_56                                        =   56;
-            inline constexpr std::ptrdiff_t method_57                                        =   57;
-            inline constexpr std::ptrdiff_t method_58                                        =   58;
-            inline constexpr std::ptrdiff_t method_59                                        =   59;
-            inline constexpr std::ptrdiff_t method_60                                        =   60;
-            inline constexpr std::ptrdiff_t method_61                                        =   61;
-            inline constexpr std::ptrdiff_t method_62                                        =   62;
-            inline constexpr std::ptrdiff_t method_63                                        =   63;
-            inline constexpr std::ptrdiff_t method_64                                        =   64;
-            inline constexpr std::ptrdiff_t method_65                                        =   65;
-            inline constexpr std::ptrdiff_t method_66                                        =   66;
-            inline constexpr std::ptrdiff_t method_67                                        =   67;
-            inline constexpr std::ptrdiff_t method_68                                        =   68;
-            inline constexpr std::ptrdiff_t method_69                                        =   69;
-            inline constexpr std::ptrdiff_t method_70                                        =   70;
-            inline constexpr std::ptrdiff_t method_71                                        =   71;
-            inline constexpr std::ptrdiff_t method_72                                        =   72;
-            inline constexpr std::ptrdiff_t method_73                                        =   73;
-            inline constexpr std::ptrdiff_t method_74                                        =   74;
-            inline constexpr std::ptrdiff_t method_75                                        =   75;
-            inline constexpr std::ptrdiff_t method_76                                        =   76;
-            inline constexpr std::ptrdiff_t method_77                                        =   77;
-            inline constexpr std::ptrdiff_t method_78                                        =   78;
-            inline constexpr std::ptrdiff_t method_79                                        =   79;
-            inline constexpr std::ptrdiff_t method_80                                        =   80;
-            inline constexpr std::ptrdiff_t method_81                                        =   81;
-            inline constexpr std::ptrdiff_t method_82                                        =   82;
-            inline constexpr std::ptrdiff_t method_83                                        =   83;
-            inline constexpr std::ptrdiff_t method_84                                        =   84;
-            inline constexpr std::ptrdiff_t method_85                                        =   85;
-            inline constexpr std::ptrdiff_t method_86                                        =   86;
-            inline constexpr std::ptrdiff_t method_87                                        =   87;
-            inline constexpr std::ptrdiff_t method_88                                        =   88;
-            inline constexpr std::ptrdiff_t method_89                                        =   89;
-            inline constexpr std::ptrdiff_t method_90                                        =   90;
-            inline constexpr std::ptrdiff_t method_91                                        =   91;
-            inline constexpr std::ptrdiff_t method_92                                        =   92;
-            inline constexpr std::ptrdiff_t method_93                                        =   93;
-            inline constexpr std::ptrdiff_t method_94                                        =   94;
-            inline constexpr std::ptrdiff_t method_95                                        =   95;
-            inline constexpr std::ptrdiff_t method_96                                        =   96;
-            inline constexpr std::ptrdiff_t method_97                                        =   97;
-            inline constexpr std::ptrdiff_t method_98                                        =   98;
-            inline constexpr std::ptrdiff_t method_99                                        =   99;
-            inline constexpr std::ptrdiff_t method_100                                       =  100;
-            inline constexpr std::ptrdiff_t method_101                                       =  101;
-            inline constexpr std::ptrdiff_t method_102                                       =  102;
-            inline constexpr std::ptrdiff_t method_103                                       =  103;
-            inline constexpr std::ptrdiff_t method_104                                       =  104;
-            inline constexpr std::ptrdiff_t method_105                                       =  105;
-            inline constexpr std::ptrdiff_t method_106                                       =  106;
-            inline constexpr std::ptrdiff_t method_107                                       =  107;
-            inline constexpr std::ptrdiff_t method_108                                       =  108;
-            inline constexpr std::ptrdiff_t method_109                                       =  109;
-            inline constexpr std::ptrdiff_t method_110                                       =  110;
-            inline constexpr std::ptrdiff_t method_111                                       =  111;
-            inline constexpr std::ptrdiff_t method_112                                       =  112;
-            inline constexpr std::ptrdiff_t method_113                                       =  113;
-            inline constexpr std::ptrdiff_t method_114                                       =  114;
-            inline constexpr std::ptrdiff_t method_115                                       =  115;
-            inline constexpr std::ptrdiff_t method_116                                       =  116;
-            inline constexpr std::ptrdiff_t method_117                                       =  117;
-            inline constexpr std::ptrdiff_t method_118                                       =  118;
-            inline constexpr std::ptrdiff_t method_119                                       =  119;
-            inline constexpr std::ptrdiff_t method_120                                       =  120;
-            inline constexpr std::ptrdiff_t method_121                                       =  121;
-            inline constexpr std::ptrdiff_t method_122                                       =  122;
-            inline constexpr std::ptrdiff_t method_123                                       =  123;
-            inline constexpr std::ptrdiff_t method_124                                       =  124;
-            inline constexpr std::ptrdiff_t method_125                                       =  125;
-            inline constexpr std::ptrdiff_t method_126                                       =  126;
-            inline constexpr std::ptrdiff_t method_127                                       =  127;
-            inline constexpr std::ptrdiff_t method_128                                       =  128;
-            inline constexpr std::ptrdiff_t method_129                                       =  129;
-            inline constexpr std::ptrdiff_t method_130                                       =  130;
-            inline constexpr std::ptrdiff_t method_131                                       =  131;
-            inline constexpr std::ptrdiff_t method_132                                       =  132;
-            inline constexpr std::ptrdiff_t method_133                                       =  133;
-            inline constexpr std::ptrdiff_t method_134                                       =  134;
-            inline constexpr std::ptrdiff_t method_135                                       =  135;
-            inline constexpr std::ptrdiff_t method_136                                       =  136;
-            inline constexpr std::ptrdiff_t method_137                                       =  137;
-            inline constexpr std::ptrdiff_t method_138                                       =  138;
-            inline constexpr std::ptrdiff_t method_139                                       =  139;
-            inline constexpr std::ptrdiff_t method_140                                       =  140;
-            inline constexpr std::ptrdiff_t method_141                                       =  141;
-            inline constexpr std::ptrdiff_t method_142                                       =  142;
-            inline constexpr std::ptrdiff_t method_143                                       =  143;
-            inline constexpr std::ptrdiff_t method_144                                       =  144;
-            inline constexpr std::ptrdiff_t method_145                                       =  145;
-            inline constexpr std::ptrdiff_t method_146                                       =  146;
-            inline constexpr std::ptrdiff_t method_147                                       =  147;
-            inline constexpr std::ptrdiff_t method_148                                       =  148;
-            inline constexpr std::ptrdiff_t method_149                                       =  149;
-            inline constexpr std::ptrdiff_t method_150                                       =  150;
-            inline constexpr std::ptrdiff_t method_151                                       =  151;
-            inline constexpr std::ptrdiff_t method_152                                       =  152;
-            inline constexpr std::ptrdiff_t method_153                                       =  153;
-            inline constexpr std::ptrdiff_t method_154                                       =  154;
-            inline constexpr std::ptrdiff_t method_155                                       =  155;
-            inline constexpr std::ptrdiff_t method_156                                       =  156;
-            inline constexpr std::ptrdiff_t method_157                                       =  157;
-            inline constexpr std::ptrdiff_t method_158                                       =  158;
-            inline constexpr std::ptrdiff_t method_159                                       =  159;
-            inline constexpr std::ptrdiff_t method_160                                       =  160;
-            inline constexpr std::ptrdiff_t method_161                                       =  161;
-            inline constexpr std::ptrdiff_t method_162                                       =  162;
-            inline constexpr std::ptrdiff_t method_163                                       =  163;
-            inline constexpr std::ptrdiff_t method_164                                       =  164;
-            inline constexpr std::ptrdiff_t method_165                                       =  165;
-            inline constexpr std::ptrdiff_t method_166                                       =  166;
-            inline constexpr std::ptrdiff_t method_167                                       =  167;
-            inline constexpr std::ptrdiff_t method_168                                       =  168;
-        }
-
-    }
-
-    namespace vscript_dll {
-
-        namespace CScriptManager {
-            inline constexpr std::ptrdiff_t method_0                                         =    0;
-            inline constexpr std::ptrdiff_t method_1                                         =    1;
-            inline constexpr std::ptrdiff_t method_2                                         =    2;
-            inline constexpr std::ptrdiff_t method_3                                         =    3;
-            inline constexpr std::ptrdiff_t method_4                                         =    4;
-            inline constexpr std::ptrdiff_t method_5                                         =    5;
-            inline constexpr std::ptrdiff_t method_6                                         =    6;
-            inline constexpr std::ptrdiff_t method_7                                         =    7;
-            inline constexpr std::ptrdiff_t method_8                                         =    8;
-            inline constexpr std::ptrdiff_t method_9                                         =    9;
-            inline constexpr std::ptrdiff_t method_10                                        =   10;
-            inline constexpr std::ptrdiff_t method_11                                        =   11;
-            inline constexpr std::ptrdiff_t method_12                                        =   12;
-            inline constexpr std::ptrdiff_t method_13                                        =   13;
-            inline constexpr std::ptrdiff_t method_14                                        =   14;
-            inline constexpr std::ptrdiff_t method_15                                        =   15;
-            inline constexpr std::ptrdiff_t method_16                                        =   16;
-            inline constexpr std::ptrdiff_t method_17                                        =   17;
-            inline constexpr std::ptrdiff_t method_18                                        =   18;
-            inline constexpr std::ptrdiff_t method_19                                        =   19;
-            inline constexpr std::ptrdiff_t method_20                                        =   20;
-            inline constexpr std::ptrdiff_t method_21                                        =   21;
-            inline constexpr std::ptrdiff_t method_22                                        =   22;
-            inline constexpr std::ptrdiff_t method_23                                        =   23;
-            inline constexpr std::ptrdiff_t method_24                                        =   24;
-            inline constexpr std::ptrdiff_t method_25                                        =   25;
-            inline constexpr std::ptrdiff_t method_26                                        =   26;
-            inline constexpr std::ptrdiff_t method_27                                        =   27;
-            inline constexpr std::ptrdiff_t method_28                                        =   28;
-            inline constexpr std::ptrdiff_t method_29                                        =   29;
-            inline constexpr std::ptrdiff_t method_30                                        =   30;
-            inline constexpr std::ptrdiff_t method_31                                        =   31;
-            inline constexpr std::ptrdiff_t method_32                                        =   32;
-            inline constexpr std::ptrdiff_t method_33                                        =   33;
-            inline constexpr std::ptrdiff_t method_34                                        =   34;
-            inline constexpr std::ptrdiff_t method_35                                        =   35;
-            inline constexpr std::ptrdiff_t method_36                                        =   36;
-            inline constexpr std::ptrdiff_t method_37                                        =   37;
-            inline constexpr std::ptrdiff_t method_38                                        =   38;
-            inline constexpr std::ptrdiff_t method_39                                        =   39;
-            inline constexpr std::ptrdiff_t method_40                                        =   40;
-            inline constexpr std::ptrdiff_t method_41                                        =   41;
-            inline constexpr std::ptrdiff_t method_42                                        =   42;
-            inline constexpr std::ptrdiff_t method_43                                        =   43;
-            inline constexpr std::ptrdiff_t method_44                                        =   44;
-            inline constexpr std::ptrdiff_t method_45                                        =   45;
-            inline constexpr std::ptrdiff_t method_46                                        =   46;
-            inline constexpr std::ptrdiff_t method_47                                        =   47;
-            inline constexpr std::ptrdiff_t method_48                                        =   48;
-            inline constexpr std::ptrdiff_t method_49                                        =   49;
-            inline constexpr std::ptrdiff_t method_50                                        =   50;
-            inline constexpr std::ptrdiff_t method_51                                        =   51;
-            inline constexpr std::ptrdiff_t method_52                                        =   52;
-            inline constexpr std::ptrdiff_t method_53                                        =   53;
-            inline constexpr std::ptrdiff_t method_54                                        =   54;
-            inline constexpr std::ptrdiff_t method_55                                        =   55;
-            inline constexpr std::ptrdiff_t method_56                                        =   56;
-            inline constexpr std::ptrdiff_t method_57                                        =   57;
-            inline constexpr std::ptrdiff_t method_58                                        =   58;
-        }
-
-    }
-
     namespace vstdlib_s64_dll {
 
         namespace CVStdLibDLLValidate {
@@ -7686,115 +7988,6 @@ namespace cs2::vtables {
             inline constexpr std::ptrdiff_t method_10                                        =   10;
             inline constexpr std::ptrdiff_t method_11                                        =   11;
             inline constexpr std::ptrdiff_t method_12                                        =   12;
-        }
-
-    }
-
-    namespace worldrenderer_dll {
-
-        namespace CWorldRendererMgr {
-            inline constexpr std::ptrdiff_t method_0                                         =    0;
-            inline constexpr std::ptrdiff_t method_1                                         =    1;
-            inline constexpr std::ptrdiff_t method_2                                         =    2;
-            inline constexpr std::ptrdiff_t method_3                                         =    3;
-            inline constexpr std::ptrdiff_t method_4                                         =    4;
-            inline constexpr std::ptrdiff_t method_5                                         =    5;
-            inline constexpr std::ptrdiff_t method_6                                         =    6;
-            inline constexpr std::ptrdiff_t method_7                                         =    7;
-            inline constexpr std::ptrdiff_t method_8                                         =    8;
-            inline constexpr std::ptrdiff_t method_9                                         =    9;
-            inline constexpr std::ptrdiff_t method_10                                        =   10;
-            inline constexpr std::ptrdiff_t method_11                                        =   11;
-            inline constexpr std::ptrdiff_t method_12                                        =   12;
-            inline constexpr std::ptrdiff_t method_13                                        =   13;
-            inline constexpr std::ptrdiff_t method_14                                        =   14;
-            inline constexpr std::ptrdiff_t method_15                                        =   15;
-            inline constexpr std::ptrdiff_t method_16                                        =   16;
-            inline constexpr std::ptrdiff_t method_17                                        =   17;
-            inline constexpr std::ptrdiff_t method_18                                        =   18;
-            inline constexpr std::ptrdiff_t method_19                                        =   19;
-            inline constexpr std::ptrdiff_t method_20                                        =   20;
-            inline constexpr std::ptrdiff_t method_21                                        =   21;
-            inline constexpr std::ptrdiff_t method_22                                        =   22;
-            inline constexpr std::ptrdiff_t method_23                                        =   23;
-            inline constexpr std::ptrdiff_t method_24                                        =   24;
-            inline constexpr std::ptrdiff_t method_25                                        =   25;
-            inline constexpr std::ptrdiff_t method_26                                        =   26;
-            inline constexpr std::ptrdiff_t method_27                                        =   27;
-            inline constexpr std::ptrdiff_t method_28                                        =   28;
-            inline constexpr std::ptrdiff_t method_29                                        =   29;
-            inline constexpr std::ptrdiff_t method_30                                        =   30;
-            inline constexpr std::ptrdiff_t method_31                                        =   31;
-            inline constexpr std::ptrdiff_t CWorldRendererMgr_ServiceWorldRequests           =   32;
-            inline constexpr std::ptrdiff_t method_33                                        =   33;
-            inline constexpr std::ptrdiff_t method_34                                        =   34;
-            inline constexpr std::ptrdiff_t method_35                                        =   35;
-            inline constexpr std::ptrdiff_t method_36                                        =   36;
-            inline constexpr std::ptrdiff_t method_37                                        =   37;
-            inline constexpr std::ptrdiff_t method_38                                        =   38;
-            inline constexpr std::ptrdiff_t method_39                                        =   39;
-            inline constexpr std::ptrdiff_t method_40                                        =   40;
-            inline constexpr std::ptrdiff_t method_41                                        =   41;
-            inline constexpr std::ptrdiff_t method_42                                        =   42;
-            inline constexpr std::ptrdiff_t method_43                                        =   43;
-            inline constexpr std::ptrdiff_t method_44                                        =   44;
-            inline constexpr std::ptrdiff_t method_45                                        =   45;
-            inline constexpr std::ptrdiff_t method_46                                        =   46;
-            inline constexpr std::ptrdiff_t method_47                                        =   47;
-            inline constexpr std::ptrdiff_t method_48                                        =   48;
-            inline constexpr std::ptrdiff_t method_49                                        =   49;
-            inline constexpr std::ptrdiff_t method_50                                        =   50;
-            inline constexpr std::ptrdiff_t method_51                                        =   51;
-            inline constexpr std::ptrdiff_t method_52                                        =   52;
-            inline constexpr std::ptrdiff_t method_53                                        =   53;
-            inline constexpr std::ptrdiff_t method_54                                        =   54;
-            inline constexpr std::ptrdiff_t method_55                                        =   55;
-            inline constexpr std::ptrdiff_t method_56                                        =   56;
-            inline constexpr std::ptrdiff_t method_57                                        =   57;
-            inline constexpr std::ptrdiff_t method_58                                        =   58;
-            inline constexpr std::ptrdiff_t method_59                                        =   59;
-            inline constexpr std::ptrdiff_t method_60                                        =   60;
-            inline constexpr std::ptrdiff_t method_61                                        =   61;
-            inline constexpr std::ptrdiff_t method_62                                        =   62;
-            inline constexpr std::ptrdiff_t method_63                                        =   63;
-            inline constexpr std::ptrdiff_t method_64                                        =   64;
-            inline constexpr std::ptrdiff_t method_65                                        =   65;
-            inline constexpr std::ptrdiff_t method_66                                        =   66;
-            inline constexpr std::ptrdiff_t method_67                                        =   67;
-            inline constexpr std::ptrdiff_t method_68                                        =   68;
-            inline constexpr std::ptrdiff_t method_69                                        =   69;
-            inline constexpr std::ptrdiff_t method_70                                        =   70;
-            inline constexpr std::ptrdiff_t method_71                                        =   71;
-            inline constexpr std::ptrdiff_t method_72                                        =   72;
-            inline constexpr std::ptrdiff_t method_73                                        =   73;
-            inline constexpr std::ptrdiff_t method_74                                        =   74;
-            inline constexpr std::ptrdiff_t method_75                                        =   75;
-            inline constexpr std::ptrdiff_t method_76                                        =   76;
-            inline constexpr std::ptrdiff_t method_77                                        =   77;
-            inline constexpr std::ptrdiff_t method_78                                        =   78;
-            inline constexpr std::ptrdiff_t method_79                                        =   79;
-            inline constexpr std::ptrdiff_t method_80                                        =   80;
-            inline constexpr std::ptrdiff_t method_81                                        =   81;
-            inline constexpr std::ptrdiff_t method_82                                        =   82;
-            inline constexpr std::ptrdiff_t method_83                                        =   83;
-            inline constexpr std::ptrdiff_t method_84                                        =   84;
-            inline constexpr std::ptrdiff_t method_85                                        =   85;
-            inline constexpr std::ptrdiff_t method_86                                        =   86;
-            inline constexpr std::ptrdiff_t method_87                                        =   87;
-            inline constexpr std::ptrdiff_t method_88                                        =   88;
-            inline constexpr std::ptrdiff_t method_89                                        =   89;
-            inline constexpr std::ptrdiff_t method_90                                        =   90;
-            inline constexpr std::ptrdiff_t method_91                                        =   91;
-            inline constexpr std::ptrdiff_t method_92                                        =   92;
-            inline constexpr std::ptrdiff_t method_93                                        =   93;
-            inline constexpr std::ptrdiff_t method_94                                        =   94;
-            inline constexpr std::ptrdiff_t method_95                                        =   95;
-            inline constexpr std::ptrdiff_t method_96                                        =   96;
-            inline constexpr std::ptrdiff_t method_97                                        =   97;
-            inline constexpr std::ptrdiff_t method_98                                        =   98;
-            inline constexpr std::ptrdiff_t method_99                                        =   99;
-            inline constexpr std::ptrdiff_t method_100                                       =  100;
-            inline constexpr std::ptrdiff_t method_101                                       =  101;
         }
 
     }

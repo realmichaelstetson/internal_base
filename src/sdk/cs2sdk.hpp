@@ -2,7 +2,7 @@
 
 #pragma once
 
-inline constexpr unsigned int CS2_BUILD = 14160;
+inline constexpr unsigned int CS2_BUILD = 14189;
 
 #include "cs2sdk_macros.hpp"
 
