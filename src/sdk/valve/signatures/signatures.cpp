@@ -151,6 +151,7 @@ std::uint8_t* c_signatures::get(const char* module_name, const char* name)
 
 std::uint8_t* c_signatures::resolve(const signature_entry_t& entry)
 {
+	dbg::t_stage = entry.name;   // so a crash report names the signature being scanned
 	std::uint8_t* address = g_opcodes->scan(entry.module_name, entry.pattern.data());
 	if (!address) {
 		LOG_ERROR("[signatures] couldn't find %s!%s (%s)", entry.module_name, entry.name, entry.pattern.data());

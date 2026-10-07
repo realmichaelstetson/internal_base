@@ -70,16 +70,20 @@ void configure_feature_dependencies() {
 }
 
 void destroy(HMODULE h_module) {
+    DBG_INFO("[unload] END pressed, unloading");
     if (g_jump_bug)
         g_jump_bug->shutdown();
 
     g_hooks->destroy();
+    DBG_INFO("[unload] hooks removed");
     logger::shutdown();
+    dbg::shutdown();
 
     FreeLibraryAndExitThread(h_module, 0);
 }
 
 uintptr_t __stdcall start_address(const HMODULE h_module) {
+    DBG_INFO("[init] init thread started");
     char user_name[64];
     DWORD user_name_len = sizeof(user_name);
     if (GetUserNameA(user_name, &user_name_len) && strcmp(user_name, "geroooooxik") == 0)
@@ -104,12 +108,17 @@ uintptr_t __stdcall start_address(const HMODULE h_module) {
     }
     try {
         logger::initialize();
+        DBG_INFO("[init] console ready, full log also in %s", dbg::g_path[0] ? dbg::g_path : "<no log file>");
+        dbg::init_symbols();
         diagnostics::g_diagnostics->initialize();
         int init_index = 0;
 
         auto run_step = [&](const char* name, bool required, const char* status, auto&& fn) {
             diagnostics::g_diagnostics->begin_step(name, required);
             sync_init_progress(init_index, status);
+            dbg::g_init_step = name;
+            DBG_INFO("[init] >> %s%s", name, required ? " (required)" : "");
+            const ULONGLONG step_start = GetTickCount64();
             bool success = false;
             std::string detail;
             try {
@@ -118,6 +127,13 @@ uintptr_t __stdcall start_address(const HMODULE h_module) {
                 detail = e.what();
                 success = false;
             }
+            const auto step_ms = static_cast<unsigned long long>(GetTickCount64() - step_start);
+            if (success)
+                DBG_OK("[init] << %s ok (%llu ms) %s", name, step_ms, detail.c_str());
+            else if (required)
+                DBG_ERR("[init] << %s FAILED (%llu ms) %s", name, step_ms, detail.c_str());
+            else
+                DBG_WARN("[init] << %s failed, continuing (%llu ms) %s", name, step_ms, detail.c_str());
             diagnostics::g_diagnostics->finish_step(name, success, detail);
             ++init_index;
             if (required && !success)
@@ -196,6 +212,9 @@ uintptr_t __stdcall start_address(const HMODULE h_module) {
 
         configure_feature_dependencies();
 
+        dbg::g_init_step = "running (init finished)";
+        DBG_OK("[init] all steps done - if CS2 crashes now, look for the last [hook] line and the crash report");
+
         g_init_progress.current = g_init_progress.total;
         g_init_progress.status = "ready";
         g_init_progress.done = true;
@@ -207,12 +226,14 @@ uintptr_t __stdcall start_address(const HMODULE h_module) {
         destroy(h_module);
     }
     catch (const std::exception& e) {
+        DBG_ERR("[init] startup failed in step '%s': %s", dbg::g_init_step, e.what());
         printf("  [startup] failed: %s\n", e.what());
         MessageBoxA(NULL, e.what(), "Exception", MB_OK | MB_ICONERROR);
         logger::shutdown();
         FreeLibraryAndExitThread(h_module, 0);
     }
     catch (...) {
+        DBG_ERR("[init] startup failed in step '%s': unknown exception", dbg::g_init_step);
         printf("  [startup] failed: unknown exception\n");
         MessageBoxA(NULL, "Unknown exception occurred", "Exception", MB_OK | MB_ICONERROR);
         logger::shutdown();
@@ -223,7 +244,10 @@ uintptr_t __stdcall start_address(const HMODULE h_module) {
 BOOL APIENTRY DllMain(HMODULE h_module, DWORD ul_reason_for_call, LPVOID lp_reserved) {
     (void)lp_reserved;
     if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
+        dbg::init(h_module);
+        DBG_INFO("[attach] DllMain attach, InitMemAlloc...");
         InitMemAlloc();
+        DBG_INFO("[attach] InitMemAlloc done, starting init thread");
         DisableThreadLibraryCalls(h_module);
 
         HANDLE thread = CreateThread(nullptr, 0,
@@ -235,8 +259,12 @@ BOOL APIENTRY DllMain(HMODULE h_module, DWORD ul_reason_for_call, LPVOID lp_rese
             return TRUE;
         }
 
+        DBG_ERR("[attach] CreateThread failed: %lu", GetLastError());
         return FALSE;
     }
+
+    if (ul_reason_for_call == DLL_PROCESS_DETACH)
+        DBG_INFO("[detach] %s", lp_reserved ? "CS2 process is exiting" : "dll unloaded");
 
     return TRUE;
 }

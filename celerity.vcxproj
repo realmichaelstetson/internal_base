@@ -156,6 +156,7 @@
     <ClInclude Include="src\sdk\client_dll.hpp" />
     <ClInclude Include="src\sdk\config_system\config_system.hpp" />
     <ClInclude Include="src\sdk\console\console.hpp" />
+    <ClInclude Include="src\sdk\console\debug_log.hpp" />
     <ClInclude Include="src\sdk\cs2sdk.hpp" />
     <ClInclude Include="src\sdk\cs2sdk_macros.hpp" />
     <ClInclude Include="src\sdk\diagnostics\diagnostics.hpp" />
@@ -286,6 +287,7 @@
     <ClCompile Include="src\hooks\hooks.cpp" />
     <ClCompile Include="src\sdk\config_system\config_system.cpp" />
     <ClCompile Include="src\sdk\diagnostics\diagnostics.cpp" />
+    <ClCompile Include="src\sdk\console\debug_log.cpp" />
     <ClCompile Include="src\sdk\includes\imgui\imgui.cpp" />
     <ClCompile Include="src\sdk\includes\imgui\imgui_draw.cpp" />
     <ClCompile Include="src\sdk\includes\imgui\imgui_impl_dx11.cpp" />

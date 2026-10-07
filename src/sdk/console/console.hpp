@@ -1,4 +1,5 @@
 #pragma once
+#include "debug_log.hpp"
 #include <Windows.h>
 #include <cstdio>
 #include <atomic>
@@ -143,6 +144,8 @@ inline void initialize() {
     cursor.bVisible = FALSE;
     SetConsoleCursorInfo(g_console, &cursor);
 
+    dbg::set_console(true);          // debug log now mirrors to the console too
+
     // fire up the printer thread; returns immediately so init never blocks.
     detail::g_running.store(true);
     detail::g_thread = std::thread(detail::printer_loop);
@@ -154,6 +157,7 @@ inline void shutdown() {
         if (detail::g_thread.joinable())
             detail::g_thread.join();
     }
+    dbg::set_console(false);
     if (g_console) {
         FreeConsole();
         g_console = nullptr;
