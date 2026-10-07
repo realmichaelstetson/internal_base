@@ -94,9 +94,9 @@ namespace trace_ns {
 
 namespace {
 	constexpr float k_pi = 3.14159265358979323846f;
-	constexpr std::ptrdiff_t k_view_offset = 0xE70;
+	constexpr std::ptrdiff_t k_view_offset = 0xF60; // @sdk schema:C_BaseModelEntity::m_vecViewOffset
 
-	constexpr std::ptrdiff_t k_player_pawn_handle = 0x90C;
+	constexpr std::ptrdiff_t k_player_pawn_handle = 0x92C; // @sdk schema:CCSPlayerController::m_hPlayerPawn
 	constexpr std::ptrdiff_t k_id_ent_index = cs2::verified::Triggerbot__Seeded_::C_CSPlayerPawn__m_iIDEntIndex;
 
 	// Settings for the weapon group of the player's currently held weapon.
