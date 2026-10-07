@@ -4,11 +4,6 @@ using schema_key_value_map_t = std::unordered_map<unsigned long long, std::uint3
 using schema_table_map_t = std::unordered_map<unsigned long long, schema_key_value_map_t>;
 
 namespace {
-// namespace scope on purpose: function-local statics are initialised through TLS,
-// which a manual-mapped dll doesn't have (that left the map unconstructed -> crash)
-schema_table_map_t g_schema_by_module;
-schema_table_map_t g_schema_any_module;
-
 constexpr const char* schema_modules[] = {
     "client.dll",
     "animationsystem.dll",
@@ -72,7 +67,7 @@ std::uint32_t find_cached_offset(schema_table_map_t& table_map, const char* modu
 }
 
 std::uint32_t schema_get_offset(const char* module_name, const char* class_name, const char* key_name) {
-    schema_table_map_t& schema_table_map = g_schema_by_module;
+    static schema_table_map_t schema_table_map;
 
     if (!g_interfaces || !g_interfaces->m_schema_system || !module_name || !class_name || !key_name) {
         LOG_ERROR("[Schema] invalid lookup %s->%s", class_name ? class_name : "<null>", key_name ? key_name : "<null>");
@@ -94,11 +89,11 @@ void schema_verify_offset(const char* module_name, const char* class_name, const
 
 void schema_verify_known_offsets() {
     schema_verify_offset("client.dll", "CSkeletonInstance", "m_modelState", 0x140);
-    schema_verify_offset("client.dll", "C_CSPlayerPawn", "m_ArmorValue", 0x1ECC); // @sdk schema:C_CSPlayerPawn::m_ArmorValue
+    schema_verify_offset("client.dll", "C_CSPlayerPawn", "m_ArmorValue", 0x1C9C);
 }
 
 std::uint32_t schema_get_offset(const char* class_name, const char* key_name) {
-    schema_table_map_t& schema_table_map = g_schema_any_module;
+    static schema_table_map_t schema_table_map;
 
     if (!g_interfaces || !g_interfaces->m_schema_system || !class_name || !key_name) {
         LOG_ERROR("[Schema] invalid lookup %s->%s", class_name ? class_name : "<null>", key_name ? key_name : "<null>");
