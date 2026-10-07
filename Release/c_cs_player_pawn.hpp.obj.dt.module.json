@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "Release\\c_cs_player_pawn.obj",
+            "outputs": [
+                "Release\\c_cs_player_pawn.hpp.obj.dt.module.json",
+                "Release\\c_cs_player_pawn.hpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

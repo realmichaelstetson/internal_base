@@ -1,0 +1,160 @@
+﻿
+#ifndef GOOGLE_PROTOBUF_MAP_FIELD_LITE_H__
+#define GOOGLE_PROTOBUF_MAP_FIELD_LITE_H__
+
+#include <type_traits>
+
+#include <google/protobuf/io/coded_stream.h>
+#include <google/protobuf/port.h>
+#include <google/protobuf/map.h>
+#include <google/protobuf/map_entry_lite.h>
+#include <google/protobuf/parse_context.h>
+#include <google/protobuf/wire_format_lite.h>
+
+#include <google/protobuf/port_def.inc>
+
+#ifdef SWIG
+#error "You cannot SWIG proto headers"
+#endif
+
+namespace google {
+namespace protobuf {
+namespace internal {
+
+#ifndef NDEBUG
+void MapFieldLiteNotDestructed(void* map_field_lite);
+#endif
+
+template <typename Derived, typename Key, typename T,
+          WireFormatLite::FieldType key_wire_type,
+          WireFormatLite::FieldType value_wire_type>
+class MapFieldLite {
+
+  typedef Derived EntryType;
+
+ public:
+  typedef Map<Key, T> MapType;
+
+  constexpr MapFieldLite() : map_() {}
+  explicit MapFieldLite(Arena* arena) : map_(arena) {}
+  MapFieldLite(ArenaInitialized, Arena* arena) : MapFieldLite(arena) {}
+
+#ifdef NDEBUG
+  void Destruct() { map_.~Map(); }
+  ~MapFieldLite() {}
+#else
+  void Destruct() {
+
+    decltype(map_) swapped_map(map_.arena());
+    map_.InternalSwap(swapped_map);
+  }
+  ~MapFieldLite() {
+    if (map_.arena() == nullptr && !map_.empty()) {
+      MapFieldLiteNotDestructed(this);
+    }
+  }
+#endif
+
+  const Map<Key, T>& GetMap() const { return map_; }
+  Map<Key, T>* MutableMap() { return &map_; }
+
+  int size() const { return static_cast<int>(map_.size()); }
+  void Clear() { return map_.clear(); }
+  void MergeFrom(const MapFieldLite& other) {
+    for (typename Map<Key, T>::const_iterator it = other.map_.begin();
+         it != other.map_.end(); ++it) {
+      map_[it->first] = it->second;
+    }
+  }
+  void Swap(MapFieldLite* other) { map_.swap(other->map_); }
+  void InternalSwap(MapFieldLite* other) { map_.InternalSwap(other->map_); }
+
+  EntryType* NewEntry() const {
+    return Arena::CreateMessage<EntryType>(map_.arena());
+  }
+
+  const char* _InternalParse(const char* ptr, ParseContext* ctx) {
+    typename Derived::template Parser<MapFieldLite, Map<Key, T>> parser(this);
+    return parser._InternalParse(ptr, ctx);
+  }
+
+  template <typename UnknownType>
+  const char* ParseWithEnumValidation(const char* ptr, ParseContext* ctx,
+                                      bool (*is_valid)(int), uint32_t field_num,
+                                      InternalMetadata* metadata) {
+    typename Derived::template Parser<MapFieldLite, Map<Key, T>> parser(this);
+    return parser.template ParseWithEnumValidation<UnknownType>(
+        ptr, ctx, is_valid, field_num, metadata);
+  }
+
+ private:
+  typedef void DestructorSkippable_;
+
+  union {
+    Map<Key, T> map_;
+  };
+
+  friend class ::PROTOBUF_NAMESPACE_ID::Arena;
+};
+
+template <typename UnknownType, typename T>
+struct EnumParseWrapper {
+  const char* _InternalParse(const char* ptr, ParseContext* ctx) {
+    return map_field->template ParseWithEnumValidation<UnknownType>(
+        ptr, ctx, is_valid, field_num, metadata);
+  }
+  T* map_field;
+  bool (*is_valid)(int);
+  uint32_t field_num;
+  InternalMetadata* metadata;
+};
+
+template <typename UnknownType, typename T>
+EnumParseWrapper<UnknownType, T> InitEnumParseWrapper(
+    T* map_field, bool (*is_valid)(int), uint32_t field_num,
+    InternalMetadata* metadata) {
+  return EnumParseWrapper<UnknownType, T>{map_field, is_valid, field_num,
+                                          metadata};
+}
+
+template <typename Derived, typename Key, typename T,
+          WireFormatLite::FieldType key_wire_type,
+          WireFormatLite::FieldType value_wire_type>
+bool AllAreInitialized(const MapFieldLite<Derived, Key, T, key_wire_type,
+                                          value_wire_type>& field) {
+  const auto& t = field.GetMap();
+  for (typename Map<Key, T>::const_iterator it = t.begin(); it != t.end();
+       ++it) {
+    if (!it->second.IsInitialized()) return false;
+  }
+  return true;
+}
+
+template <typename MEntry>
+struct MapEntryToMapField : MapEntryToMapField<typename MEntry::SuperType> {};
+
+template <typename T, typename Key, typename Value,
+          WireFormatLite::FieldType kKeyFieldType,
+          WireFormatLite::FieldType kValueFieldType>
+struct MapEntryToMapField<
+    MapEntryLite<T, Key, Value, kKeyFieldType, kValueFieldType>> {
+  typedef MapFieldLite<
+      MapEntryLite<T, Key, Value, kKeyFieldType, kValueFieldType>, Key, Value,
+      kKeyFieldType, kValueFieldType>
+      MapFieldType;
+};
+
+#ifndef NDEBUG
+inline PROTOBUF_NOINLINE void MapFieldLiteNotDestructed(void* map_field_lite) {
+  bool proper_destruct = false;
+  GOOGLE_CHECK(proper_destruct) << map_field_lite;
+}
+#endif
+
+}
+}
+}
+
+#include <google/protobuf/port_undef.inc>
+
+#endif

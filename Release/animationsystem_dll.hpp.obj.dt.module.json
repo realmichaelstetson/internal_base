@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "Release\\animationsystem_dll.obj",
+            "outputs": [
+                "Release\\animationsystem_dll.hpp.obj.dt.module.json",
+                "Release\\animationsystem_dll.hpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

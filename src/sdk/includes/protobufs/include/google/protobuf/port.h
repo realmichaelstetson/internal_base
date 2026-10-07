@@ -1,0 +1,38 @@
+﻿
+#ifndef GOOGLE_PROTOBUF_PORT_H__
+#define GOOGLE_PROTOBUF_PORT_H__
+
+#include <cstddef>
+#include <new>
+
+namespace google {
+namespace protobuf {
+namespace internal {
+inline void SizedDelete(void* p, size_t size) {
+#if defined(__cpp_sized_deallocation)
+  ::operator delete(p, size);
+#else
+  ::operator delete(p);
+#endif
+}
+inline void SizedArrayDelete(void* p, size_t size) {
+#if defined(__cpp_sized_deallocation)
+  ::operator delete[](p, size);
+#else
+  ::operator delete[](p);
+#endif
+}
+
+struct ConstantInitialized {
+  explicit ConstantInitialized() = default;
+};
+
+struct ArenaInitialized {
+  explicit ArenaInitialized() = default;
+};
+
+}
+}
+}
+
+#endif

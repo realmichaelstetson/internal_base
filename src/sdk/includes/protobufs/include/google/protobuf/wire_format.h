@@ -1,0 +1,278 @@
+﻿
+#ifndef GOOGLE_PROTOBUF_WIRE_FORMAT_H__
+#define GOOGLE_PROTOBUF_WIRE_FORMAT_H__
+
+#include <google/protobuf/stubs/common.h>
+#include <google/protobuf/io/coded_stream.h>
+#include <google/protobuf/stubs/casts.h>
+#include <google/protobuf/descriptor.h>
+#include <google/protobuf/generated_message_util.h>
+#include <google/protobuf/message.h>
+#include <google/protobuf/metadata_lite.h>
+#include <google/protobuf/parse_context.h>
+#include <google/protobuf/wire_format_lite.h>
+
+#ifdef SWIG
+#error "You cannot SWIG proto headers"
+#endif
+
+#include <google/protobuf/port_def.inc>
+
+namespace google {
+namespace protobuf {
+class MapKey;
+class UnknownFieldSet;
+}
+}
+
+namespace google {
+namespace protobuf {
+namespace internal {
+
+class PROTOBUF_EXPORT WireFormat {
+ public:
+
+  static inline WireFormatLite::WireType WireTypeForField(
+      const FieldDescriptor* field);
+
+  static inline WireFormatLite::WireType WireTypeForFieldType(
+      FieldDescriptor::Type type);
+
+  static inline size_t TagSize(int field_number, FieldDescriptor::Type type);
+
+  static bool ParseAndMergePartial(io::CodedInputStream* input,
+                                   Message* message);
+
+  static const char* _InternalParse(Message* msg, const char* ptr,
+                                    internal::ParseContext* ctx);
+
+  static void SerializeWithCachedSizes(const Message& message, int size,
+                                       io::CodedOutputStream* output) {
+    int expected_endpoint = output->ByteCount() + size;
+    output->SetCur(
+        _InternalSerialize(message, output->Cur(), output->EpsCopy()));
+    GOOGLE_CHECK_EQ(output->ByteCount(), expected_endpoint)
+        << ": Protocol message serialized to a size different from what was "
+           "originally expected.  Perhaps it was modified by another thread "
+           "during serialization?";
+  }
+  static uint8_t* _InternalSerialize(const Message& message, uint8_t* target,
+                                     io::EpsCopyOutputStream* stream);
+
+  static size_t ByteSize(const Message& message);
+
+  static bool SkipField(io::CodedInputStream* input, uint32_t tag,
+                        UnknownFieldSet* unknown_fields);
+
+  static bool SkipMessage(io::CodedInputStream* input,
+                          UnknownFieldSet* unknown_fields);
+
+  static bool ReadPackedEnumPreserveUnknowns(io::CodedInputStream* input,
+                                             uint32_t field_number,
+                                             bool (*is_valid)(int),
+                                             UnknownFieldSet* unknown_fields,
+                                             RepeatedField<int>* values);
+
+  static void SerializeUnknownFields(const UnknownFieldSet& unknown_fields,
+                                     io::CodedOutputStream* output) {
+    output->SetCur(InternalSerializeUnknownFieldsToArray(
+        unknown_fields, output->Cur(), output->EpsCopy()));
+  }
+
+  static uint8_t* SerializeUnknownFieldsToArray(
+      const UnknownFieldSet& unknown_fields, uint8_t* target) {
+    io::EpsCopyOutputStream stream(
+        target, static_cast<int>(ComputeUnknownFieldsSize(unknown_fields)),
+        io::CodedOutputStream::IsDefaultSerializationDeterministic());
+    return InternalSerializeUnknownFieldsToArray(unknown_fields, target,
+                                                 &stream);
+  }
+  static uint8_t* InternalSerializeUnknownFieldsToArray(
+      const UnknownFieldSet& unknown_fields, uint8_t* target,
+      io::EpsCopyOutputStream* stream);
+
+  static void SerializeUnknownMessageSetItems(
+      const UnknownFieldSet& unknown_fields, io::CodedOutputStream* output) {
+    output->SetCur(InternalSerializeUnknownMessageSetItemsToArray(
+        unknown_fields, output->Cur(), output->EpsCopy()));
+  }
+
+  static uint8_t* SerializeUnknownMessageSetItemsToArray(
+      const UnknownFieldSet& unknown_fields, uint8_t* target);
+  static uint8_t* InternalSerializeUnknownMessageSetItemsToArray(
+      const UnknownFieldSet& unknown_fields, uint8_t* target,
+      io::EpsCopyOutputStream* stream);
+
+  static size_t ComputeUnknownFieldsSize(const UnknownFieldSet& unknown_fields);
+
+  static size_t ComputeUnknownMessageSetItemsSize(
+      const UnknownFieldSet& unknown_fields);
+
+  static uint32_t MakeTag(const FieldDescriptor* field);
+
+  static bool ParseAndMergeField(
+      uint32_t tag,
+      const FieldDescriptor* field,
+      Message* message, io::CodedInputStream* input);
+
+  static void SerializeFieldWithCachedSizes(
+      const FieldDescriptor* field,
+      const Message& message, io::CodedOutputStream* output) {
+    output->SetCur(InternalSerializeField(field, message, output->Cur(),
+                                          output->EpsCopy()));
+  }
+  static uint8_t* InternalSerializeField(
+      const FieldDescriptor* field,
+      const Message& message, uint8_t* target, io::EpsCopyOutputStream* stream);
+
+  static size_t FieldByteSize(const FieldDescriptor* field,
+                              const Message& message);
+
+  static bool ParseAndMergeMessageSetItem(io::CodedInputStream* input,
+                                          Message* message);
+  static void SerializeMessageSetItemWithCachedSizes(
+      const FieldDescriptor* field, const Message& message,
+      io::CodedOutputStream* output) {
+    output->SetCur(InternalSerializeMessageSetItem(
+        field, message, output->Cur(), output->EpsCopy()));
+  }
+  static uint8_t* InternalSerializeMessageSetItem(
+      const FieldDescriptor* field, const Message& message, uint8_t* target,
+      io::EpsCopyOutputStream* stream);
+  static size_t MessageSetItemByteSize(const FieldDescriptor* field,
+                                       const Message& message);
+
+  static size_t FieldDataOnlyByteSize(
+      const FieldDescriptor* field,
+      const Message& message);
+
+  enum Operation {
+    PARSE = 0,
+    SERIALIZE = 1,
+  };
+
+  static void VerifyUTF8String(const char* data, int size, Operation op);
+
+  static void VerifyUTF8StringNamedField(const char* data, int size,
+                                         Operation op, const char* field_name);
+
+ private:
+  struct MessageSetParser;
+
+  static bool SkipMessageSetField(io::CodedInputStream* input,
+                                  uint32_t field_number,
+                                  UnknownFieldSet* unknown_fields);
+
+  static bool ParseAndMergeMessageSetField(uint32_t field_number,
+                                           const FieldDescriptor* field,
+                                           Message* message,
+                                           io::CodedInputStream* input);
+
+  static const char* _InternalParseAndMergeField(Message* msg, const char* ptr,
+                                                 internal::ParseContext* ctx,
+                                                 uint64_t tag,
+                                                 const Reflection* reflection,
+                                                 const FieldDescriptor* field);
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(WireFormat);
+};
+
+class PROTOBUF_EXPORT UnknownFieldSetFieldSkipper : public FieldSkipper {
+ public:
+  UnknownFieldSetFieldSkipper(UnknownFieldSet* unknown_fields)
+      : unknown_fields_(unknown_fields) {}
+  ~UnknownFieldSetFieldSkipper() override {}
+
+  bool SkipField(io::CodedInputStream* input, uint32_t tag) override;
+  bool SkipMessage(io::CodedInputStream* input) override;
+  void SkipUnknownEnum(int field_number, int value) override;
+
+ protected:
+  UnknownFieldSet* unknown_fields_;
+};
+
+inline WireFormatLite::WireType WireFormat::WireTypeForField(
+    const FieldDescriptor* field) {
+  if (field->is_packed()) {
+    return WireFormatLite::WIRETYPE_LENGTH_DELIMITED;
+  } else {
+    return WireTypeForFieldType(field->type());
+  }
+}
+
+inline WireFormatLite::WireType WireFormat::WireTypeForFieldType(
+    FieldDescriptor::Type type) {
+
+  return WireFormatLite::WireTypeForFieldType(
+      static_cast<WireFormatLite::FieldType>(implicit_cast<int>(type)));
+}
+
+inline uint32_t WireFormat::MakeTag(const FieldDescriptor* field) {
+  return WireFormatLite::MakeTag(field->number(), WireTypeForField(field));
+}
+
+inline size_t WireFormat::TagSize(int field_number,
+                                  FieldDescriptor::Type type) {
+
+  return WireFormatLite::TagSize(
+      field_number,
+      static_cast<WireFormatLite::FieldType>(implicit_cast<int>(type)));
+}
+
+inline void WireFormat::VerifyUTF8String(const char* data, int size,
+                                         WireFormat::Operation op) {
+#ifdef GOOGLE_PROTOBUF_UTF8_VALIDATION_ENABLED
+  WireFormatLite::VerifyUtf8String(
+      data, size, static_cast<WireFormatLite::Operation>(op), nullptr);
+#else
+
+  (void)data;
+  (void)size;
+  (void)op;
+#endif
+}
+
+inline void WireFormat::VerifyUTF8StringNamedField(const char* data, int size,
+                                                   WireFormat::Operation op,
+                                                   const char* field_name) {
+#ifdef GOOGLE_PROTOBUF_UTF8_VALIDATION_ENABLED
+  WireFormatLite::VerifyUtf8String(
+      data, size, static_cast<WireFormatLite::Operation>(op), field_name);
+#else
+
+  (void)data;
+  (void)size;
+  (void)op;
+  (void)field_name;
+#endif
+}
+
+inline uint8_t* InternalSerializeUnknownMessageSetItemsToArray(
+    const UnknownFieldSet& unknown_fields, uint8_t* target,
+    io::EpsCopyOutputStream* stream) {
+  return WireFormat::InternalSerializeUnknownMessageSetItemsToArray(
+      unknown_fields, target, stream);
+}
+
+inline size_t ComputeUnknownMessageSetItemsSize(
+    const UnknownFieldSet& unknown_fields) {
+  return WireFormat::ComputeUnknownMessageSetItemsSize(unknown_fields);
+}
+
+PROTOBUF_EXPORT
+size_t ComputeUnknownFieldsSize(const InternalMetadata& metadata, size_t size,
+                                CachedSize* cached_size);
+
+size_t MapKeyDataOnlyByteSize(const FieldDescriptor* field,
+                              const MapKey& value);
+
+uint8_t* SerializeMapKeyWithCachedSizes(const FieldDescriptor* field,
+                                        const MapKey& value, uint8_t* target,
+                                        io::EpsCopyOutputStream* stream);
+}
+}
+}
+
+#include <google/protobuf/port_undef.inc>
+
+#endif

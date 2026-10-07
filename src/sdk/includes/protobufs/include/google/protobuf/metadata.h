@@ -1,0 +1,5 @@
+﻿
+#ifndef GOOGLE_PROTOBUF_METADATA_H__
+#define GOOGLE_PROTOBUF_METADATA_H__
+
+#endif

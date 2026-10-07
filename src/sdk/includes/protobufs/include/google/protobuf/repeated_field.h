@@ -1,0 +1,967 @@
+﻿
+#ifndef GOOGLE_PROTOBUF_REPEATED_FIELD_H__
+#define GOOGLE_PROTOBUF_REPEATED_FIELD_H__
+
+#include <algorithm>
+#include <iterator>
+#include <limits>
+#include <string>
+#include <type_traits>
+#include <utility>
+
+#include <google/protobuf/stubs/logging.h>
+#include <google/protobuf/stubs/common.h>
+#include <google/protobuf/arena.h>
+#include <google/protobuf/port.h>
+#include <google/protobuf/message_lite.h>
+#include <google/protobuf/repeated_ptr_field.h>
+
+#include <google/protobuf/port_def.inc>
+
+#ifdef SWIG
+#error "You cannot SWIG proto headers"
+#endif
+
+namespace google {
+namespace protobuf {
+
+class Message;
+
+namespace internal {
+
+template <typename T, int kRepHeaderSize>
+constexpr int RepeatedFieldLowerClampLimit() {
+
+  static_assert(sizeof(T) <= kRepHeaderSize, "");
+
+  return kRepHeaderSize / sizeof(T);
+}
+
+constexpr int kRepeatedFieldUpperClampLimit =
+    (std::numeric_limits<int>::max() / 2) + 1;
+
+template <typename Iter>
+inline int CalculateReserve(Iter begin, Iter end, std::forward_iterator_tag) {
+  return static_cast<int>(std::distance(begin, end));
+}
+
+template <typename Iter>
+inline int CalculateReserve(Iter , Iter ,
+                            std::input_iterator_tag ) {
+  return -1;
+}
+
+template <typename Iter>
+inline int CalculateReserve(Iter begin, Iter end) {
+  typedef typename std::iterator_traits<Iter>::iterator_category Category;
+  return CalculateReserve(begin, end, Category());
+}
+
+template <typename T>
+inline void SwapBlock(char* p, char* q) {
+  T tmp;
+  memcpy(&tmp, p, sizeof(T));
+  memcpy(p, q, sizeof(T));
+  memcpy(q, &tmp, sizeof(T));
+}
+
+template <int kSize>
+inline typename std::enable_if<(kSize == 0), void>::type memswap(char*, char*) {
+}
+
+#define PROTO_MEMSWAP_DEF_SIZE(reg_type, max_size)                           \
+  template <int kSize>                                                       \
+  typename std::enable_if<(kSize >= sizeof(reg_type) && kSize < (max_size)), \
+                          void>::type                                        \
+  memswap(char* p, char* q) {                                                \
+    SwapBlock<reg_type>(p, q);                                               \
+    memswap<kSize - sizeof(reg_type)>(p + sizeof(reg_type),                  \
+                                      q + sizeof(reg_type));                 \
+  }
+
+PROTO_MEMSWAP_DEF_SIZE(uint8_t, 2)
+PROTO_MEMSWAP_DEF_SIZE(uint16_t, 4)
+PROTO_MEMSWAP_DEF_SIZE(uint32_t, 8)
+
+#ifdef __SIZEOF_INT128__
+PROTO_MEMSWAP_DEF_SIZE(uint64_t, 16)
+PROTO_MEMSWAP_DEF_SIZE(__uint128_t, (1u << 31))
+#else
+PROTO_MEMSWAP_DEF_SIZE(uint64_t, (1u << 31))
+#endif
+
+#undef PROTO_MEMSWAP_DEF_SIZE
+
+template <typename Element>
+class RepeatedIterator;
+
+}
+
+template <typename Element>
+class RepeatedField final {
+  static_assert(
+      alignof(Arena) >= alignof(Element),
+      "We only support types that have an alignment smaller than Arena");
+
+ public:
+  constexpr RepeatedField();
+  explicit RepeatedField(Arena* arena);
+
+  RepeatedField(const RepeatedField& other);
+
+  template <typename Iter,
+            typename = typename std::enable_if<std::is_constructible<
+                Element, decltype(*std::declval<Iter>())>::value>::type>
+  RepeatedField(Iter begin, Iter end);
+
+  ~RepeatedField();
+
+  RepeatedField& operator=(const RepeatedField& other);
+
+  RepeatedField(RepeatedField&& other) noexcept;
+  RepeatedField& operator=(RepeatedField&& other) noexcept;
+
+  bool empty() const;
+  int size() const;
+
+  const Element& Get(int index) const;
+  Element* Mutable(int index);
+
+  const Element& operator[](int index) const { return Get(index); }
+  Element& operator[](int index) { return *Mutable(index); }
+
+  const Element& at(int index) const;
+  Element& at(int index);
+
+  void Set(int index, const Element& value);
+  void Add(const Element& value);
+
+  Element* Add();
+
+  template <typename Iter>
+  void Add(Iter begin, Iter end);
+
+  void RemoveLast();
+
+  void ExtractSubrange(int start, int num, Element* elements);
+
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear();
+  void MergeFrom(const RepeatedField& other);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void CopyFrom(const RepeatedField& other);
+
+  template <typename Iter>
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Assign(Iter begin, Iter end);
+
+  void Reserve(int new_size);
+
+  void Truncate(int new_size);
+
+  void AddAlreadyReserved(const Element& value);
+
+  Element* AddAlreadyReserved();
+  Element* AddNAlreadyReserved(int elements);
+  int Capacity() const;
+
+  void Resize(int new_size, const Element& value);
+
+  Element* mutable_data();
+  const Element* data() const;
+
+  void Swap(RepeatedField* other);
+
+  void UnsafeArenaSwap(RepeatedField* other);
+
+  void SwapElements(int index1, int index2);
+
+  typedef internal::RepeatedIterator<Element> iterator;
+  typedef internal::RepeatedIterator<const Element> const_iterator;
+  typedef Element value_type;
+  typedef value_type& reference;
+  typedef const value_type& const_reference;
+  typedef value_type* pointer;
+  typedef const value_type* const_pointer;
+  typedef int size_type;
+  typedef ptrdiff_t difference_type;
+
+  iterator begin();
+  const_iterator begin() const;
+  const_iterator cbegin() const;
+  iterator end();
+  const_iterator end() const;
+  const_iterator cend() const;
+
+  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+  typedef std::reverse_iterator<iterator> reverse_iterator;
+  reverse_iterator rbegin() { return reverse_iterator(end()); }
+  const_reverse_iterator rbegin() const {
+    return const_reverse_iterator(end());
+  }
+  reverse_iterator rend() { return reverse_iterator(begin()); }
+  const_reverse_iterator rend() const {
+    return const_reverse_iterator(begin());
+  }
+
+  size_t SpaceUsedExcludingSelfLong() const;
+
+  int SpaceUsedExcludingSelf() const {
+    return internal::ToIntSize(SpaceUsedExcludingSelfLong());
+  }
+
+  iterator erase(const_iterator position);
+
+  iterator erase(const_iterator first, const_iterator last);
+
+  inline Arena* GetArena() const {
+    return GetOwningArena();
+  }
+
+  inline void InternalSwap(RepeatedField* other);
+
+ private:
+  template <typename T> friend class Arena::InternalHelper;
+
+  inline Arena* GetOwningArena() const {
+    return (total_size_ == 0) ? static_cast<Arena*>(arena_or_elements_)
+                              : rep()->arena;
+  }
+
+  static constexpr int kInitialSize = 0;
+
+  int current_size_;
+  int total_size_;
+
+  static PROTOBUF_CONSTEXPR const size_t kRepHeaderSize =
+      sizeof(Arena*) < sizeof(Element) ? sizeof(Element) : sizeof(Arena*);
+  struct Rep {
+    Arena* arena;
+    Element* elements() {
+      return reinterpret_cast<Element*>(reinterpret_cast<char*>(this) +
+                                        kRepHeaderSize);
+    }
+  };
+
+  void* arena_or_elements_;
+
+  Element* elements() const {
+    GOOGLE_DCHECK_GT(total_size_, 0);
+
+    return unsafe_elements();
+  }
+
+  Element* unsafe_elements() const {
+    return static_cast<Element*>(arena_or_elements_);
+  }
+
+  Rep* rep() const {
+    return reinterpret_cast<Rep*>(reinterpret_cast<char*>(elements()) -
+                                  kRepHeaderSize);
+  }
+
+  friend class Arena;
+  typedef void InternalArenaConstructable_;
+
+  void MoveArray(Element* to, Element* from, int size);
+
+  void CopyArray(Element* to, const Element* from, int size);
+
+  void InternalDeallocate(Rep* rep, int size, bool in_destructor) {
+    if (rep != nullptr) {
+      Element* e = &rep->elements()[0];
+      if (!std::is_trivial<Element>::value) {
+        Element* limit = &rep->elements()[size];
+        for (; e < limit; e++) {
+          e->~Element();
+        }
+      }
+      const size_t bytes = size * sizeof(*e) + kRepHeaderSize;
+      if (rep->arena == nullptr) {
+        internal::SizedDelete(rep, bytes);
+      } else if (!in_destructor) {
+
+        rep->arena->ReturnArrayMemory(rep, bytes);
+      }
+    }
+  }
+
+  template <int = 0, bool = std::is_trivial<Element>::value>
+  class FastAdderImpl {
+   public:
+    explicit FastAdderImpl(RepeatedField* rf) : repeated_field_(rf) {
+      index_ = repeated_field_->current_size_;
+      capacity_ = repeated_field_->total_size_;
+      buffer_ = repeated_field_->unsafe_elements();
+    }
+    ~FastAdderImpl() { repeated_field_->current_size_ = index_; }
+
+    void Add(Element val) {
+      if (index_ == capacity_) {
+        repeated_field_->current_size_ = index_;
+        repeated_field_->Reserve(index_ + 1);
+        capacity_ = repeated_field_->total_size_;
+        buffer_ = repeated_field_->unsafe_elements();
+      }
+      buffer_[index_++] = val;
+    }
+
+   private:
+    RepeatedField* repeated_field_;
+    int index_;
+    int capacity_;
+    Element* buffer_;
+
+    GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(FastAdderImpl);
+  };
+
+  template <int I>
+  class FastAdderImpl<I, false> {
+   public:
+    explicit FastAdderImpl(RepeatedField* rf) : repeated_field_(rf) {}
+    void Add(const Element& val) { repeated_field_->Add(val); }
+
+   private:
+    RepeatedField* repeated_field_;
+    GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(FastAdderImpl);
+  };
+
+  using FastAdder = FastAdderImpl<>;
+
+  friend class TestRepeatedFieldHelper;
+  friend class ::google::protobuf::internal::ParseContext;
+};
+
+namespace internal {
+
+template <typename Element,
+          bool HasTrivialCopy = std::is_trivial<Element>::value>
+struct ElementCopier {
+  void operator()(Element* to, const Element* from, int array_size);
+};
+
+}
+
+template <typename Element>
+constexpr RepeatedField<Element>::RepeatedField()
+    : current_size_(0), total_size_(0), arena_or_elements_(nullptr) {}
+
+template <typename Element>
+inline RepeatedField<Element>::RepeatedField(Arena* arena)
+    : current_size_(0), total_size_(0), arena_or_elements_(arena) {}
+
+template <typename Element>
+inline RepeatedField<Element>::RepeatedField(const RepeatedField& other)
+    : current_size_(0), total_size_(0), arena_or_elements_(nullptr) {
+  if (other.current_size_ != 0) {
+    Reserve(other.size());
+    AddNAlreadyReserved(other.size());
+    CopyArray(Mutable(0), &other.Get(0), other.size());
+  }
+}
+
+template <typename Element>
+template <typename Iter, typename>
+RepeatedField<Element>::RepeatedField(Iter begin, Iter end)
+    : current_size_(0), total_size_(0), arena_or_elements_(nullptr) {
+  Add(begin, end);
+}
+
+template <typename Element>
+RepeatedField<Element>::~RepeatedField() {
+#ifndef NDEBUG
+
+  auto arena = GetOwningArena();
+  if (arena) (void)arena->SpaceAllocated();
+#endif
+  if (total_size_ > 0) {
+    InternalDeallocate(rep(), total_size_, true);
+  }
+}
+
+template <typename Element>
+inline RepeatedField<Element>& RepeatedField<Element>::operator=(
+    const RepeatedField& other) {
+  if (this != &other) CopyFrom(other);
+  return *this;
+}
+
+template <typename Element>
+inline RepeatedField<Element>::RepeatedField(RepeatedField&& other) noexcept
+    : RepeatedField() {
+#ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+  CopyFrom(other);
+#else
+
+  if (other.GetOwningArena()) {
+    CopyFrom(other);
+  } else {
+    InternalSwap(&other);
+  }
+#endif
+}
+
+template <typename Element>
+inline RepeatedField<Element>& RepeatedField<Element>::operator=(
+    RepeatedField&& other) noexcept {
+
+  if (this != &other) {
+    if (GetOwningArena() != other.GetOwningArena()
+#ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        || GetOwningArena() == nullptr
+#endif
+    ) {
+      CopyFrom(other);
+    } else {
+      InternalSwap(&other);
+    }
+  }
+  return *this;
+}
+
+template <typename Element>
+inline bool RepeatedField<Element>::empty() const {
+  return current_size_ == 0;
+}
+
+template <typename Element>
+inline int RepeatedField<Element>::size() const {
+  return current_size_;
+}
+
+template <typename Element>
+inline int RepeatedField<Element>::Capacity() const {
+  return total_size_;
+}
+
+template <typename Element>
+inline void RepeatedField<Element>::AddAlreadyReserved(const Element& value) {
+  GOOGLE_DCHECK_LT(current_size_, total_size_);
+  elements()[current_size_++] = value;
+}
+
+template <typename Element>
+inline Element* RepeatedField<Element>::AddAlreadyReserved() {
+  GOOGLE_DCHECK_LT(current_size_, total_size_);
+  return &elements()[current_size_++];
+}
+
+template <typename Element>
+inline Element* RepeatedField<Element>::AddNAlreadyReserved(int elements) {
+  GOOGLE_DCHECK_GE(total_size_ - current_size_, elements)
+      << total_size_ << ", " << current_size_;
+
+  Element* ret = unsafe_elements() + current_size_;
+  current_size_ += elements;
+  return ret;
+}
+
+template <typename Element>
+inline void RepeatedField<Element>::Resize(int new_size, const Element& value) {
+  GOOGLE_DCHECK_GE(new_size, 0);
+  if (new_size > current_size_) {
+    Reserve(new_size);
+    std::fill(&elements()[current_size_], &elements()[new_size], value);
+  }
+  current_size_ = new_size;
+}
+
+template <typename Element>
+inline const Element& RepeatedField<Element>::Get(int index) const {
+  GOOGLE_DCHECK_GE(index, 0);
+  GOOGLE_DCHECK_LT(index, current_size_);
+  return elements()[index];
+}
+
+template <typename Element>
+inline const Element& RepeatedField<Element>::at(int index) const {
+  GOOGLE_CHECK_GE(index, 0);
+  GOOGLE_CHECK_LT(index, current_size_);
+  return elements()[index];
+}
+
+template <typename Element>
+inline Element& RepeatedField<Element>::at(int index) {
+  GOOGLE_CHECK_GE(index, 0);
+  GOOGLE_CHECK_LT(index, current_size_);
+  return elements()[index];
+}
+
+template <typename Element>
+inline Element* RepeatedField<Element>::Mutable(int index) {
+  GOOGLE_DCHECK_GE(index, 0);
+  GOOGLE_DCHECK_LT(index, current_size_);
+  return &elements()[index];
+}
+
+template <typename Element>
+inline void RepeatedField<Element>::Set(int index, const Element& value) {
+  GOOGLE_DCHECK_GE(index, 0);
+  GOOGLE_DCHECK_LT(index, current_size_);
+  elements()[index] = value;
+}
+
+template <typename Element>
+inline void RepeatedField<Element>::Add(const Element& value) {
+  uint32_t size = current_size_;
+  if (static_cast<int>(size) == total_size_) {
+
+    auto tmp = value;
+    Reserve(total_size_ + 1);
+    elements()[size] = std::move(tmp);
+  } else {
+    elements()[size] = value;
+  }
+  current_size_ = size + 1;
+}
+
+template <typename Element>
+inline Element* RepeatedField<Element>::Add() {
+  uint32_t size = current_size_;
+  if (static_cast<int>(size) == total_size_) Reserve(total_size_ + 1);
+  auto ptr = &elements()[size];
+  current_size_ = size + 1;
+  return ptr;
+}
+
+template <typename Element>
+template <typename Iter>
+inline void RepeatedField<Element>::Add(Iter begin, Iter end) {
+  int reserve = internal::CalculateReserve(begin, end);
+  if (reserve != -1) {
+    if (reserve == 0) {
+      return;
+    }
+
+    Reserve(reserve + size());
+
+    std::copy(begin, end, elements() + size());
+    current_size_ = reserve + size();
+  } else {
+    FastAdder fast_adder(this);
+    for (; begin != end; ++begin) fast_adder.Add(*begin);
+  }
+}
+
+template <typename Element>
+inline void RepeatedField<Element>::RemoveLast() {
+  GOOGLE_DCHECK_GT(current_size_, 0);
+  current_size_--;
+}
+
+template <typename Element>
+void RepeatedField<Element>::ExtractSubrange(int start, int num,
+                                             Element* elements) {
+  GOOGLE_DCHECK_GE(start, 0);
+  GOOGLE_DCHECK_GE(num, 0);
+  GOOGLE_DCHECK_LE(start + num, this->current_size_);
+
+  if (elements != nullptr) {
+    for (int i = 0; i < num; ++i) elements[i] = this->Get(i + start);
+  }
+
+  if (num > 0) {
+    for (int i = start + num; i < this->current_size_; ++i)
+      this->Set(i - num, this->Get(i));
+    this->Truncate(this->current_size_ - num);
+  }
+}
+
+template <typename Element>
+inline void RepeatedField<Element>::Clear() {
+  current_size_ = 0;
+}
+
+template <typename Element>
+inline void RepeatedField<Element>::MergeFrom(const RepeatedField& other) {
+  GOOGLE_DCHECK_NE(&other, this);
+  if (other.current_size_ != 0) {
+    int existing_size = size();
+    Reserve(existing_size + other.size());
+    AddNAlreadyReserved(other.size());
+    CopyArray(Mutable(existing_size), &other.Get(0), other.size());
+  }
+}
+
+template <typename Element>
+inline void RepeatedField<Element>::CopyFrom(const RepeatedField& other) {
+  if (&other == this) return;
+  Clear();
+  MergeFrom(other);
+}
+
+template <typename Element>
+template <typename Iter>
+inline void RepeatedField<Element>::Assign(Iter begin, Iter end) {
+  Clear();
+  Add(begin, end);
+}
+
+template <typename Element>
+inline typename RepeatedField<Element>::iterator RepeatedField<Element>::erase(
+    const_iterator position) {
+  return erase(position, position + 1);
+}
+
+template <typename Element>
+inline typename RepeatedField<Element>::iterator RepeatedField<Element>::erase(
+    const_iterator first, const_iterator last) {
+  size_type first_offset = first - cbegin();
+  if (first != last) {
+    Truncate(std::copy(last, cend(), begin() + first_offset) - cbegin());
+  }
+  return begin() + first_offset;
+}
+
+template <typename Element>
+inline Element* RepeatedField<Element>::mutable_data() {
+  return unsafe_elements();
+}
+
+template <typename Element>
+inline const Element* RepeatedField<Element>::data() const {
+  return unsafe_elements();
+}
+
+template <typename Element>
+inline void RepeatedField<Element>::InternalSwap(RepeatedField* other) {
+  GOOGLE_DCHECK(this != other);
+
+  static_assert(std::is_standard_layout<RepeatedField<Element>>::value,
+                "offsetof() requires standard layout before c++17");
+  internal::memswap<offsetof(RepeatedField, arena_or_elements_) +
+                    sizeof(this->arena_or_elements_) -
+                    offsetof(RepeatedField, current_size_)>(
+      reinterpret_cast<char*>(this) + offsetof(RepeatedField, current_size_),
+      reinterpret_cast<char*>(other) + offsetof(RepeatedField, current_size_));
+}
+
+template <typename Element>
+void RepeatedField<Element>::Swap(RepeatedField* other) {
+  if (this == other) return;
+#ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+  if (GetOwningArena() != nullptr &&
+      GetOwningArena() == other->GetOwningArena()) {
+#else
+  if (GetOwningArena() == other->GetOwningArena()) {
+#endif
+    InternalSwap(other);
+  } else {
+    RepeatedField<Element> temp(other->GetOwningArena());
+    temp.MergeFrom(*this);
+    CopyFrom(*other);
+    other->UnsafeArenaSwap(&temp);
+  }
+}
+
+template <typename Element>
+void RepeatedField<Element>::UnsafeArenaSwap(RepeatedField* other) {
+  if (this == other) return;
+  GOOGLE_DCHECK_EQ(GetOwningArena(), other->GetOwningArena());
+  InternalSwap(other);
+}
+
+template <typename Element>
+void RepeatedField<Element>::SwapElements(int index1, int index2) {
+  using std::swap;
+  swap(elements()[index1], elements()[index2]);
+}
+
+template <typename Element>
+inline typename RepeatedField<Element>::iterator
+RepeatedField<Element>::begin() {
+  return iterator(unsafe_elements());
+}
+template <typename Element>
+inline typename RepeatedField<Element>::const_iterator
+RepeatedField<Element>::begin() const {
+  return const_iterator(unsafe_elements());
+}
+template <typename Element>
+inline typename RepeatedField<Element>::const_iterator
+RepeatedField<Element>::cbegin() const {
+  return const_iterator(unsafe_elements());
+}
+template <typename Element>
+inline typename RepeatedField<Element>::iterator RepeatedField<Element>::end() {
+  return iterator(unsafe_elements() + current_size_);
+}
+template <typename Element>
+inline typename RepeatedField<Element>::const_iterator
+RepeatedField<Element>::end() const {
+  return const_iterator(unsafe_elements() + current_size_);
+}
+template <typename Element>
+inline typename RepeatedField<Element>::const_iterator
+RepeatedField<Element>::cend() const {
+  return const_iterator(unsafe_elements() + current_size_);
+}
+
+template <typename Element>
+inline size_t RepeatedField<Element>::SpaceUsedExcludingSelfLong() const {
+  return total_size_ > 0 ? (total_size_ * sizeof(Element) + kRepHeaderSize) : 0;
+}
+
+namespace internal {
+
+template <typename T, int kRepHeaderSize>
+inline int CalculateReserveSize(int total_size, int new_size) {
+  constexpr int lower_limit = RepeatedFieldLowerClampLimit<T, kRepHeaderSize>();
+  if (new_size < lower_limit) {
+
+    return lower_limit;
+  }
+  constexpr int kMaxSizeBeforeClamp =
+      (std::numeric_limits<int>::max() - kRepHeaderSize) / 2;
+  if (PROTOBUF_PREDICT_FALSE(total_size > kMaxSizeBeforeClamp)) {
+    return std::numeric_limits<int>::max();
+  }
+
+  int doubled_size = 2 * total_size + kRepHeaderSize / sizeof(T);
+  return std::max(doubled_size, new_size);
+}
+}
+
+template <typename Element>
+void RepeatedField<Element>::Reserve(int new_size) {
+  if (total_size_ >= new_size) return;
+  Rep* old_rep = total_size_ > 0 ? rep() : nullptr;
+  Rep* new_rep;
+  Arena* arena = GetOwningArena();
+
+  new_size = internal::CalculateReserveSize<Element, kRepHeaderSize>(
+      total_size_, new_size);
+
+  GOOGLE_DCHECK_LE(
+      static_cast<size_t>(new_size),
+      (std::numeric_limits<size_t>::max() - kRepHeaderSize) / sizeof(Element))
+      << "Requested size is too large to fit into size_t.";
+  size_t bytes =
+      kRepHeaderSize + sizeof(Element) * static_cast<size_t>(new_size);
+  if (arena == nullptr) {
+    new_rep = static_cast<Rep*>(::operator new(bytes));
+  } else {
+    new_rep = reinterpret_cast<Rep*>(Arena::CreateArray<char>(arena, bytes));
+  }
+  new_rep->arena = arena;
+  int old_total_size = total_size_;
+
+  total_size_ = new_size;
+  arena_or_elements_ = new_rep->elements();
+
+  Element* e = &elements()[0];
+  Element* limit = e + total_size_;
+  for (; e < limit; e++) {
+    new (e) Element;
+  }
+  if (current_size_ > 0) {
+    MoveArray(&elements()[0], old_rep->elements(), current_size_);
+  }
+
+  InternalDeallocate(old_rep, old_total_size, false);
+
+}
+
+template <typename Element>
+inline void RepeatedField<Element>::Truncate(int new_size) {
+  GOOGLE_DCHECK_LE(new_size, current_size_);
+  if (current_size_ > 0) {
+    current_size_ = new_size;
+  }
+}
+
+template <typename Element>
+inline void RepeatedField<Element>::MoveArray(Element* to, Element* from,
+                                              int array_size) {
+  CopyArray(to, from, array_size);
+}
+
+template <typename Element>
+inline void RepeatedField<Element>::CopyArray(Element* to, const Element* from,
+                                              int array_size) {
+  internal::ElementCopier<Element>()(to, from, array_size);
+}
+
+namespace internal {
+
+template <typename Element, bool HasTrivialCopy>
+void ElementCopier<Element, HasTrivialCopy>::operator()(Element* to,
+                                                        const Element* from,
+                                                        int array_size) {
+  std::copy(from, from + array_size, to);
+}
+
+template <typename Element>
+struct ElementCopier<Element, true> {
+  void operator()(Element* to, const Element* from, int array_size) {
+    memcpy(to, from, static_cast<size_t>(array_size) * sizeof(Element));
+  }
+};
+
+}
+
+namespace internal {
+
+template <typename Element>
+class RepeatedIterator {
+ public:
+  using iterator_category = std::random_access_iterator_tag;
+
+  using value_type = typename std::remove_const<Element>::type;
+  using difference_type = std::ptrdiff_t;
+  using pointer = Element*;
+  using reference = Element&;
+
+  constexpr RepeatedIterator() noexcept : it_(nullptr) {}
+
+  template <typename OtherElement,
+            typename std::enable_if<std::is_convertible<
+                OtherElement*, pointer>::value>::type* = nullptr>
+  constexpr RepeatedIterator(
+      const RepeatedIterator<OtherElement>& other) noexcept
+      : it_(other.it_) {}
+
+  constexpr reference operator*() const noexcept { return *it_; }
+  constexpr pointer operator->() const noexcept { return it_; }
+
+ private:
+
+  using iterator = RepeatedIterator<Element>;
+
+ public:
+
+  iterator& operator++() noexcept {
+    ++it_;
+    return *this;
+  }
+  iterator operator++(int) noexcept { return iterator(it_++); }
+  iterator& operator--() noexcept {
+    --it_;
+    return *this;
+  }
+  iterator operator--(int) noexcept { return iterator(it_--); }
+
+  friend constexpr bool operator==(const iterator& x,
+                                   const iterator& y) noexcept {
+    return x.it_ == y.it_;
+  }
+  friend constexpr bool operator!=(const iterator& x,
+                                   const iterator& y) noexcept {
+    return x.it_ != y.it_;
+  }
+
+  friend constexpr bool operator<(const iterator& x,
+                                  const iterator& y) noexcept {
+    return x.it_ < y.it_;
+  }
+  friend constexpr bool operator<=(const iterator& x,
+                                   const iterator& y) noexcept {
+    return x.it_ <= y.it_;
+  }
+  friend constexpr bool operator>(const iterator& x,
+                                  const iterator& y) noexcept {
+    return x.it_ > y.it_;
+  }
+  friend constexpr bool operator>=(const iterator& x,
+                                   const iterator& y) noexcept {
+    return x.it_ >= y.it_;
+  }
+
+  iterator& operator+=(difference_type d) noexcept {
+    it_ += d;
+    return *this;
+  }
+  constexpr iterator operator+(difference_type d) const noexcept {
+    return iterator(it_ + d);
+  }
+  friend constexpr iterator operator+(const difference_type d,
+                                      iterator it) noexcept {
+    return it + d;
+  }
+
+  iterator& operator-=(difference_type d) noexcept {
+    it_ -= d;
+    return *this;
+  }
+  iterator constexpr operator-(difference_type d) const noexcept {
+    return iterator(it_ - d);
+  }
+
+  constexpr reference operator[](difference_type d) const noexcept {
+    return it_[d];
+  }
+
+  friend constexpr difference_type operator-(iterator it1,
+                                             iterator it2) noexcept {
+    return it1.it_ - it2.it_;
+  }
+
+ private:
+  template <typename OtherElement>
+  friend class RepeatedIterator;
+
+  friend class RepeatedField<value_type>;
+  explicit RepeatedIterator(Element* it) noexcept : it_(it) {}
+
+  Element* it_;
+};
+
+template <typename T>
+class RepeatedFieldBackInsertIterator {
+ public:
+  using iterator_category = std::output_iterator_tag;
+  using value_type = T;
+  using pointer = void;
+  using reference = void;
+  using difference_type = std::ptrdiff_t;
+
+  explicit RepeatedFieldBackInsertIterator(
+      RepeatedField<T>* const mutable_field)
+      : field_(mutable_field) {}
+  RepeatedFieldBackInsertIterator<T>& operator=(const T& value) {
+    field_->Add(value);
+    return *this;
+  }
+  RepeatedFieldBackInsertIterator<T>& operator*() { return *this; }
+  RepeatedFieldBackInsertIterator<T>& operator++() { return *this; }
+  RepeatedFieldBackInsertIterator<T>& operator++(int ) {
+    return *this;
+  }
+
+ private:
+  RepeatedField<T>* field_;
+};
+
+}
+
+template <typename T>
+internal::RepeatedFieldBackInsertIterator<T> RepeatedFieldBackInserter(
+    RepeatedField<T>* const mutable_field) {
+  return internal::RepeatedFieldBackInsertIterator<T>(mutable_field);
+}
+
+extern template class PROTOBUF_EXPORT_TEMPLATE_DECLARE RepeatedField<bool>;
+extern template class PROTOBUF_EXPORT_TEMPLATE_DECLARE RepeatedField<int32_t>;
+extern template class PROTOBUF_EXPORT_TEMPLATE_DECLARE RepeatedField<uint32_t>;
+extern template class PROTOBUF_EXPORT_TEMPLATE_DECLARE RepeatedField<int64_t>;
+extern template class PROTOBUF_EXPORT_TEMPLATE_DECLARE RepeatedField<uint64_t>;
+extern template class PROTOBUF_EXPORT_TEMPLATE_DECLARE RepeatedField<float>;
+extern template class PROTOBUF_EXPORT_TEMPLATE_DECLARE RepeatedField<double>;
+
+namespace internal {
+extern template class PROTOBUF_EXPORT_TEMPLATE_DECLARE RepeatedIterator<bool>;
+extern template class PROTOBUF_EXPORT_TEMPLATE_DECLARE
+    RepeatedIterator<int32_t>;
+extern template class PROTOBUF_EXPORT_TEMPLATE_DECLARE
+    RepeatedIterator<uint32_t>;
+extern template class PROTOBUF_EXPORT_TEMPLATE_DECLARE
+    RepeatedIterator<int64_t>;
+extern template class PROTOBUF_EXPORT_TEMPLATE_DECLARE
+    RepeatedIterator<uint64_t>;
+extern template class PROTOBUF_EXPORT_TEMPLATE_DECLARE RepeatedIterator<float>;
+extern template class PROTOBUF_EXPORT_TEMPLATE_DECLARE RepeatedIterator<double>;
+}
+
+}
+}
+
+#include <google/protobuf/port_undef.inc>
+
+#endif

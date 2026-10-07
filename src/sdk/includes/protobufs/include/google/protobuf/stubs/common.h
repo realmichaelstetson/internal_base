@@ -1,0 +1,121 @@
+﻿
+#ifndef GOOGLE_PROTOBUF_COMMON_H__
+#define GOOGLE_PROTOBUF_COMMON_H__
+
+#include <algorithm>
+#include <iostream>
+#include <map>
+#include <memory>
+#include <set>
+#include <string>
+#include <vector>
+
+#include <google/protobuf/stubs/macros.h>
+#include <google/protobuf/stubs/platform_macros.h>
+#include <google/protobuf/stubs/port.h>
+#include <google/protobuf/stubs/stringpiece.h>
+
+#ifndef PROTOBUF_USE_EXCEPTIONS
+#if defined(_MSC_VER) && defined(_CPPUNWIND)
+  #define PROTOBUF_USE_EXCEPTIONS 1
+#elif defined(__EXCEPTIONS)
+  #define PROTOBUF_USE_EXCEPTIONS 1
+#else
+  #define PROTOBUF_USE_EXCEPTIONS 0
+#endif
+#endif
+
+#if PROTOBUF_USE_EXCEPTIONS
+#include <exception>
+#endif
+#if defined(__APPLE__)
+#include <TargetConditionals.h>
+#endif
+
+#if defined(__ANDROID__) || defined(GOOGLE_PROTOBUF_OS_ANDROID) || (defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE) || defined(GOOGLE_PROTOBUF_OS_IPHONE)
+#include <pthread.h>
+#endif
+
+#include <google/protobuf/port_def.inc>
+
+namespace std {}
+
+namespace google {
+namespace protobuf {
+namespace internal {
+
+#define GOOGLE_PROTOBUF_VERSION 3021012
+
+#define GOOGLE_PROTOBUF_VERSION_SUFFIX ""
+
+static const int kMinHeaderVersionForLibrary = 3021000;
+
+#define GOOGLE_PROTOBUF_MIN_PROTOC_VERSION 3021000
+
+static const int kMinHeaderVersionForProtoc = 3021000;
+
+void PROTOBUF_EXPORT VerifyVersion(int headerVersion, int minLibraryVersion,
+                                   const char* filename);
+
+std::string PROTOBUF_EXPORT VersionString(int version);
+
+}
+
+#define GOOGLE_PROTOBUF_VERIFY_VERSION                                    \
+  ::google::protobuf::internal::VerifyVersion(                            \
+    GOOGLE_PROTOBUF_VERSION, GOOGLE_PROTOBUF_MIN_LIBRARY_VERSION,         \
+    __FILE__)
+
+namespace internal {
+
+PROTOBUF_EXPORT bool IsStructurallyValidUTF8(const char* buf, int len);
+
+inline bool IsStructurallyValidUTF8(StringPiece str) {
+  return IsStructurallyValidUTF8(str.data(), static_cast<int>(str.length()));
+}
+
+PROTOBUF_EXPORT int UTF8SpnStructurallyValid(StringPiece str);
+
+PROTOBUF_EXPORT char* UTF8CoerceToStructurallyValid(StringPiece str, char* dst,
+                                                    char replace_char);
+
+}
+
+PROTOBUF_EXPORT void ShutdownProtobufLibrary();
+
+namespace internal {
+
+template <typename T>
+void StrongReference(const T& var) {
+  auto volatile unused = &var;
+  (void)&unused;
+}
+
+}
+
+#if PROTOBUF_USE_EXCEPTIONS
+class FatalException : public std::exception {
+ public:
+  FatalException(const char* filename, int line, const std::string& message)
+      : filename_(filename), line_(line), message_(message) {}
+  virtual ~FatalException() throw();
+
+  const char* what() const throw() override;
+
+  const char* filename() const { return filename_; }
+  int line() const { return line_; }
+  const std::string& message() const { return message_; }
+
+ private:
+  const char* filename_;
+  const int line_;
+  const std::string message_;
+};
+#endif
+
+}
+}
+
+#include <google/protobuf/port_undef.inc>
+
+#endif

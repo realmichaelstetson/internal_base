@@ -1,0 +1,348 @@
+﻿
+#ifndef GOOGLE_PROTOBUF_MESSAGE_LITE_H__
+#define GOOGLE_PROTOBUF_MESSAGE_LITE_H__
+
+#include <climits>
+#include <string>
+
+#include <google/protobuf/stubs/common.h>
+#include <google/protobuf/stubs/logging.h>
+#include <google/protobuf/io/coded_stream.h>
+#include <google/protobuf/arena.h>
+#include <google/protobuf/stubs/once.h>
+#include <google/protobuf/port.h>
+#include <google/protobuf/stubs/strutil.h>
+#include <google/protobuf/explicitly_constructed.h>
+#include <google/protobuf/metadata_lite.h>
+#include <google/protobuf/stubs/hash.h>
+
+#include <google/protobuf/port_def.inc>
+
+#ifdef SWIG
+#error "You cannot SWIG proto headers"
+#endif
+
+namespace google {
+namespace protobuf {
+
+template <typename T>
+class RepeatedPtrField;
+
+class FastReflectionMessageMutator;
+class FastReflectionStringSetter;
+class Reflection;
+
+namespace io {
+
+class CodedInputStream;
+class CodedOutputStream;
+class ZeroCopyInputStream;
+class ZeroCopyOutputStream;
+
+}
+namespace internal {
+
+class SwapFieldHelper;
+
+class ParseContext;
+
+class ExtensionSet;
+class LazyField;
+class RepeatedPtrFieldBase;
+class TcParser;
+class WireFormatLite;
+class WeakFieldMap;
+
+template <typename Type>
+class GenericTypeHandler;
+
+inline int ToCachedSize(size_t size) { return static_cast<int>(size); }
+
+inline size_t FromIntSize(int size) {
+
+  return static_cast<unsigned int>(size);
+}
+
+inline int ToIntSize(size_t size) {
+  GOOGLE_DCHECK_LE(size, static_cast<size_t>(INT_MAX));
+  return static_cast<int>(size);
+}
+
+PROTOBUF_EXPORT extern ExplicitlyConstructedArenaString
+    fixed_address_empty_string;
+
+PROTOBUF_EXPORT constexpr const std::string& GetEmptyStringAlreadyInited() {
+  return fixed_address_empty_string.get();
+}
+
+PROTOBUF_EXPORT size_t StringSpaceUsedExcludingSelfLong(const std::string& str);
+
+}
+
+class PROTOBUF_EXPORT MessageLite {
+ public:
+  constexpr MessageLite() {}
+  virtual ~MessageLite() = default;
+
+  virtual std::string GetTypeName() const = 0;
+
+  MessageLite* New() const { return New(nullptr); }
+
+  virtual MessageLite* New(Arena* arena) const = 0;
+
+  Arena* GetArena() const { return _internal_metadata_.user_arena(); }
+
+  virtual void Clear() = 0;
+
+  virtual bool IsInitialized() const = 0;
+
+  virtual std::string InitializationErrorString() const;
+
+  virtual void CheckTypeAndMergeFrom(const MessageLite& other) = 0;
+
+  std::string DebugString() const;
+  std::string ShortDebugString() const { return DebugString(); }
+
+  std::string Utf8DebugString() const { return DebugString(); }
+
+  PROTOBUF_ATTRIBUTE_REINITIALIZES bool ParseFromCodedStream(
+      io::CodedInputStream* input);
+
+  PROTOBUF_ATTRIBUTE_REINITIALIZES bool ParsePartialFromCodedStream(
+      io::CodedInputStream* input);
+
+  PROTOBUF_ATTRIBUTE_REINITIALIZES bool ParseFromZeroCopyStream(
+      io::ZeroCopyInputStream* input);
+
+  PROTOBUF_ATTRIBUTE_REINITIALIZES bool ParsePartialFromZeroCopyStream(
+      io::ZeroCopyInputStream* input);
+
+  PROTOBUF_ATTRIBUTE_REINITIALIZES bool ParseFromFileDescriptor(
+      int file_descriptor);
+
+  PROTOBUF_ATTRIBUTE_REINITIALIZES bool ParsePartialFromFileDescriptor(
+      int file_descriptor);
+
+  PROTOBUF_ATTRIBUTE_REINITIALIZES bool ParseFromIstream(std::istream* input);
+
+  PROTOBUF_ATTRIBUTE_REINITIALIZES bool ParsePartialFromIstream(
+      std::istream* input);
+
+  bool MergePartialFromBoundedZeroCopyStream(io::ZeroCopyInputStream* input,
+                                             int size);
+
+  bool MergeFromBoundedZeroCopyStream(io::ZeroCopyInputStream* input, int size);
+  PROTOBUF_ATTRIBUTE_REINITIALIZES bool ParseFromBoundedZeroCopyStream(
+      io::ZeroCopyInputStream* input, int size);
+
+  PROTOBUF_ATTRIBUTE_REINITIALIZES bool ParsePartialFromBoundedZeroCopyStream(
+      io::ZeroCopyInputStream* input, int size);
+
+  PROTOBUF_ATTRIBUTE_REINITIALIZES bool ParseFromString(ConstStringParam data);
+
+  PROTOBUF_ATTRIBUTE_REINITIALIZES bool ParsePartialFromString(
+      ConstStringParam data);
+
+  PROTOBUF_ATTRIBUTE_REINITIALIZES bool ParseFromArray(const void* data,
+                                                       int size);
+
+  PROTOBUF_ATTRIBUTE_REINITIALIZES bool ParsePartialFromArray(const void* data,
+                                                              int size);
+
+  bool MergeFromCodedStream(io::CodedInputStream* input);
+
+  bool MergePartialFromCodedStream(io::CodedInputStream* input);
+
+  bool MergeFromString(ConstStringParam data);
+
+  bool SerializeToCodedStream(io::CodedOutputStream* output) const;
+
+  bool SerializePartialToCodedStream(io::CodedOutputStream* output) const;
+
+  bool SerializeToZeroCopyStream(io::ZeroCopyOutputStream* output) const;
+
+  bool SerializePartialToZeroCopyStream(io::ZeroCopyOutputStream* output) const;
+
+  bool SerializeToString(std::string* output) const;
+
+  bool SerializePartialToString(std::string* output) const;
+
+  bool SerializeToArray(void* data, int size) const;
+
+  bool SerializePartialToArray(void* data, int size) const;
+
+  std::string SerializeAsString() const;
+
+  std::string SerializePartialAsString() const;
+
+  bool SerializeToFileDescriptor(int file_descriptor) const;
+
+  bool SerializePartialToFileDescriptor(int file_descriptor) const;
+
+  bool SerializeToOstream(std::ostream* output) const;
+
+  bool SerializePartialToOstream(std::ostream* output) const;
+
+  bool AppendToString(std::string* output) const;
+
+  bool AppendPartialToString(std::string* output) const;
+
+  virtual size_t ByteSizeLong() const = 0;
+
+  PROTOBUF_DEPRECATED_MSG("Please use ByteSizeLong() instead")
+  int ByteSize() const { return internal::ToIntSize(ByteSizeLong()); }
+
+  void SerializeWithCachedSizes(io::CodedOutputStream* output) const {
+    output->SetCur(_InternalSerialize(output->Cur(), output->EpsCopy()));
+  }
+
+  uint8_t* SerializeWithCachedSizesToArray(uint8_t* target) const;
+
+  virtual int GetCachedSize() const = 0;
+
+  virtual const char* _InternalParse(const char* ,
+                                     internal::ParseContext* ) {
+    return nullptr;
+  }
+
+  virtual void OnDemandRegisterArenaDtor(Arena* ) {}
+
+ protected:
+  template <typename T>
+  static T* CreateMaybeMessage(Arena* arena) {
+    return Arena::CreateMaybeMessage<T>(arena);
+  }
+
+  inline explicit MessageLite(Arena* arena, bool is_message_owned = false)
+      : _internal_metadata_(arena, is_message_owned) {}
+
+  Arena* GetOwningArena() const { return _internal_metadata_.owning_arena(); }
+
+  Arena* GetArenaForAllocation() const { return _internal_metadata_.arena(); }
+
+  static bool InMoaTrial() { return false; }
+
+  internal::InternalMetadata _internal_metadata_;
+
+ public:
+  enum ParseFlags {
+    kMerge = 0,
+    kParse = 1,
+    kMergePartial = 2,
+    kParsePartial = 3,
+    kMergeWithAliasing = 4,
+    kParseWithAliasing = 5,
+    kMergePartialWithAliasing = 6,
+    kParsePartialWithAliasing = 7
+  };
+
+  template <ParseFlags flags, typename T>
+  bool ParseFrom(const T& input);
+
+  virtual uint8_t* _InternalSerialize(
+      uint8_t* ptr, io::EpsCopyOutputStream* stream) const = 0;
+
+  bool IsInitializedWithErrors() const {
+    if (IsInitialized()) return true;
+    LogInitializationErrorMessage();
+    return false;
+  }
+
+ private:
+  friend class FastReflectionMessageMutator;
+  friend class FastReflectionStringSetter;
+  friend class Message;
+  friend class Reflection;
+  friend class internal::ExtensionSet;
+  friend class internal::LazyField;
+  friend class internal::SwapFieldHelper;
+  friend class internal::TcParser;
+  friend class internal::WeakFieldMap;
+  friend class internal::WireFormatLite;
+
+  template <typename Type>
+  friend class Arena::InternalHelper;
+  template <typename Type>
+  friend class internal::GenericTypeHandler;
+
+  void LogInitializationErrorMessage() const;
+
+  bool MergeFromImpl(io::CodedInputStream* input, ParseFlags parse_flags);
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(MessageLite);
+};
+
+namespace internal {
+
+template <bool alias>
+bool MergeFromImpl(StringPiece input, MessageLite* msg,
+                   MessageLite::ParseFlags parse_flags);
+extern template bool MergeFromImpl<false>(StringPiece input,
+                                          MessageLite* msg,
+                                          MessageLite::ParseFlags parse_flags);
+extern template bool MergeFromImpl<true>(StringPiece input,
+                                         MessageLite* msg,
+                                         MessageLite::ParseFlags parse_flags);
+
+template <bool alias>
+bool MergeFromImpl(io::ZeroCopyInputStream* input, MessageLite* msg,
+                   MessageLite::ParseFlags parse_flags);
+extern template bool MergeFromImpl<false>(io::ZeroCopyInputStream* input,
+                                          MessageLite* msg,
+                                          MessageLite::ParseFlags parse_flags);
+extern template bool MergeFromImpl<true>(io::ZeroCopyInputStream* input,
+                                         MessageLite* msg,
+                                         MessageLite::ParseFlags parse_flags);
+
+struct BoundedZCIS {
+  io::ZeroCopyInputStream* zcis;
+  int limit;
+};
+
+template <bool alias>
+bool MergeFromImpl(BoundedZCIS input, MessageLite* msg,
+                   MessageLite::ParseFlags parse_flags);
+extern template bool MergeFromImpl<false>(BoundedZCIS input, MessageLite* msg,
+                                          MessageLite::ParseFlags parse_flags);
+extern template bool MergeFromImpl<true>(BoundedZCIS input, MessageLite* msg,
+                                         MessageLite::ParseFlags parse_flags);
+
+template <typename T>
+struct SourceWrapper;
+
+template <bool alias, typename T>
+bool MergeFromImpl(const SourceWrapper<T>& input, MessageLite* msg,
+                   MessageLite::ParseFlags parse_flags) {
+  return input.template MergeInto<alias>(msg, parse_flags);
+}
+
+}
+
+template <MessageLite::ParseFlags flags, typename T>
+bool MessageLite::ParseFrom(const T& input) {
+  if (flags & kParse) Clear();
+  constexpr bool alias = (flags & kMergeWithAliasing) != 0;
+  return internal::MergeFromImpl<alias>(input, this, flags);
+}
+
+PROTOBUF_EXPORT void ShutdownProtobufLibrary();
+
+namespace internal {
+
+PROTOBUF_EXPORT void OnShutdown(void (*func)());
+
+PROTOBUF_EXPORT void OnShutdownRun(void (*f)(const void*), const void* arg);
+
+template <typename T>
+T* OnShutdownDelete(T* p) {
+  OnShutdownRun([](const void* pp) { delete static_cast<const T*>(pp); }, p);
+  return p;
+}
+
+}
+}
+}
+
+#include <google/protobuf/port_undef.inc>
+
+#endif

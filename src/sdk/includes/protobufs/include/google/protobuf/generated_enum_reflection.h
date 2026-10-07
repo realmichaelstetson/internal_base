@@ -1,0 +1,52 @@
+﻿
+#ifndef GOOGLE_PROTOBUF_GENERATED_ENUM_REFLECTION_H__
+#define GOOGLE_PROTOBUF_GENERATED_ENUM_REFLECTION_H__
+
+#include <string>
+
+#include <google/protobuf/port.h>
+#include <google/protobuf/stubs/strutil.h>
+#include <google/protobuf/generated_enum_util.h>
+
+#ifdef SWIG
+#error "You cannot SWIG proto headers"
+#endif
+
+#include <google/protobuf/port_def.inc>
+
+namespace google {
+namespace protobuf {
+class EnumDescriptor;
+}
+}
+
+namespace google {
+namespace protobuf {
+
+template <typename E>
+const EnumDescriptor* GetEnumDescriptor();
+
+namespace internal {
+
+PROTOBUF_EXPORT bool ParseNamedEnum(const EnumDescriptor* descriptor,
+                                    ConstStringParam name, int* value);
+
+template <typename EnumType>
+bool ParseNamedEnum(const EnumDescriptor* descriptor, ConstStringParam name,
+                    EnumType* value) {
+  int tmp;
+  if (!ParseNamedEnum(descriptor, name, &tmp)) return false;
+  *value = static_cast<EnumType>(tmp);
+  return true;
+}
+
+PROTOBUF_EXPORT const std::string& NameOfEnum(const EnumDescriptor* descriptor,
+                                              int value);
+
+}
+}
+}
+
+#include <google/protobuf/port_undef.inc>
+
+#endif

@@ -1,0 +1,204 @@
+﻿
+#ifndef GOOGLE_PROTOBUF_IO_ZERO_COPY_STREAM_IMPL_H__
+#define GOOGLE_PROTOBUF_IO_ZERO_COPY_STREAM_IMPL_H__
+
+#include <iosfwd>
+#include <string>
+
+#include <google/protobuf/stubs/common.h>
+#include <google/protobuf/io/zero_copy_stream.h>
+#include <google/protobuf/io/zero_copy_stream_impl_lite.h>
+
+#include <google/protobuf/port_def.inc>
+
+namespace google {
+namespace protobuf {
+namespace io {
+
+class PROTOBUF_EXPORT FileInputStream PROTOBUF_FUTURE_FINAL
+    : public ZeroCopyInputStream {
+ public:
+
+  explicit FileInputStream(int file_descriptor, int block_size = -1);
+
+  bool Close();
+
+  void SetCloseOnDelete(bool value) { copying_input_.SetCloseOnDelete(value); }
+
+  int GetErrno() const { return copying_input_.GetErrno(); }
+
+  bool Next(const void** data, int* size) override;
+  void BackUp(int count) override;
+  bool Skip(int count) override;
+  int64_t ByteCount() const override;
+
+ private:
+  class PROTOBUF_EXPORT CopyingFileInputStream PROTOBUF_FUTURE_FINAL
+      : public CopyingInputStream {
+   public:
+    CopyingFileInputStream(int file_descriptor);
+    ~CopyingFileInputStream() override;
+
+    bool Close();
+    void SetCloseOnDelete(bool value) { close_on_delete_ = value; }
+    int GetErrno() const { return errno_; }
+
+    int Read(void* buffer, int size) override;
+    int Skip(int count) override;
+
+   private:
+
+    const int file_;
+    bool close_on_delete_;
+    bool is_closed_;
+
+    int errno_;
+
+    bool previous_seek_failed_;
+
+    GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(CopyingFileInputStream);
+  };
+
+  CopyingFileInputStream copying_input_;
+  CopyingInputStreamAdaptor impl_;
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(FileInputStream);
+};
+
+class PROTOBUF_EXPORT FileOutputStream PROTOBUF_FUTURE_FINAL
+    : public CopyingOutputStreamAdaptor {
+ public:
+
+  explicit FileOutputStream(int file_descriptor, int block_size = -1);
+
+  ~FileOutputStream() override;
+
+  bool Close();
+
+  void SetCloseOnDelete(bool value) { copying_output_.SetCloseOnDelete(value); }
+
+  int GetErrno() const { return copying_output_.GetErrno(); }
+
+ private:
+  class PROTOBUF_EXPORT CopyingFileOutputStream PROTOBUF_FUTURE_FINAL
+      : public CopyingOutputStream {
+   public:
+    CopyingFileOutputStream(int file_descriptor);
+    ~CopyingFileOutputStream() override;
+
+    bool Close();
+    void SetCloseOnDelete(bool value) { close_on_delete_ = value; }
+    int GetErrno() const { return errno_; }
+
+    bool Write(const void* buffer, int size) override;
+
+   private:
+
+    const int file_;
+    bool close_on_delete_;
+    bool is_closed_;
+
+    int errno_;
+
+    GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(CopyingFileOutputStream);
+  };
+
+  CopyingFileOutputStream copying_output_;
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(FileOutputStream);
+};
+
+class PROTOBUF_EXPORT IstreamInputStream PROTOBUF_FUTURE_FINAL
+    : public ZeroCopyInputStream {
+ public:
+
+  explicit IstreamInputStream(std::istream* stream, int block_size = -1);
+
+  bool Next(const void** data, int* size) override;
+  void BackUp(int count) override;
+  bool Skip(int count) override;
+  int64_t ByteCount() const override;
+
+ private:
+  class PROTOBUF_EXPORT CopyingIstreamInputStream PROTOBUF_FUTURE_FINAL
+      : public CopyingInputStream {
+   public:
+    CopyingIstreamInputStream(std::istream* input);
+    ~CopyingIstreamInputStream() override;
+
+    int Read(void* buffer, int size) override;
+
+   private:
+
+    std::istream* input_;
+
+    GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(CopyingIstreamInputStream);
+  };
+
+  CopyingIstreamInputStream copying_input_;
+  CopyingInputStreamAdaptor impl_;
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(IstreamInputStream);
+};
+
+class PROTOBUF_EXPORT OstreamOutputStream PROTOBUF_FUTURE_FINAL
+    : public ZeroCopyOutputStream {
+ public:
+
+  explicit OstreamOutputStream(std::ostream* stream, int block_size = -1);
+  ~OstreamOutputStream() override;
+
+  bool Next(void** data, int* size) override;
+  void BackUp(int count) override;
+  int64_t ByteCount() const override;
+
+ private:
+  class PROTOBUF_EXPORT CopyingOstreamOutputStream PROTOBUF_FUTURE_FINAL
+      : public CopyingOutputStream {
+   public:
+    CopyingOstreamOutputStream(std::ostream* output);
+    ~CopyingOstreamOutputStream() override;
+
+    bool Write(const void* buffer, int size) override;
+
+   private:
+
+    std::ostream* output_;
+
+    GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(CopyingOstreamOutputStream);
+  };
+
+  CopyingOstreamOutputStream copying_output_;
+  CopyingOutputStreamAdaptor impl_;
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(OstreamOutputStream);
+};
+
+class PROTOBUF_EXPORT ConcatenatingInputStream PROTOBUF_FUTURE_FINAL
+    : public ZeroCopyInputStream {
+ public:
+
+  ConcatenatingInputStream(ZeroCopyInputStream* const streams[], int count);
+  ~ConcatenatingInputStream() override = default;
+
+  bool Next(const void** data, int* size) override;
+  void BackUp(int count) override;
+  bool Skip(int count) override;
+  int64_t ByteCount() const override;
+
+ private:
+
+  ZeroCopyInputStream* const* streams_;
+  int stream_count_;
+  int64_t bytes_retired_;
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(ConcatenatingInputStream);
+};
+
+}
+}
+}
+
+#include <google/protobuf/port_undef.inc>
+
+#endif

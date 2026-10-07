@@ -1,0 +1,221 @@
+﻿
+#ifndef GOOGLE_PROTOBUF_IO_TOKENIZER_H__
+#define GOOGLE_PROTOBUF_IO_TOKENIZER_H__
+
+#include <string>
+#include <vector>
+
+#include <google/protobuf/stubs/common.h>
+#include <google/protobuf/stubs/logging.h>
+
+#include <google/protobuf/port_def.inc>
+
+namespace google {
+namespace protobuf {
+namespace io {
+
+class ZeroCopyInputStream;
+
+class ErrorCollector;
+class Tokenizer;
+
+typedef int ColumnNumber;
+
+class PROTOBUF_EXPORT ErrorCollector {
+ public:
+  inline ErrorCollector() {}
+  virtual ~ErrorCollector();
+
+  virtual void AddError(int line, ColumnNumber column,
+                        const std::string& message) = 0;
+
+  virtual void AddWarning(int , ColumnNumber ,
+                          const std::string& ) {}
+
+ private:
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(ErrorCollector);
+};
+
+class PROTOBUF_EXPORT Tokenizer {
+ public:
+
+  Tokenizer(ZeroCopyInputStream* input, ErrorCollector* error_collector);
+  ~Tokenizer();
+
+  enum TokenType {
+    TYPE_START,
+    TYPE_END,
+
+    TYPE_IDENTIFIER,
+
+    TYPE_INTEGER,
+
+    TYPE_FLOAT,
+
+    TYPE_STRING,
+
+    TYPE_SYMBOL,
+
+    TYPE_WHITESPACE,
+
+    TYPE_NEWLINE,
+
+  };
+
+  struct Token {
+    TokenType type;
+    std::string text;
+
+    int line;
+    ColumnNumber column;
+    ColumnNumber end_column;
+  };
+
+  const Token& current();
+
+  const Token& previous();
+
+  bool Next();
+
+  bool NextWithComments(std::string* prev_trailing_comments,
+                        std::vector<std::string>* detached_comments,
+                        std::string* next_leading_comments);
+
+  static double ParseFloat(const std::string& text);
+
+  static void ParseString(const std::string& text, std::string* output);
+
+  static void ParseStringAppend(const std::string& text, std::string* output);
+
+  static bool ParseInteger(const std::string& text, uint64_t max_value,
+                           uint64_t* output);
+
+  void set_allow_f_after_float(bool value) { allow_f_after_float_ = value; }
+
+  enum CommentStyle {
+
+    CPP_COMMENT_STYLE,
+
+    SH_COMMENT_STYLE
+  };
+
+  void set_comment_style(CommentStyle style) { comment_style_ = style; }
+
+  void set_require_space_after_number(bool require) {
+    require_space_after_number_ = require;
+  }
+
+  void set_allow_multiline_strings(bool allow) {
+    allow_multiline_strings_ = allow;
+  }
+
+  bool report_whitespace() const;
+  void set_report_whitespace(bool report);
+
+  bool report_newlines() const;
+  void set_report_newlines(bool report);
+
+  static bool IsIdentifier(const std::string& text);
+
+ private:
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(Tokenizer);
+
+  Token current_;
+  Token previous_;
+
+  ZeroCopyInputStream* input_;
+  ErrorCollector* error_collector_;
+
+  char current_char_;
+  const char* buffer_;
+  int buffer_size_;
+  int buffer_pos_;
+  bool read_error_;
+
+  int line_;
+  ColumnNumber column_;
+
+  std::string* record_target_;
+  int record_start_;
+
+  bool allow_f_after_float_;
+  CommentStyle comment_style_;
+  bool require_space_after_number_;
+  bool allow_multiline_strings_;
+  bool report_whitespace_ = false;
+  bool report_newlines_ = false;
+
+  static const int kTabWidth = 8;
+
+  void NextChar();
+
+  void Refresh();
+
+  inline void RecordTo(std::string* target);
+  inline void StopRecording();
+
+  inline void StartToken();
+
+  inline void EndToken();
+
+  void AddError(const std::string& message) {
+    error_collector_->AddError(line_, column_, message);
+  }
+
+  void ConsumeString(char delimiter);
+
+  TokenType ConsumeNumber(bool started_with_zero, bool started_with_dot);
+
+  void ConsumeLineComment(std::string* content);
+
+  void ConsumeBlockComment(std::string* content);
+
+  enum NextCommentStatus {
+
+    LINE_COMMENT,
+
+    BLOCK_COMMENT,
+
+    SLASH_NOT_COMMENT,
+
+    NO_COMMENT
+  };
+
+  NextCommentStatus TryConsumeCommentStart();
+
+  bool TryConsumeWhitespace();
+
+  bool TryConsumeNewline();
+
+  template <typename CharacterClass>
+  inline bool LookingAt();
+
+  template <typename CharacterClass>
+  inline bool TryConsumeOne();
+
+  inline bool TryConsume(char c);
+
+  template <typename CharacterClass>
+  inline void ConsumeZeroOrMore();
+
+  template <typename CharacterClass>
+  inline void ConsumeOneOrMore(const char* error);
+};
+
+inline const Tokenizer::Token& Tokenizer::current() { return current_; }
+
+inline const Tokenizer::Token& Tokenizer::previous() { return previous_; }
+
+inline void Tokenizer::ParseString(const std::string& text,
+                                   std::string* output) {
+  output->clear();
+  ParseStringAppend(text, output);
+}
+
+}
+}
+}
+
+#include <google/protobuf/port_undef.inc>
+
+#endif

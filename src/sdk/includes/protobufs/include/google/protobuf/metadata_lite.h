@@ -1,0 +1,238 @@
+﻿
+#ifndef GOOGLE_PROTOBUF_METADATA_LITE_H__
+#define GOOGLE_PROTOBUF_METADATA_LITE_H__
+
+#include <string>
+#include <google/protobuf/stubs/common.h>
+#include <google/protobuf/arena.h>
+#include <google/protobuf/port.h>
+
+#include <google/protobuf/port_def.inc>
+
+#ifdef SWIG
+#error "You cannot SWIG proto headers"
+#endif
+
+namespace google {
+namespace protobuf {
+namespace internal {
+
+class PROTOBUF_EXPORT InternalMetadata {
+ public:
+  constexpr InternalMetadata() : ptr_(0) {}
+  explicit InternalMetadata(Arena* arena, bool is_message_owned = false) {
+    SetArena(arena, is_message_owned);
+  }
+
+  void SetArena(Arena* arena, bool is_message_owned) {
+    ptr_ = is_message_owned
+               ? reinterpret_cast<intptr_t>(arena) | kMessageOwnedArenaTagMask
+               : reinterpret_cast<intptr_t>(arena);
+    GOOGLE_DCHECK(!is_message_owned || arena != nullptr);
+  }
+
+  ~InternalMetadata() {
+#if defined(NDEBUG) || defined(_MSC_VER)
+    if (HasMessageOwnedArenaTag()) {
+      delete reinterpret_cast<Arena*>(ptr_ - kMessageOwnedArenaTagMask);
+    }
+#else
+    CheckedDestruct();
+#endif
+  }
+
+  template <typename T>
+  void Delete() {
+
+    if (have_unknown_fields()) {
+      DeleteOutOfLineHelper<T>();
+    }
+  }
+
+  template <typename T>
+  Arena* DeleteReturnArena() {
+    if (have_unknown_fields()) {
+      return DeleteOutOfLineHelper<T>();
+    } else {
+      return PtrValue<Arena>();
+    }
+  }
+
+  PROTOBUF_NDEBUG_INLINE Arena* owning_arena() const {
+    return HasMessageOwnedArenaTag() ? nullptr : arena();
+  }
+
+  PROTOBUF_NDEBUG_INLINE Arena* user_arena() const {
+    Arena* a = arena();
+    return a && !a->IsMessageOwned() ? a : nullptr;
+  }
+
+  PROTOBUF_NDEBUG_INLINE Arena* arena() const {
+    if (PROTOBUF_PREDICT_FALSE(have_unknown_fields())) {
+      return PtrValue<ContainerBase>()->arena;
+    } else {
+      return PtrValue<Arena>();
+    }
+  }
+
+  PROTOBUF_NDEBUG_INLINE bool have_unknown_fields() const {
+    return HasUnknownFieldsTag();
+  }
+
+  PROTOBUF_NDEBUG_INLINE void* raw_arena_ptr() const {
+    return reinterpret_cast<void*>(ptr_);
+  }
+
+  template <typename T>
+  PROTOBUF_NDEBUG_INLINE const T& unknown_fields(
+      const T& (*default_instance)()) const {
+    if (PROTOBUF_PREDICT_FALSE(have_unknown_fields())) {
+      return PtrValue<Container<T>>()->unknown_fields;
+    } else {
+      return default_instance();
+    }
+  }
+
+  template <typename T>
+  PROTOBUF_NDEBUG_INLINE T* mutable_unknown_fields() {
+    if (PROTOBUF_PREDICT_TRUE(have_unknown_fields())) {
+      return &PtrValue<Container<T>>()->unknown_fields;
+    } else {
+      return mutable_unknown_fields_slow<T>();
+    }
+  }
+
+  template <typename T>
+  PROTOBUF_NDEBUG_INLINE void Swap(InternalMetadata* other) {
+
+    if (have_unknown_fields() || other->have_unknown_fields()) {
+      DoSwap<T>(other->mutable_unknown_fields<T>());
+    }
+  }
+
+  PROTOBUF_NDEBUG_INLINE void InternalSwap(InternalMetadata* other) {
+    std::swap(ptr_, other->ptr_);
+  }
+
+  template <typename T>
+  PROTOBUF_NDEBUG_INLINE void MergeFrom(const InternalMetadata& other) {
+    if (other.have_unknown_fields()) {
+      DoMergeFrom<T>(other.unknown_fields<T>(nullptr));
+    }
+  }
+
+  template <typename T>
+  PROTOBUF_NDEBUG_INLINE void Clear() {
+    if (have_unknown_fields()) {
+      DoClear<T>();
+    }
+  }
+
+ private:
+  intptr_t ptr_;
+
+  static constexpr intptr_t kUnknownFieldsTagMask = 1;
+  static constexpr intptr_t kMessageOwnedArenaTagMask = 2;
+  static constexpr intptr_t kPtrTagMask =
+      kUnknownFieldsTagMask | kMessageOwnedArenaTagMask;
+  static constexpr intptr_t kPtrValueMask = ~kPtrTagMask;
+
+  PROTOBUF_ALWAYS_INLINE bool HasUnknownFieldsTag() const {
+    return ptr_ & kUnknownFieldsTagMask;
+  }
+  PROTOBUF_ALWAYS_INLINE bool HasMessageOwnedArenaTag() const {
+    return ptr_ & kMessageOwnedArenaTagMask;
+  }
+
+  template <typename U>
+  U* PtrValue() const {
+    return reinterpret_cast<U*>(ptr_ & kPtrValueMask);
+  }
+
+  struct ContainerBase {
+    Arena* arena;
+  };
+
+  template <typename T>
+  struct Container : public ContainerBase {
+    T unknown_fields;
+  };
+
+  template <typename T>
+  PROTOBUF_NOINLINE Arena* DeleteOutOfLineHelper() {
+    if (auto* a = arena()) {
+
+      intptr_t message_owned_arena_tag = ptr_ & kMessageOwnedArenaTagMask;
+      ptr_ = reinterpret_cast<intptr_t>(a) | message_owned_arena_tag;
+      return a;
+    } else {
+      delete PtrValue<Container<T>>();
+      ptr_ = 0;
+      return nullptr;
+    }
+  }
+
+  template <typename T>
+  PROTOBUF_NOINLINE T* mutable_unknown_fields_slow() {
+    Arena* my_arena = arena();
+    Container<T>* container = Arena::Create<Container<T>>(my_arena);
+    intptr_t message_owned_arena_tag = ptr_ & kMessageOwnedArenaTagMask;
+
+    ptr_ = reinterpret_cast<intptr_t>(container);
+    ptr_ |= kUnknownFieldsTagMask | message_owned_arena_tag;
+    container->arena = my_arena;
+    return &(container->unknown_fields);
+  }
+
+  template <typename T>
+  PROTOBUF_NOINLINE void DoClear() {
+    mutable_unknown_fields<T>()->Clear();
+  }
+
+  template <typename T>
+  PROTOBUF_NOINLINE void DoMergeFrom(const T& other) {
+    mutable_unknown_fields<T>()->MergeFrom(other);
+  }
+
+  template <typename T>
+  PROTOBUF_NOINLINE void DoSwap(T* other) {
+    mutable_unknown_fields<T>()->Swap(other);
+  }
+
+  void CheckedDestruct();
+};
+
+template <>
+PROTOBUF_EXPORT void InternalMetadata::DoClear<std::string>();
+template <>
+PROTOBUF_EXPORT void InternalMetadata::DoMergeFrom<std::string>(
+    const std::string& other);
+template <>
+PROTOBUF_EXPORT void InternalMetadata::DoSwap<std::string>(std::string* other);
+
+class PROTOBUF_EXPORT LiteUnknownFieldSetter {
+ public:
+  explicit LiteUnknownFieldSetter(InternalMetadata* metadata)
+      : metadata_(metadata) {
+    if (metadata->have_unknown_fields()) {
+      buffer_.swap(*metadata->mutable_unknown_fields<std::string>());
+    }
+  }
+  ~LiteUnknownFieldSetter() {
+    if (!buffer_.empty())
+      metadata_->mutable_unknown_fields<std::string>()->swap(buffer_);
+  }
+  std::string* buffer() { return &buffer_; }
+
+ private:
+  InternalMetadata* metadata_;
+  std::string buffer_;
+};
+
+}
+}
+}
+
+#include <google/protobuf/port_undef.inc>
+
+#endif

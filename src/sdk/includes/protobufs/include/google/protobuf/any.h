@@ -1,0 +1,95 @@
+﻿
+#ifndef GOOGLE_PROTOBUF_ANY_H__
+#define GOOGLE_PROTOBUF_ANY_H__
+
+#include <string>
+
+#include <google/protobuf/stubs/common.h>
+#include <google/protobuf/arenastring.h>
+#include <google/protobuf/message_lite.h>
+
+#include <google/protobuf/port_def.inc>
+
+namespace google {
+namespace protobuf {
+
+class FieldDescriptor;
+class Message;
+
+namespace internal {
+
+extern const char kAnyFullTypeName[];
+extern const char kTypeGoogleApisComPrefix[];
+extern const char kTypeGoogleProdComPrefix[];
+
+std::string GetTypeUrl(StringPiece message_name,
+                       StringPiece type_url_prefix);
+
+class PROTOBUF_EXPORT AnyMetadata {
+  typedef ArenaStringPtr UrlType;
+  typedef ArenaStringPtr ValueType;
+ public:
+
+  constexpr AnyMetadata(UrlType* type_url, ValueType* value)
+      : type_url_(type_url), value_(value) {}
+
+  template <typename T>
+  bool PackFrom(Arena* arena, const T& message) {
+    return InternalPackFrom(arena, message, kTypeGoogleApisComPrefix,
+                            T::FullMessageName());
+  }
+
+  bool PackFrom(Arena* arena, const Message& message);
+
+  template <typename T>
+  bool PackFrom(Arena* arena, const T& message,
+                StringPiece type_url_prefix) {
+    return InternalPackFrom(arena, message, type_url_prefix,
+                            T::FullMessageName());
+  }
+
+  bool PackFrom(Arena* arena, const Message& message,
+                StringPiece type_url_prefix);
+
+  template <typename T>
+  bool UnpackTo(T* message) const {
+    return InternalUnpackTo(T::FullMessageName(), message);
+  }
+
+  bool UnpackTo(Message* message) const;
+
+  template <typename T>
+  bool Is() const {
+    return InternalIs(T::FullMessageName());
+  }
+
+ private:
+  bool InternalPackFrom(Arena* arena, const MessageLite& message,
+                        StringPiece type_url_prefix,
+                        StringPiece type_name);
+  bool InternalUnpackTo(StringPiece type_name,
+                        MessageLite* message) const;
+  bool InternalIs(StringPiece type_name) const;
+
+  UrlType* type_url_;
+  ValueType* value_;
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(AnyMetadata);
+};
+
+bool ParseAnyTypeUrl(StringPiece type_url, std::string* full_type_name);
+
+bool ParseAnyTypeUrl(StringPiece type_url, std::string* url_prefix,
+                     std::string* full_type_name);
+
+bool GetAnyFieldDescriptors(const Message& message,
+                            const FieldDescriptor** type_url_field,
+                            const FieldDescriptor** value_field);
+
+}
+}
+}
+
+#include <google/protobuf/port_undef.inc>
+
+#endif

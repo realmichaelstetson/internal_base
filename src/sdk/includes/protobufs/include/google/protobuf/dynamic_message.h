@@ -1,0 +1,139 @@
+﻿
+#ifndef GOOGLE_PROTOBUF_DYNAMIC_MESSAGE_H__
+#define GOOGLE_PROTOBUF_DYNAMIC_MESSAGE_H__
+
+#include <algorithm>
+#include <memory>
+#include <unordered_map>
+#include <vector>
+
+#include <google/protobuf/stubs/common.h>
+#include <google/protobuf/stubs/mutex.h>
+#include <google/protobuf/message.h>
+#include <google/protobuf/reflection.h>
+#include <google/protobuf/repeated_field.h>
+
+#ifdef SWIG
+#error "You cannot SWIG proto headers"
+#endif
+
+#include <google/protobuf/port_def.inc>
+
+namespace google {
+namespace protobuf {
+
+class Descriptor;
+class DescriptorPool;
+
+class PROTOBUF_EXPORT DynamicMessageFactory : public MessageFactory {
+ public:
+
+  DynamicMessageFactory();
+
+  DynamicMessageFactory(const DescriptorPool* pool);
+
+  ~DynamicMessageFactory() override;
+
+  void SetDelegateToGeneratedFactory(bool enable) {
+    delegate_to_generated_factory_ = enable;
+  }
+
+  const Message* GetPrototype(const Descriptor* type) override;
+
+ private:
+  const DescriptorPool* pool_;
+  bool delegate_to_generated_factory_;
+
+  struct TypeInfo;
+  std::unordered_map<const Descriptor*, const TypeInfo*> prototypes_;
+  mutable internal::WrappedMutex prototypes_mutex_;
+
+  friend class DynamicMessage;
+  const Message* GetPrototypeNoLock(const Descriptor* type);
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(DynamicMessageFactory);
+};
+
+class PROTOBUF_EXPORT DynamicMapSorter {
+ public:
+  static std::vector<const Message*> Sort(const Message& message, int map_size,
+                                          const Reflection* reflection,
+                                          const FieldDescriptor* field) {
+    std::vector<const Message*> result;
+    result.reserve(map_size);
+    RepeatedFieldRef<Message> map_field =
+        reflection->GetRepeatedFieldRef<Message>(message, field);
+    for (auto it = map_field.begin(); it != map_field.end(); ++it) {
+      result.push_back(&*it);
+    }
+    MapEntryMessageComparator comparator(field->message_type());
+    std::stable_sort(result.begin(), result.end(), comparator);
+
+#ifndef NDEBUG
+    for (size_t j = 1; j < static_cast<size_t>(map_size); j++) {
+      if (!comparator(result[j - 1], result[j])) {
+        GOOGLE_LOG(ERROR) << (comparator(result[j], result[j - 1])
+                           ? "internal error in map key sorting"
+                           : "map keys are not unique");
+      }
+    }
+#endif
+    return result;
+  }
+
+ private:
+  class PROTOBUF_EXPORT MapEntryMessageComparator {
+   public:
+    explicit MapEntryMessageComparator(const Descriptor* descriptor)
+        : field_(descriptor->field(0)) {}
+
+    bool operator()(const Message* a, const Message* b) {
+      const Reflection* reflection = a->GetReflection();
+      switch (field_->cpp_type()) {
+        case FieldDescriptor::CPPTYPE_BOOL: {
+          bool first = reflection->GetBool(*a, field_);
+          bool second = reflection->GetBool(*b, field_);
+          return first < second;
+        }
+        case FieldDescriptor::CPPTYPE_INT32: {
+          int32_t first = reflection->GetInt32(*a, field_);
+          int32_t second = reflection->GetInt32(*b, field_);
+          return first < second;
+        }
+        case FieldDescriptor::CPPTYPE_INT64: {
+          int64_t first = reflection->GetInt64(*a, field_);
+          int64_t second = reflection->GetInt64(*b, field_);
+          return first < second;
+        }
+        case FieldDescriptor::CPPTYPE_UINT32: {
+          uint32_t first = reflection->GetUInt32(*a, field_);
+          uint32_t second = reflection->GetUInt32(*b, field_);
+          return first < second;
+        }
+        case FieldDescriptor::CPPTYPE_UINT64: {
+          uint64_t first = reflection->GetUInt64(*a, field_);
+          uint64_t second = reflection->GetUInt64(*b, field_);
+          return first < second;
+        }
+        case FieldDescriptor::CPPTYPE_STRING: {
+          std::string first = reflection->GetString(*a, field_);
+          std::string second = reflection->GetString(*b, field_);
+          return first < second;
+        }
+        default:
+          GOOGLE_LOG(DFATAL) << "Invalid key for map field.";
+          return true;
+      }
+    }
+
+   private:
+    const FieldDescriptor* field_;
+  };
+};
+
+}
+}
+
+#include <google/protobuf/port_undef.inc>
+
+#endif

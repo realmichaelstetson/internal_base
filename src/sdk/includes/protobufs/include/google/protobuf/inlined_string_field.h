@@ -1,0 +1,397 @@
+﻿
+#ifndef GOOGLE_PROTOBUF_INLINED_STRING_FIELD_H__
+#define GOOGLE_PROTOBUF_INLINED_STRING_FIELD_H__
+
+#include <string>
+#include <utility>
+
+#include <google/protobuf/stubs/logging.h>
+#include <google/protobuf/stubs/common.h>
+#include <google/protobuf/port.h>
+#include <google/protobuf/stubs/strutil.h>
+#include <google/protobuf/arenastring.h>
+#include <google/protobuf/message_lite.h>
+
+#include <google/protobuf/port_def.inc>
+
+#ifdef SWIG
+#error "You cannot SWIG proto headers"
+#endif
+
+namespace google {
+namespace protobuf {
+
+class Arena;
+
+namespace internal {
+
+class PROTOBUF_EXPORT InlinedStringField {
+ public:
+  InlinedStringField() { Init(); }
+  inline void Init() { new (get_mutable()) std::string(); }
+
+  constexpr InlinedStringField(
+      const ExplicitlyConstructed<std::string>* ,
+      bool )
+      : value_{} {}
+  explicit InlinedStringField(const std::string& default_value);
+  explicit InlinedStringField(Arena* arena);
+  ~InlinedStringField() { Destruct(); }
+
+  void Set(ConstStringParam value, Arena* arena, bool donated,
+           uint32_t* donating_states, uint32_t mask, MessageLite* msg);
+
+  void Set(std::string&& value, Arena* arena, bool donated,
+           uint32_t* donating_states, uint32_t mask, MessageLite* msg);
+
+  void Set(const char* str, ::google::protobuf::Arena* arena, bool donated,
+           uint32_t* donating_states, uint32_t mask, MessageLite* msg);
+
+  void Set(const char* str, size_t size, ::google::protobuf::Arena* arena, bool donated,
+           uint32_t* donating_states, uint32_t mask, MessageLite* msg);
+
+  template <typename RefWrappedType>
+  void Set(std::reference_wrapper<RefWrappedType> const_string_ref,
+           ::google::protobuf::Arena* arena, bool donated, uint32_t* donating_states,
+           uint32_t mask, MessageLite* msg);
+
+  void SetBytes(ConstStringParam value, Arena* arena, bool donated,
+                uint32_t* donating_states, uint32_t mask, MessageLite* msg);
+
+  void SetBytes(std::string&& value, Arena* arena, bool donated,
+                uint32_t* donating_states, uint32_t mask, MessageLite* msg);
+
+  void SetBytes(const char* str, ::google::protobuf::Arena* arena, bool donated,
+                uint32_t* donating_states, uint32_t mask, MessageLite* msg);
+
+  void SetBytes(const void* p, size_t size, ::google::protobuf::Arena* arena,
+                bool donated, uint32_t* donating_states, uint32_t mask,
+                MessageLite* msg);
+
+  template <typename RefWrappedType>
+  void SetBytes(std::reference_wrapper<RefWrappedType> const_string_ref,
+                ::google::protobuf::Arena* arena, bool donated, uint32_t* donating_states,
+                uint32_t mask, MessageLite* msg);
+
+  PROTOBUF_NDEBUG_INLINE void SetNoArena(StringPiece value);
+  PROTOBUF_NDEBUG_INLINE void SetNoArena(std::string&& value);
+
+  PROTOBUF_NDEBUG_INLINE const std::string& Get() const { return GetNoArena(); }
+  PROTOBUF_NDEBUG_INLINE const std::string& GetNoArena() const;
+
+  std::string* Mutable(Arena* arena, bool donated, uint32_t* donating_states,
+                       uint32_t mask, MessageLite* msg);
+  std::string* Mutable(const LazyString& default_value, Arena* arena,
+                       bool donated, uint32_t* donating_states, uint32_t mask,
+                       MessageLite* msg);
+
+  std::string* Mutable(std::nullptr_t);
+  std::string* MutableNoCopy(std::nullptr_t);
+
+  void SetAllocated(const std::string* default_value, std::string* value,
+                    Arena* arena, bool donated, uint32_t* donating_states,
+                    uint32_t mask, MessageLite* msg);
+
+  void SetAllocatedNoArena(const std::string* default_value,
+                           std::string* value);
+
+  PROTOBUF_NODISCARD std::string* Release(Arena* arena, bool donated);
+  PROTOBUF_NODISCARD std::string* Release();
+
+#ifdef DEPRECATED_METHODS_TO_BE_DELETED
+  PROTOBUF_NODISCARD std::string* Release(const std::string*, Arena* arena,
+                                          bool donated) {
+    return Release(arena, donated);
+  }
+
+  PROTOBUF_NODISCARD std::string* ReleaseNonDefault(const std::string*,
+                                                    Arena* arena) {
+    return Release();
+  }
+
+  std::string* ReleaseNonDefaultNoArena(const std::string* default_value) {
+    return Release();
+  }
+
+  void Set(const std::string*, ConstStringParam value, Arena* arena,
+           bool donated, uint32_t* donating_states, uint32_t mask,
+           MessageLite* msg) {
+    Set(value, arena, donated, donating_states, mask, msg);
+  }
+
+  void Set(const std::string*, std::string&& value, Arena* arena, bool donated,
+           uint32_t* donating_states, uint32_t mask, MessageLite* msg) {
+    Set(std::move(value), arena, donated, donating_states, mask, msg);
+  }
+
+  template <typename FirstParam>
+  void Set(FirstParam, const char* str, ::google::protobuf::Arena* arena, bool donated,
+           uint32_t* donating_states, uint32_t mask, MessageLite* msg) {
+    Set(str, arena, donated, donating_states, mask, msg);
+  }
+
+  template <typename FirstParam>
+  void Set(FirstParam p1, const char* str, size_t size, ::google::protobuf::Arena* arena,
+           bool donated, uint32_t* donating_states, uint32_t mask,
+           MessageLite* msg) {
+    Set(str, size, arena, donated, donating_states, mask, msg);
+  }
+
+  template <typename FirstParam, typename RefWrappedType>
+  void Set(FirstParam p1,
+           std::reference_wrapper<RefWrappedType> const_string_ref,
+           ::google::protobuf::Arena* arena, bool donated, uint32_t* donating_states,
+           uint32_t mask, MessageLite* msg) {
+    Set(const_string_ref, arena, donated, donating_states, mask, msg);
+  }
+
+  void SetBytes(const std::string*, ConstStringParam value, Arena* arena,
+                bool donated, uint32_t* donating_states, uint32_t mask,
+                MessageLite* msg) {
+    Set(value, arena, donated, donating_states, mask, msg);
+  }
+
+  void SetBytes(const std::string*, std::string&& value, Arena* arena,
+                bool donated, uint32_t* donating_states, uint32_t mask,
+                MessageLite* msg) {
+    Set(std::move(value), arena, donated, donating_states, mask, msg);
+  }
+
+  template <typename FirstParam>
+  void SetBytes(FirstParam p1, const char* str, ::google::protobuf::Arena* arena,
+                bool donated, uint32_t* donating_states, uint32_t mask,
+                MessageLite* msg) {
+    SetBytes(str, arena, donated, donating_states, mask, msg);
+  }
+
+  template <typename FirstParam>
+  void SetBytes(FirstParam p1, const void* p, size_t size,
+                ::google::protobuf::Arena* arena, bool donated, uint32_t* donating_states,
+                uint32_t mask, MessageLite* msg) {
+    SetBytes(p, size, arena, donated, donating_states, mask, msg);
+  }
+
+  template <typename FirstParam, typename RefWrappedType>
+  void SetBytes(FirstParam p1,
+                std::reference_wrapper<RefWrappedType> const_string_ref,
+                ::google::protobuf::Arena* arena, bool donated, uint32_t* donating_states,
+                uint32_t mask, MessageLite* msg) {
+    SetBytes(const_string_ref.get(), arena, donated, donating_states, mask,
+             msg);
+  }
+
+  void SetNoArena(const std::string*, StringPiece value) {
+    SetNoArena(value);
+  }
+  void SetNoArena(const std::string*, std::string&& value) {
+    SetNoArena(std::move(value));
+  }
+
+  std::string* Mutable(ArenaStringPtr::EmptyDefault, Arena* arena, bool donated,
+                       uint32_t* donating_states, uint32_t mask,
+                       MessageLite* msg) {
+    return Mutable(arena, donated, donating_states, mask, msg);
+  }
+
+  PROTOBUF_NDEBUG_INLINE std::string* MutableNoArenaNoDefault(
+      const std::string* ) {
+    return MutableNoCopy(nullptr);
+  }
+
+#endif
+
+  inline PROTOBUF_NDEBUG_INLINE static void InternalSwap(
+      InlinedStringField* lhs, Arena* lhs_arena, bool lhs_arena_dtor_registered,
+      MessageLite* lhs_msg,
+      InlinedStringField* rhs, Arena* rhs_arena, bool rhs_arena_dtor_registered,
+      MessageLite* rhs_msg);
+
+  PROTOBUF_NDEBUG_INLINE void Destroy(const std::string* default_value,
+                                      Arena* arena) {
+    if (arena == nullptr) {
+      DestroyNoArena(default_value);
+    }
+  }
+  PROTOBUF_NDEBUG_INLINE void DestroyNoArena(const std::string* default_value);
+
+  PROTOBUF_NDEBUG_INLINE void ClearToEmpty() { ClearNonDefaultToEmpty(); }
+  PROTOBUF_NDEBUG_INLINE void ClearNonDefaultToEmpty() {
+    get_mutable()->clear();
+  }
+
+  void ClearToDefault(const LazyString& default_value, Arena* arena,
+                      bool donated);
+
+  PROTOBUF_NDEBUG_INLINE std::string* UnsafeMutablePointer();
+
+  static constexpr bool IsDefault() { return false; }
+  static constexpr bool IsDefault(const std::string*) { return false; }
+
+ private:
+  void Destruct() { get_mutable()->~basic_string(); }
+
+  PROTOBUF_NDEBUG_INLINE std::string* get_mutable();
+  PROTOBUF_NDEBUG_INLINE const std::string* get_const() const;
+
+  alignas(std::string) char value_[sizeof(std::string)];
+
+  std::string* MutableSlow(::google::protobuf::Arena* arena, bool donated,
+                           uint32_t* donating_states, uint32_t mask,
+                           MessageLite* msg);
+
+  friend class ::google::protobuf::Arena;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+};
+
+inline std::string* InlinedStringField::get_mutable() {
+  return reinterpret_cast<std::string*>(&value_);
+}
+
+inline const std::string* InlinedStringField::get_const() const {
+  return reinterpret_cast<const std::string*>(&value_);
+}
+
+inline InlinedStringField::InlinedStringField(
+    const std::string& default_value) {
+  new (get_mutable()) std::string(default_value);
+}
+
+inline InlinedStringField::InlinedStringField(Arena* ) { Init(); }
+
+inline const std::string& InlinedStringField::GetNoArena() const {
+  return *get_const();
+}
+
+inline void InlinedStringField::SetAllocatedNoArena(
+    const std::string* , std::string* value) {
+  if (value == nullptr) {
+
+    get_mutable()->clear();
+  } else {
+    get_mutable()->assign(std::move(*value));
+    delete value;
+  }
+}
+
+inline void InlinedStringField::DestroyNoArena(const std::string*) {
+
+  this->~InlinedStringField();
+}
+
+inline void InlinedStringField::SetNoArena(StringPiece value) {
+  get_mutable()->assign(value.data(), value.length());
+}
+
+inline void InlinedStringField::SetNoArena(std::string&& value) {
+  get_mutable()->assign(std::move(value));
+}
+
+inline PROTOBUF_NDEBUG_INLINE void InlinedStringField::InternalSwap(
+    InlinedStringField* lhs, Arena* lhs_arena, bool lhs_arena_dtor_registered,
+    MessageLite* lhs_msg,
+    InlinedStringField* rhs, Arena* rhs_arena, bool rhs_arena_dtor_registered,
+    MessageLite* rhs_msg) {
+#if GOOGLE_PROTOBUF_INTERNAL_DONATE_STEAL_INLINE
+  lhs->get_mutable()->swap(*rhs->get_mutable());
+  if (!lhs_arena_dtor_registered && rhs_arena_dtor_registered) {
+    lhs_msg->OnDemandRegisterArenaDtor(lhs_arena);
+  } else if (lhs_arena_dtor_registered && !rhs_arena_dtor_registered) {
+    rhs_msg->OnDemandRegisterArenaDtor(rhs_arena);
+  }
+#else
+  (void)lhs_arena;
+  (void)rhs_arena;
+  (void)lhs_arena_dtor_registered;
+  (void)rhs_arena_dtor_registered;
+  (void)lhs_msg;
+  (void)rhs_msg;
+  lhs->get_mutable()->swap(*rhs->get_mutable());
+#endif
+}
+
+inline void InlinedStringField::Set(ConstStringParam value, Arena* arena,
+                                    bool donated, uint32_t* ,
+                                    uint32_t , MessageLite* ) {
+  (void)arena;
+  (void)donated;
+  SetNoArena(value);
+}
+
+inline void InlinedStringField::Set(const char* str, ::google::protobuf::Arena* arena,
+                                    bool donated, uint32_t* donating_states,
+                                    uint32_t mask, MessageLite* msg) {
+  Set(ConstStringParam(str), arena, donated, donating_states, mask, msg);
+}
+
+inline void InlinedStringField::Set(const char* str, size_t size,
+                                    ::google::protobuf::Arena* arena, bool donated,
+                                    uint32_t* donating_states, uint32_t mask,
+                                    MessageLite* msg) {
+  Set(ConstStringParam{str, size}, arena, donated, donating_states, mask, msg);
+}
+
+inline void InlinedStringField::SetBytes(ConstStringParam value, Arena* arena,
+                                         bool donated,
+                                         uint32_t* donating_states,
+                                         uint32_t mask, MessageLite* msg) {
+  Set(value, arena, donated, donating_states, mask, msg);
+}
+
+inline void InlinedStringField::SetBytes(std::string&& value, Arena* arena,
+                                         bool donated,
+                                         uint32_t* donating_states,
+                                         uint32_t mask, MessageLite* msg) {
+  Set(std::move(value), arena, donated, donating_states, mask, msg);
+}
+
+inline void InlinedStringField::SetBytes(const char* str,
+                                         ::google::protobuf::Arena* arena, bool donated,
+                                         uint32_t* donating_states,
+                                         uint32_t mask, MessageLite* msg) {
+  Set(str, arena, donated, donating_states, mask, msg);
+}
+
+inline void InlinedStringField::SetBytes(const void* p, size_t size,
+                                         ::google::protobuf::Arena* arena, bool donated,
+                                         uint32_t* donating_states,
+                                         uint32_t mask, MessageLite* msg) {
+  Set(static_cast<const char*>(p), size, arena, donated, donating_states, mask,
+      msg);
+}
+
+template <typename RefWrappedType>
+inline void InlinedStringField::Set(
+    std::reference_wrapper<RefWrappedType> const_string_ref,
+    ::google::protobuf::Arena* arena, bool donated, uint32_t* donating_states,
+    uint32_t mask, MessageLite* msg) {
+  Set(const_string_ref.get(), arena, donated, donating_states, mask, msg);
+}
+
+template <typename RefWrappedType>
+inline void InlinedStringField::SetBytes(
+    std::reference_wrapper<RefWrappedType> const_string_ref,
+    ::google::protobuf::Arena* arena, bool donated, uint32_t* donating_states,
+    uint32_t mask, MessageLite* msg) {
+  Set(const_string_ref.get(), arena, donated, donating_states, mask, msg);
+}
+
+inline std::string* InlinedStringField::UnsafeMutablePointer() {
+  return get_mutable();
+}
+
+inline std::string* InlinedStringField::Mutable(std::nullptr_t) {
+  return get_mutable();
+}
+
+inline std::string* InlinedStringField::MutableNoCopy(std::nullptr_t) {
+  return get_mutable();
+}
+
+}
+}
+}
+
+#include <google/protobuf/port_undef.inc>
+
+#endif

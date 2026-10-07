@@ -1,0 +1,212 @@
+﻿
+#ifndef GOOGLE_PROTOBUF_IO_ZERO_COPY_STREAM_IMPL_LITE_H__
+#define GOOGLE_PROTOBUF_IO_ZERO_COPY_STREAM_IMPL_LITE_H__
+
+#include <iosfwd>
+#include <memory>
+#include <string>
+
+#include <google/protobuf/stubs/callback.h>
+#include <google/protobuf/stubs/common.h>
+#include <google/protobuf/io/zero_copy_stream.h>
+#include <google/protobuf/stubs/stl_util.h>
+
+#include <google/protobuf/port_def.inc>
+
+namespace google {
+namespace protobuf {
+namespace io {
+
+class PROTOBUF_EXPORT ArrayInputStream PROTOBUF_FUTURE_FINAL
+    : public ZeroCopyInputStream {
+ public:
+
+  ArrayInputStream(const void* data, int size, int block_size = -1);
+  ~ArrayInputStream() override = default;
+
+  bool Next(const void** data, int* size) override;
+  void BackUp(int count) override;
+  bool Skip(int count) override;
+  int64_t ByteCount() const override;
+
+ private:
+  const uint8_t* const data_;
+  const int size_;
+  const int block_size_;
+
+  int position_;
+  int last_returned_size_;
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(ArrayInputStream);
+};
+
+class PROTOBUF_EXPORT ArrayOutputStream PROTOBUF_FUTURE_FINAL
+    : public ZeroCopyOutputStream {
+ public:
+
+  ArrayOutputStream(void* data, int size, int block_size = -1);
+  ~ArrayOutputStream() override = default;
+
+  bool Next(void** data, int* size) override;
+  void BackUp(int count) override;
+  int64_t ByteCount() const override;
+
+ private:
+  uint8_t* const data_;
+  const int size_;
+  const int block_size_;
+
+  int position_;
+  int last_returned_size_;
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(ArrayOutputStream);
+};
+
+class PROTOBUF_EXPORT StringOutputStream PROTOBUF_FUTURE_FINAL
+    : public ZeroCopyOutputStream {
+ public:
+
+  explicit StringOutputStream(std::string* target);
+  ~StringOutputStream() override = default;
+
+  bool Next(void** data, int* size) override;
+  void BackUp(int count) override;
+  int64_t ByteCount() const override;
+
+ private:
+  static constexpr size_t kMinimumSize = 16;
+
+  std::string* target_;
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(StringOutputStream);
+};
+
+class PROTOBUF_EXPORT CopyingInputStream {
+ public:
+  virtual ~CopyingInputStream() {}
+
+  virtual int Read(void* buffer, int size) = 0;
+
+  virtual int Skip(int count);
+};
+
+class PROTOBUF_EXPORT CopyingInputStreamAdaptor : public ZeroCopyInputStream {
+ public:
+
+  explicit CopyingInputStreamAdaptor(CopyingInputStream* copying_stream,
+                                     int block_size = -1);
+  ~CopyingInputStreamAdaptor() override;
+
+  void SetOwnsCopyingStream(bool value) { owns_copying_stream_ = value; }
+
+  bool Next(const void** data, int* size) override;
+  void BackUp(int count) override;
+  bool Skip(int count) override;
+  int64_t ByteCount() const override;
+
+ private:
+
+  void AllocateBufferIfNeeded();
+
+  void FreeBuffer();
+
+  CopyingInputStream* copying_stream_;
+  bool owns_copying_stream_;
+
+  bool failed_;
+
+  int64_t position_;
+
+  std::unique_ptr<uint8_t[]> buffer_;
+  const int buffer_size_;
+
+  int buffer_used_;
+
+  int backup_bytes_;
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(CopyingInputStreamAdaptor);
+};
+
+class PROTOBUF_EXPORT CopyingOutputStream {
+ public:
+  virtual ~CopyingOutputStream() {}
+
+  virtual bool Write(const void* buffer, int size) = 0;
+};
+
+class PROTOBUF_EXPORT CopyingOutputStreamAdaptor : public ZeroCopyOutputStream {
+ public:
+
+  explicit CopyingOutputStreamAdaptor(CopyingOutputStream* copying_stream,
+                                      int block_size = -1);
+  ~CopyingOutputStreamAdaptor() override;
+
+  bool Flush();
+
+  void SetOwnsCopyingStream(bool value) { owns_copying_stream_ = value; }
+
+  bool Next(void** data, int* size) override;
+  void BackUp(int count) override;
+  int64_t ByteCount() const override;
+  bool WriteAliasedRaw(const void* data, int size) override;
+  bool AllowsAliasing() const override { return true; }
+
+ private:
+
+  bool WriteBuffer();
+
+  void AllocateBufferIfNeeded();
+
+  void FreeBuffer();
+
+  CopyingOutputStream* copying_stream_;
+  bool owns_copying_stream_;
+
+  bool failed_;
+
+  int64_t position_;
+
+  std::unique_ptr<uint8_t[]> buffer_;
+  const int buffer_size_;
+
+  int buffer_used_;
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(CopyingOutputStreamAdaptor);
+};
+
+class PROTOBUF_EXPORT LimitingInputStream PROTOBUF_FUTURE_FINAL
+    : public ZeroCopyInputStream {
+ public:
+  LimitingInputStream(ZeroCopyInputStream* input, int64_t limit);
+  ~LimitingInputStream() override;
+
+  bool Next(const void** data, int* size) override;
+  void BackUp(int count) override;
+  bool Skip(int count) override;
+  int64_t ByteCount() const override;
+
+ private:
+  ZeroCopyInputStream* input_;
+  int64_t limit_;
+  int64_t prior_bytes_read_;
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(LimitingInputStream);
+};
+
+inline char* mutable_string_data(std::string* s) {
+
+  return &(*s)[0];
+}
+
+inline std::pair<char*, bool> as_string_data(std::string* s) {
+  char* p = mutable_string_data(s);
+  return std::make_pair(p, true);
+}
+
+}
+}
+}
+
+#include <google/protobuf/port_undef.inc>
+
+#endif

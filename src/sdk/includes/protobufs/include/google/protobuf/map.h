@@ -1,0 +1,1230 @@
+﻿
+#ifndef GOOGLE_PROTOBUF_MAP_H__
+#define GOOGLE_PROTOBUF_MAP_H__
+
+#include <functional>
+#include <initializer_list>
+#include <iterator>
+#include <limits>
+#include <map>
+#include <string>
+#include <type_traits>
+#include <utility>
+
+#if defined(__cpp_lib_string_view)
+#include <string_view>
+#endif
+
+#if !defined(GOOGLE_PROTOBUF_NO_RDTSC) && defined(__APPLE__)
+#include <mach/mach_time.h>
+#endif
+
+#include <google/protobuf/stubs/common.h>
+#include <google/protobuf/arena.h>
+#include <google/protobuf/generated_enum_util.h>
+#include <google/protobuf/map_type_handler.h>
+#include <google/protobuf/port.h>
+#include <google/protobuf/stubs/hash.h>
+
+#ifdef SWIG
+#error "You cannot SWIG proto headers"
+#endif
+
+#include <google/protobuf/port_def.inc>
+
+namespace google {
+namespace protobuf {
+
+template <typename Key, typename T>
+class Map;
+
+class MapIterator;
+
+template <typename Enum>
+struct is_proto_enum;
+
+namespace internal {
+template <typename Derived, typename Key, typename T,
+          WireFormatLite::FieldType key_wire_type,
+          WireFormatLite::FieldType value_wire_type>
+class MapFieldLite;
+
+template <typename Derived, typename Key, typename T,
+          WireFormatLite::FieldType key_wire_type,
+          WireFormatLite::FieldType value_wire_type>
+class MapField;
+
+template <typename Key, typename T>
+class TypeDefinedMapFieldBase;
+
+class DynamicMapField;
+
+class GeneratedMessageReflection;
+
+template <typename U>
+class MapAllocator {
+ public:
+  using value_type = U;
+  using pointer = value_type*;
+  using const_pointer = const value_type*;
+  using reference = value_type&;
+  using const_reference = const value_type&;
+  using size_type = size_t;
+  using difference_type = ptrdiff_t;
+
+  constexpr MapAllocator() : arena_(nullptr) {}
+  explicit constexpr MapAllocator(Arena* arena) : arena_(arena) {}
+  template <typename X>
+  MapAllocator(const MapAllocator<X>& allocator)
+      : arena_(allocator.arena()) {}
+
+  static_assert(alignof(value_type) <= 8, "");
+
+  pointer allocate(size_type n, const void*  = nullptr) {
+
+    if (arena_ == nullptr) {
+      return static_cast<pointer>(::operator new(n * sizeof(value_type)));
+    } else {
+      return reinterpret_cast<pointer>(
+          Arena::CreateArray<uint8_t>(arena_, n * sizeof(value_type)));
+    }
+  }
+
+  void deallocate(pointer p, size_type n) {
+    if (arena_ == nullptr) {
+      internal::SizedDelete(p, n * sizeof(value_type));
+    }
+  }
+
+#if !defined(GOOGLE_PROTOBUF_OS_APPLE) && !defined(GOOGLE_PROTOBUF_OS_NACL) && \
+    !defined(GOOGLE_PROTOBUF_OS_EMSCRIPTEN)
+  template <class NodeType, class... Args>
+  void construct(NodeType* p, Args&&... args) {
+
+    new (const_cast<void*>(static_cast<const void*>(p)))
+        NodeType(std::forward<Args>(args)...);
+  }
+
+  template <class NodeType>
+  void destroy(NodeType* p) {
+    p->~NodeType();
+  }
+#else
+  void construct(pointer p, const_reference t) { new (p) value_type(t); }
+
+  void destroy(pointer p) { p->~value_type(); }
+#endif
+
+  template <typename X>
+  struct rebind {
+    using other = MapAllocator<X>;
+  };
+
+  template <typename X>
+  bool operator==(const MapAllocator<X>& other) const {
+    return arena_ == other.arena_;
+  }
+
+  template <typename X>
+  bool operator!=(const MapAllocator<X>& other) const {
+    return arena_ != other.arena_;
+  }
+
+  size_type max_size() const {
+
+    return (std::numeric_limits<size_type>::max)();
+  }
+
+  Arena* arena() const { return arena_; }
+
+ private:
+  using DestructorSkippable_ = void;
+  Arena* arena_;
+};
+
+template <typename T>
+using KeyForTree =
+    typename std::conditional<std::is_scalar<T>::value, T,
+                              std::reference_wrapper<const T>>::type;
+
+template <typename key_type>
+struct TransparentSupport {
+  using hash = std::hash<key_type>;
+  using less = std::less<key_type>;
+
+  static bool Equals(const key_type& a, const key_type& b) { return a == b; }
+
+  template <typename K>
+  using key_arg = key_type;
+};
+
+#if defined(__cpp_lib_string_view)
+
+template <>
+struct TransparentSupport<std::string> {
+  static std::string_view ImplicitConvert(std::string_view str) { return str; }
+
+  template <typename = void>
+  static std::string_view ImplicitConvert(const std::string& str) {
+    return str;
+  }
+
+  struct hash : private std::hash<std::string_view> {
+    using is_transparent = void;
+
+    template <typename T>
+    size_t operator()(const T& str) const {
+      return base()(ImplicitConvert(str));
+    }
+
+   private:
+    const std::hash<std::string_view>& base() const { return *this; }
+  };
+  struct less {
+    using is_transparent = void;
+
+    template <typename T, typename U>
+    bool operator()(const T& t, const U& u) const {
+      return ImplicitConvert(t) < ImplicitConvert(u);
+    }
+  };
+
+  template <typename T, typename U>
+  static bool Equals(const T& t, const U& u) {
+    return ImplicitConvert(t) == ImplicitConvert(u);
+  }
+
+  template <typename K>
+  using key_arg = K;
+};
+#endif
+
+template <typename Key>
+using TreeForMap =
+    std::map<KeyForTree<Key>, void*, typename TransparentSupport<Key>::less,
+             MapAllocator<std::pair<const KeyForTree<Key>, void*>>>;
+
+inline bool TableEntryIsEmpty(void* const* table, size_t b) {
+  return table[b] == nullptr;
+}
+inline bool TableEntryIsNonEmptyList(void* const* table, size_t b) {
+  return table[b] != nullptr && table[b] != table[b ^ 1];
+}
+inline bool TableEntryIsTree(void* const* table, size_t b) {
+  return !TableEntryIsEmpty(table, b) && !TableEntryIsNonEmptyList(table, b);
+}
+inline bool TableEntryIsList(void* const* table, size_t b) {
+  return !TableEntryIsTree(table, b);
+}
+
+inline size_t MapValueSpaceUsedExcludingSelfLong(bool) { return 0; }
+inline size_t MapValueSpaceUsedExcludingSelfLong(const std::string& str) {
+  return StringSpaceUsedExcludingSelfLong(str);
+}
+template <typename T,
+          typename = decltype(std::declval<const T&>().SpaceUsedLong())>
+size_t MapValueSpaceUsedExcludingSelfLong(const T& message) {
+  return message.SpaceUsedLong() - sizeof(T);
+}
+
+constexpr size_t kGlobalEmptyTableSize = 1;
+PROTOBUF_EXPORT extern void* const kGlobalEmptyTable[kGlobalEmptyTableSize];
+
+template <typename Key>
+PROTOBUF_NOINLINE size_t SpaceUsedInTable(void** table, size_t num_buckets,
+                                          size_t num_elements,
+                                          size_t sizeof_node) {
+  size_t size = 0;
+
+  size += sizeof(void*) * num_buckets;
+
+  size += sizeof_node * num_elements;
+
+  for (size_t b = 0; b < num_buckets; b += 2) {
+    if (internal::TableEntryIsTree(table, b)) {
+      using Tree = TreeForMap<Key>;
+      Tree* tree = static_cast<Tree*>(table[b]);
+
+      size += tree->size() *
+              (sizeof(typename Tree::value_type) + sizeof(void*) * 4);
+    }
+  }
+  return size;
+}
+
+template <typename Map,
+          typename = typename std::enable_if<
+              !std::is_scalar<typename Map::key_type>::value ||
+              !std::is_scalar<typename Map::mapped_type>::value>::type>
+size_t SpaceUsedInValues(const Map* map) {
+  size_t size = 0;
+  for (const auto& v : *map) {
+    size += internal::MapValueSpaceUsedExcludingSelfLong(v.first) +
+            internal::MapValueSpaceUsedExcludingSelfLong(v.second);
+  }
+  return size;
+}
+
+inline size_t SpaceUsedInValues(const void*) { return 0; }
+
+}
+
+template <typename Key, typename T>
+struct PROTOBUF_ATTRIBUTE_STANDALONE_DEBUG MapPair {
+  using first_type = const Key;
+  using second_type = T;
+
+  MapPair(const Key& other_first, const T& other_second)
+      : first(other_first), second(other_second) {}
+  explicit MapPair(const Key& other_first) : first(other_first), second() {}
+  explicit MapPair(Key&& other_first)
+      : first(std::move(other_first)), second() {}
+  MapPair(const MapPair& other) : first(other.first), second(other.second) {}
+
+  ~MapPair() {}
+
+  template <typename T1, typename T2>
+  operator std::pair<T1, T2>() const {
+    return std::pair<T1, T2>(first, second);
+  }
+
+  const Key first;
+  T second;
+
+ private:
+  friend class Arena;
+  friend class Map<Key, T>;
+};
+
+template <typename Key, typename T>
+class Map {
+ public:
+  using key_type = Key;
+  using mapped_type = T;
+  using value_type = MapPair<Key, T>;
+
+  using pointer = value_type*;
+  using const_pointer = const value_type*;
+  using reference = value_type&;
+  using const_reference = const value_type&;
+
+  using size_type = size_t;
+  using hasher = typename internal::TransparentSupport<Key>::hash;
+
+  constexpr Map() : elements_(nullptr) {}
+  explicit Map(Arena* arena) : elements_(arena) {}
+
+  Map(const Map& other) : Map() { insert(other.begin(), other.end()); }
+
+  Map(Map&& other) noexcept : Map() {
+    if (other.arena() != nullptr) {
+      *this = other;
+    } else {
+      swap(other);
+    }
+  }
+
+  Map& operator=(Map&& other) noexcept {
+    if (this != &other) {
+      if (arena() != other.arena()) {
+        *this = other;
+      } else {
+        swap(other);
+      }
+    }
+    return *this;
+  }
+
+  template <class InputIt>
+  Map(const InputIt& first, const InputIt& last) : Map() {
+    insert(first, last);
+  }
+
+  ~Map() {}
+
+ private:
+  using Allocator = internal::MapAllocator<void*>;
+
+  class InnerMap : private hasher {
+   public:
+    explicit constexpr InnerMap(Arena* arena)
+        : hasher(),
+          num_elements_(0),
+          num_buckets_(internal::kGlobalEmptyTableSize),
+          seed_(0),
+          index_of_first_non_null_(internal::kGlobalEmptyTableSize),
+          table_(const_cast<void**>(internal::kGlobalEmptyTable)),
+          alloc_(arena) {}
+
+    ~InnerMap() {
+      if (alloc_.arena() == nullptr &&
+          num_buckets_ != internal::kGlobalEmptyTableSize) {
+        clear();
+        Dealloc<void*>(table_, num_buckets_);
+      }
+    }
+
+   private:
+    enum { kMinTableSize = 8 };
+
+    struct Node {
+      value_type kv;
+      Node* next;
+    };
+
+    using Tree = internal::TreeForMap<Key>;
+    using TreeIterator = typename Tree::iterator;
+
+    static Node* NodeFromTreeIterator(TreeIterator it) {
+      return static_cast<Node*>(it->second);
+    }
+
+    template <typename KeyValueType>
+    class iterator_base {
+     public:
+      using reference = KeyValueType&;
+      using pointer = KeyValueType*;
+
+      iterator_base() : node_(nullptr), m_(nullptr), bucket_index_(0) {}
+
+      explicit iterator_base(const InnerMap* m) : m_(m) {
+        SearchFrom(m->index_of_first_non_null_);
+      }
+
+      template <typename U>
+      explicit iterator_base(const iterator_base<U>& it)
+          : node_(it.node_), m_(it.m_), bucket_index_(it.bucket_index_) {}
+
+      iterator_base(Node* n, const InnerMap* m, size_type index)
+          : node_(n), m_(m), bucket_index_(index) {}
+
+      iterator_base(TreeIterator tree_it, const InnerMap* m, size_type index)
+          : node_(NodeFromTreeIterator(tree_it)), m_(m), bucket_index_(index) {
+
+        GOOGLE_DCHECK_EQ(bucket_index_ % 2, 0u);
+      }
+
+      void SearchFrom(size_type start_bucket) {
+        GOOGLE_DCHECK(m_->index_of_first_non_null_ == m_->num_buckets_ ||
+               m_->table_[m_->index_of_first_non_null_] != nullptr);
+        node_ = nullptr;
+        for (bucket_index_ = start_bucket; bucket_index_ < m_->num_buckets_;
+             bucket_index_++) {
+          if (m_->TableEntryIsNonEmptyList(bucket_index_)) {
+            node_ = static_cast<Node*>(m_->table_[bucket_index_]);
+            break;
+          } else if (m_->TableEntryIsTree(bucket_index_)) {
+            Tree* tree = static_cast<Tree*>(m_->table_[bucket_index_]);
+            GOOGLE_DCHECK(!tree->empty());
+            node_ = NodeFromTreeIterator(tree->begin());
+            break;
+          }
+        }
+      }
+
+      reference operator*() const { return node_->kv; }
+      pointer operator->() const { return &(operator*()); }
+
+      friend bool operator==(const iterator_base& a, const iterator_base& b) {
+        return a.node_ == b.node_;
+      }
+      friend bool operator!=(const iterator_base& a, const iterator_base& b) {
+        return a.node_ != b.node_;
+      }
+
+      iterator_base& operator++() {
+        if (node_->next == nullptr) {
+          TreeIterator tree_it;
+          const bool is_list = revalidate_if_necessary(&tree_it);
+          if (is_list) {
+            SearchFrom(bucket_index_ + 1);
+          } else {
+            GOOGLE_DCHECK_EQ(bucket_index_ & 1, 0u);
+            Tree* tree = static_cast<Tree*>(m_->table_[bucket_index_]);
+            if (++tree_it == tree->end()) {
+              SearchFrom(bucket_index_ + 2);
+            } else {
+              node_ = NodeFromTreeIterator(tree_it);
+            }
+          }
+        } else {
+          node_ = node_->next;
+        }
+        return *this;
+      }
+
+      iterator_base operator++(int ) {
+        iterator_base tmp = *this;
+        ++*this;
+        return tmp;
+      }
+
+      bool revalidate_if_necessary(TreeIterator* it) {
+        GOOGLE_DCHECK(node_ != nullptr && m_ != nullptr);
+
+        bucket_index_ &= (m_->num_buckets_ - 1);
+
+        if (m_->table_[bucket_index_] == static_cast<void*>(node_)) return true;
+
+        if (m_->TableEntryIsNonEmptyList(bucket_index_)) {
+          Node* l = static_cast<Node*>(m_->table_[bucket_index_]);
+          while ((l = l->next) != nullptr) {
+            if (l == node_) {
+              return true;
+            }
+          }
+        }
+
+        iterator_base i(m_->find(node_->kv.first, it));
+        bucket_index_ = i.bucket_index_;
+        return m_->TableEntryIsList(bucket_index_);
+      }
+
+      Node* node_;
+      const InnerMap* m_;
+      size_type bucket_index_;
+    };
+
+   public:
+    using iterator = iterator_base<value_type>;
+    using const_iterator = iterator_base<const value_type>;
+
+    Arena* arena() const { return alloc_.arena(); }
+
+    void Swap(InnerMap* other) {
+      std::swap(num_elements_, other->num_elements_);
+      std::swap(num_buckets_, other->num_buckets_);
+      std::swap(seed_, other->seed_);
+      std::swap(index_of_first_non_null_, other->index_of_first_non_null_);
+      std::swap(table_, other->table_);
+      std::swap(alloc_, other->alloc_);
+    }
+
+    iterator begin() { return iterator(this); }
+    iterator end() { return iterator(); }
+    const_iterator begin() const { return const_iterator(this); }
+    const_iterator end() const { return const_iterator(); }
+
+    void clear() {
+      for (size_type b = 0; b < num_buckets_; b++) {
+        if (TableEntryIsNonEmptyList(b)) {
+          Node* node = static_cast<Node*>(table_[b]);
+          table_[b] = nullptr;
+          do {
+            Node* next = node->next;
+            DestroyNode(node);
+            node = next;
+          } while (node != nullptr);
+        } else if (TableEntryIsTree(b)) {
+          Tree* tree = static_cast<Tree*>(table_[b]);
+          GOOGLE_DCHECK(table_[b] == table_[b + 1] && (b & 1) == 0);
+          table_[b] = table_[b + 1] = nullptr;
+          typename Tree::iterator tree_it = tree->begin();
+          do {
+            Node* node = NodeFromTreeIterator(tree_it);
+            typename Tree::iterator next = tree_it;
+            ++next;
+            tree->erase(tree_it);
+            DestroyNode(node);
+            tree_it = next;
+          } while (tree_it != tree->end());
+          DestroyTree(tree);
+          b++;
+        }
+      }
+      num_elements_ = 0;
+      index_of_first_non_null_ = num_buckets_;
+    }
+
+    const hasher& hash_function() const { return *this; }
+
+    static size_type max_size() {
+      return static_cast<size_type>(1) << (sizeof(void**) >= 8 ? 60 : 28);
+    }
+    size_type size() const { return num_elements_; }
+    bool empty() const { return size() == 0; }
+
+    template <typename K>
+    iterator find(const K& k) {
+      return iterator(FindHelper(k).first);
+    }
+
+    template <typename K>
+    const_iterator find(const K& k) const {
+      return FindHelper(k).first;
+    }
+
+    template <typename K, typename... Args>
+    std::pair<iterator, bool> try_emplace(K&& k, Args&&... args) {
+      return ArenaAwareTryEmplace(Arena::is_arena_constructable<mapped_type>(),
+                                  std::forward<K>(k),
+                                  std::forward<Args>(args)...);
+    }
+
+    template <typename K>
+    std::pair<iterator, bool> insert(K&& k) {
+      return try_emplace(std::forward<K>(k));
+    }
+
+    template <typename K>
+    value_type& operator[](K&& k) {
+      return *try_emplace(std::forward<K>(k)).first;
+    }
+
+    void erase(iterator it) {
+      GOOGLE_DCHECK_EQ(it.m_, this);
+      typename Tree::iterator tree_it;
+      const bool is_list = it.revalidate_if_necessary(&tree_it);
+      size_type b = it.bucket_index_;
+      Node* const item = it.node_;
+      if (is_list) {
+        GOOGLE_DCHECK(TableEntryIsNonEmptyList(b));
+        Node* head = static_cast<Node*>(table_[b]);
+        head = EraseFromLinkedList(item, head);
+        table_[b] = static_cast<void*>(head);
+      } else {
+        GOOGLE_DCHECK(TableEntryIsTree(b));
+        Tree* tree = static_cast<Tree*>(table_[b]);
+        tree->erase(tree_it);
+        if (tree->empty()) {
+
+          b &= ~static_cast<size_type>(1);
+          DestroyTree(tree);
+          table_[b] = table_[b + 1] = nullptr;
+        }
+      }
+      DestroyNode(item);
+      --num_elements_;
+      if (PROTOBUF_PREDICT_FALSE(b == index_of_first_non_null_)) {
+        while (index_of_first_non_null_ < num_buckets_ &&
+               table_[index_of_first_non_null_] == nullptr) {
+          ++index_of_first_non_null_;
+        }
+      }
+    }
+
+    size_t SpaceUsedInternal() const {
+      return internal::SpaceUsedInTable<Key>(table_, num_buckets_,
+                                             num_elements_, sizeof(Node));
+    }
+
+   private:
+    template <typename K, typename... Args>
+    std::pair<iterator, bool> TryEmplaceInternal(K&& k, Args&&... args) {
+      std::pair<const_iterator, size_type> p = FindHelper(k);
+
+      if (p.first.node_ != nullptr)
+        return std::make_pair(iterator(p.first), false);
+
+      if (ResizeIfLoadIsOutOfRange(num_elements_ + 1)) {
+        p = FindHelper(k);
+      }
+      const size_type b = p.second;
+
+      using TypeToInit = typename std::conditional<
+          std::is_same<typename std::decay<K>::type, key_type>::value, K&&,
+          key_type>::type;
+      Node* node = Alloc<Node>(1);
+
+      Arena::CreateInArenaStorage(const_cast<Key*>(&node->kv.first),
+                                  alloc_.arena(),
+                                  static_cast<TypeToInit>(std::forward<K>(k)));
+
+      Arena::CreateInArenaStorage(&node->kv.second, alloc_.arena(),
+                                  std::forward<Args>(args)...);
+
+      iterator result = InsertUnique(b, node);
+      ++num_elements_;
+      return std::make_pair(result, true);
+    }
+
+    template <typename V>
+    static void AssignMapped(std::true_type, mapped_type& mapped, V&& v) {
+      mapped = std::forward<V>(v);
+    }
+    template <typename... Args>
+    static void AssignMapped(std::false_type, mapped_type& mapped,
+                             Args&&... args) {
+      mapped = mapped_type(std::forward<Args>(args)...);
+    }
+
+    template <typename K>
+    std::pair<iterator, bool> ArenaAwareTryEmplace(std::true_type, K&& k) {
+
+      return TryEmplaceInternal(std::forward<K>(k));
+    }
+    template <typename K, typename... Args>
+    std::pair<iterator, bool> ArenaAwareTryEmplace(std::true_type, K&& k,
+                                                   Args&&... args) {
+
+      auto p = TryEmplaceInternal(std::forward<K>(k));
+      if (p.second) {
+        AssignMapped(std::is_same<void(typename std::decay<Args>::type...),
+                                  void(mapped_type)>(),
+                     p.first->second, std::forward<Args>(args)...);
+      }
+      return p;
+    }
+
+    template <typename... Args>
+    std::pair<iterator, bool> ArenaAwareTryEmplace(std::false_type,
+                                                   Args&&... args) {
+      return TryEmplaceInternal(std::forward<Args>(args)...);
+    }
+
+    const_iterator find(const Key& k, TreeIterator* it) const {
+      return FindHelper(k, it).first;
+    }
+    template <typename K>
+    std::pair<const_iterator, size_type> FindHelper(const K& k) const {
+      return FindHelper(k, nullptr);
+    }
+    template <typename K>
+    std::pair<const_iterator, size_type> FindHelper(const K& k,
+                                                    TreeIterator* it) const {
+      size_type b = BucketNumber(k);
+      if (TableEntryIsNonEmptyList(b)) {
+        Node* node = static_cast<Node*>(table_[b]);
+        do {
+          if (internal::TransparentSupport<Key>::Equals(node->kv.first, k)) {
+            return std::make_pair(const_iterator(node, this, b), b);
+          } else {
+            node = node->next;
+          }
+        } while (node != nullptr);
+      } else if (TableEntryIsTree(b)) {
+        GOOGLE_DCHECK_EQ(table_[b], table_[b ^ 1]);
+        b &= ~static_cast<size_t>(1);
+        Tree* tree = static_cast<Tree*>(table_[b]);
+        auto tree_it = tree->find(k);
+        if (tree_it != tree->end()) {
+          if (it != nullptr) *it = tree_it;
+          return std::make_pair(const_iterator(tree_it, this, b), b);
+        }
+      }
+      return std::make_pair(end(), b);
+    }
+
+    iterator InsertUnique(size_type b, Node* node) {
+      GOOGLE_DCHECK(index_of_first_non_null_ == num_buckets_ ||
+             table_[index_of_first_non_null_] != nullptr);
+
+      iterator result;
+      GOOGLE_DCHECK(find(node->kv.first) == end());
+      if (TableEntryIsEmpty(b)) {
+        result = InsertUniqueInList(b, node);
+      } else if (TableEntryIsNonEmptyList(b)) {
+        if (PROTOBUF_PREDICT_FALSE(TableEntryIsTooLong(b))) {
+          TreeConvert(b);
+          result = InsertUniqueInTree(b, node);
+          GOOGLE_DCHECK_EQ(result.bucket_index_, b & ~static_cast<size_type>(1));
+        } else {
+
+          return InsertUniqueInList(b, node);
+        }
+      } else {
+
+        return InsertUniqueInTree(b, node);
+      }
+
+      index_of_first_non_null_ =
+          (std::min)(index_of_first_non_null_, result.bucket_index_);
+      return result;
+    }
+
+    bool ShouldInsertAfterHead(void* node) {
+#ifdef NDEBUG
+      (void)node;
+      return false;
+#else
+
+      return (reinterpret_cast<uintptr_t>(node) ^ seed_) % 13 > 6;
+#endif
+    }
+
+    iterator InsertUniqueInList(size_type b, Node* node) {
+      if (table_[b] != nullptr && ShouldInsertAfterHead(node)) {
+        Node* first = static_cast<Node*>(table_[b]);
+        node->next = first->next;
+        first->next = node;
+        return iterator(node, this, b);
+      }
+
+      node->next = static_cast<Node*>(table_[b]);
+      table_[b] = static_cast<void*>(node);
+      return iterator(node, this, b);
+    }
+
+    iterator InsertUniqueInTree(size_type b, Node* node) {
+      GOOGLE_DCHECK_EQ(table_[b], table_[b ^ 1]);
+
+      node->next = nullptr;
+      return iterator(
+          static_cast<Tree*>(table_[b])->insert({node->kv.first, node}).first,
+          this, b & ~static_cast<size_t>(1));
+    }
+
+    bool ResizeIfLoadIsOutOfRange(size_type new_size) {
+      const size_type kMaxMapLoadTimes16 = 12;
+      const size_type hi_cutoff = num_buckets_ * kMaxMapLoadTimes16 / 16;
+      const size_type lo_cutoff = hi_cutoff / 4;
+
+      if (PROTOBUF_PREDICT_FALSE(new_size >= hi_cutoff)) {
+        if (num_buckets_ <= max_size() / 2) {
+          Resize(num_buckets_ * 2);
+          return true;
+        }
+      } else if (PROTOBUF_PREDICT_FALSE(new_size <= lo_cutoff &&
+                                        num_buckets_ > kMinTableSize)) {
+        size_type lg2_of_size_reduction_factor = 1;
+
+        const size_type hypothetical_size = new_size * 5 / 4 + 1;
+        while ((hypothetical_size << lg2_of_size_reduction_factor) <
+               hi_cutoff) {
+          ++lg2_of_size_reduction_factor;
+        }
+        size_type new_num_buckets = std::max<size_type>(
+            kMinTableSize, num_buckets_ >> lg2_of_size_reduction_factor);
+        if (new_num_buckets != num_buckets_) {
+          Resize(new_num_buckets);
+          return true;
+        }
+      }
+      return false;
+    }
+
+    void Resize(size_t new_num_buckets) {
+      if (num_buckets_ == internal::kGlobalEmptyTableSize) {
+
+        num_buckets_ = index_of_first_non_null_ = kMinTableSize;
+        table_ = CreateEmptyTable(num_buckets_);
+        seed_ = Seed();
+        return;
+      }
+
+      GOOGLE_DCHECK_GE(new_num_buckets, kMinTableSize);
+      void** const old_table = table_;
+      const size_type old_table_size = num_buckets_;
+      num_buckets_ = new_num_buckets;
+      table_ = CreateEmptyTable(num_buckets_);
+      const size_type start = index_of_first_non_null_;
+      index_of_first_non_null_ = num_buckets_;
+      for (size_type i = start; i < old_table_size; i++) {
+        if (internal::TableEntryIsNonEmptyList(old_table, i)) {
+          TransferList(old_table, i);
+        } else if (internal::TableEntryIsTree(old_table, i)) {
+          TransferTree(old_table, i++);
+        }
+      }
+      Dealloc<void*>(old_table, old_table_size);
+    }
+
+    void TransferList(void* const* table, size_type index) {
+      Node* node = static_cast<Node*>(table[index]);
+      do {
+        Node* next = node->next;
+        InsertUnique(BucketNumber(node->kv.first), node);
+        node = next;
+      } while (node != nullptr);
+    }
+
+    void TransferTree(void* const* table, size_type index) {
+      Tree* tree = static_cast<Tree*>(table[index]);
+      typename Tree::iterator tree_it = tree->begin();
+      do {
+        InsertUnique(BucketNumber(std::cref(tree_it->first).get()),
+                     NodeFromTreeIterator(tree_it));
+      } while (++tree_it != tree->end());
+      DestroyTree(tree);
+    }
+
+    Node* EraseFromLinkedList(Node* item, Node* head) {
+      if (head == item) {
+        return head->next;
+      } else {
+        head->next = EraseFromLinkedList(item, head->next);
+        return head;
+      }
+    }
+
+    bool TableEntryIsEmpty(size_type b) const {
+      return internal::TableEntryIsEmpty(table_, b);
+    }
+    bool TableEntryIsNonEmptyList(size_type b) const {
+      return internal::TableEntryIsNonEmptyList(table_, b);
+    }
+    bool TableEntryIsTree(size_type b) const {
+      return internal::TableEntryIsTree(table_, b);
+    }
+    bool TableEntryIsList(size_type b) const {
+      return internal::TableEntryIsList(table_, b);
+    }
+
+    void TreeConvert(size_type b) {
+      GOOGLE_DCHECK(!TableEntryIsTree(b) && !TableEntryIsTree(b ^ 1));
+      Tree* tree =
+          Arena::Create<Tree>(alloc_.arena(), typename Tree::key_compare(),
+                              typename Tree::allocator_type(alloc_));
+      size_type count = CopyListToTree(b, tree) + CopyListToTree(b ^ 1, tree);
+      GOOGLE_DCHECK_EQ(count, tree->size());
+      table_[b] = table_[b ^ 1] = static_cast<void*>(tree);
+    }
+
+    size_type CopyListToTree(size_type b, Tree* tree) {
+      size_type count = 0;
+      Node* node = static_cast<Node*>(table_[b]);
+      while (node != nullptr) {
+        tree->insert({node->kv.first, node});
+        ++count;
+        Node* next = node->next;
+        node->next = nullptr;
+        node = next;
+      }
+      return count;
+    }
+
+    bool TableEntryIsTooLong(size_type b) {
+      const size_type kMaxLength = 8;
+      size_type count = 0;
+      Node* node = static_cast<Node*>(table_[b]);
+      do {
+        ++count;
+        node = node->next;
+      } while (node != nullptr);
+
+      GOOGLE_DCHECK_LE(count, kMaxLength);
+      return count >= kMaxLength;
+    }
+
+    template <typename K>
+    size_type BucketNumber(const K& k) const {
+
+      uint64_t h = hash_function()(k) ^ seed_;
+
+      constexpr uint64_t kPhi = uint64_t{0x9e3779b97f4a7c15};
+      return ((kPhi * h) >> 32) & (num_buckets_ - 1);
+    }
+
+    size_type TableSize(size_type n) {
+      return n < static_cast<size_type>(kMinTableSize)
+                 ? static_cast<size_type>(kMinTableSize)
+                 : n;
+    }
+
+    template <typename U>
+    U* Alloc(size_type n) {
+      using alloc_type = typename Allocator::template rebind<U>::other;
+      return alloc_type(alloc_).allocate(n);
+    }
+
+    template <typename U>
+    void Dealloc(U* t, size_type n) {
+      using alloc_type = typename Allocator::template rebind<U>::other;
+      alloc_type(alloc_).deallocate(t, n);
+    }
+
+    void DestroyNode(Node* node) {
+      if (alloc_.arena() == nullptr) {
+        delete node;
+      }
+    }
+
+    void DestroyTree(Tree* tree) {
+      if (alloc_.arena() == nullptr) {
+        delete tree;
+      }
+    }
+
+    void** CreateEmptyTable(size_type n) {
+      GOOGLE_DCHECK(n >= kMinTableSize);
+      GOOGLE_DCHECK_EQ(n & (n - 1), 0u);
+      void** result = Alloc<void*>(n);
+      memset(result, 0, n * sizeof(result[0]));
+      return result;
+    }
+
+    size_type Seed() const {
+
+      size_type s = reinterpret_cast<uintptr_t>(this) >> 4;
+#if !defined(GOOGLE_PROTOBUF_NO_RDTSC)
+#if defined(__APPLE__)
+
+      s += mach_absolute_time();
+#elif defined(__x86_64__) && defined(__GNUC__)
+      uint32_t hi, lo;
+      asm volatile("rdtsc" : "=a"(lo), "=d"(hi));
+      s += ((static_cast<uint64_t>(hi) << 32) | lo);
+#elif defined(__aarch64__) && defined(__GNUC__)
+
+      uint64_t virtual_timer_value;
+      asm volatile("mrs %0, cntvct_el0" : "=r"(virtual_timer_value));
+      s += virtual_timer_value;
+#endif
+#endif
+      return s;
+    }
+
+    friend class Arena;
+    using InternalArenaConstructable_ = void;
+    using DestructorSkippable_ = void;
+
+    size_type num_elements_;
+    size_type num_buckets_;
+    size_type seed_;
+    size_type index_of_first_non_null_;
+    void** table_;
+    Allocator alloc_;
+    GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(InnerMap);
+  };
+
+  template <typename LookupKey>
+  using key_arg = typename internal::TransparentSupport<
+      key_type>::template key_arg<LookupKey>;
+
+ public:
+
+  class const_iterator {
+    using InnerIt = typename InnerMap::const_iterator;
+
+   public:
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = typename Map::value_type;
+    using difference_type = ptrdiff_t;
+    using pointer = const value_type*;
+    using reference = const value_type&;
+
+    const_iterator() {}
+    explicit const_iterator(const InnerIt& it) : it_(it) {}
+
+    const_reference operator*() const { return *it_; }
+    const_pointer operator->() const { return &(operator*()); }
+
+    const_iterator& operator++() {
+      ++it_;
+      return *this;
+    }
+    const_iterator operator++(int) { return const_iterator(it_++); }
+
+    friend bool operator==(const const_iterator& a, const const_iterator& b) {
+      return a.it_ == b.it_;
+    }
+    friend bool operator!=(const const_iterator& a, const const_iterator& b) {
+      return !(a == b);
+    }
+
+   private:
+    InnerIt it_;
+  };
+
+  class iterator {
+    using InnerIt = typename InnerMap::iterator;
+
+   public:
+    using iterator_category = std::forward_iterator_tag;
+    using value_type = typename Map::value_type;
+    using difference_type = ptrdiff_t;
+    using pointer = value_type*;
+    using reference = value_type&;
+
+    iterator() {}
+    explicit iterator(const InnerIt& it) : it_(it) {}
+
+    reference operator*() const { return *it_; }
+    pointer operator->() const { return &(operator*()); }
+
+    iterator& operator++() {
+      ++it_;
+      return *this;
+    }
+    iterator operator++(int) { return iterator(it_++); }
+
+    operator const_iterator() const {
+      return const_iterator(typename InnerMap::const_iterator(it_));
+    }
+
+    friend bool operator==(const iterator& a, const iterator& b) {
+      return a.it_ == b.it_;
+    }
+    friend bool operator!=(const iterator& a, const iterator& b) {
+      return !(a == b);
+    }
+
+   private:
+    friend class Map;
+
+    InnerIt it_;
+  };
+
+  iterator begin() { return iterator(elements_.begin()); }
+  iterator end() { return iterator(elements_.end()); }
+  const_iterator begin() const { return const_iterator(elements_.begin()); }
+  const_iterator end() const { return const_iterator(elements_.end()); }
+  const_iterator cbegin() const { return begin(); }
+  const_iterator cend() const { return end(); }
+
+  size_type size() const { return elements_.size(); }
+  bool empty() const { return size() == 0; }
+
+  template <typename K = key_type>
+  T& operator[](const key_arg<K>& key) {
+    return elements_[key].second;
+  }
+  template <
+      typename K = key_type,
+
+      typename = typename std::enable_if<!std::is_integral<K>::value>::type>
+  T& operator[](key_arg<K>&& key) {
+    return elements_[std::forward<K>(key)].second;
+  }
+
+  template <typename K = key_type>
+  const T& at(const key_arg<K>& key) const {
+    const_iterator it = find(key);
+    GOOGLE_CHECK(it != end()) << "key not found: " << static_cast<Key>(key);
+    return it->second;
+  }
+
+  template <typename K = key_type>
+  T& at(const key_arg<K>& key) {
+    iterator it = find(key);
+    GOOGLE_CHECK(it != end()) << "key not found: " << static_cast<Key>(key);
+    return it->second;
+  }
+
+  template <typename K = key_type>
+  size_type count(const key_arg<K>& key) const {
+    return find(key) == end() ? 0 : 1;
+  }
+
+  template <typename K = key_type>
+  const_iterator find(const key_arg<K>& key) const {
+    return const_iterator(elements_.find(key));
+  }
+  template <typename K = key_type>
+  iterator find(const key_arg<K>& key) {
+    return iterator(elements_.find(key));
+  }
+
+  template <typename K = key_type>
+  bool contains(const key_arg<K>& key) const {
+    return find(key) != end();
+  }
+
+  template <typename K = key_type>
+  std::pair<const_iterator, const_iterator> equal_range(
+      const key_arg<K>& key) const {
+    const_iterator it = find(key);
+    if (it == end()) {
+      return std::pair<const_iterator, const_iterator>(it, it);
+    } else {
+      const_iterator begin = it++;
+      return std::pair<const_iterator, const_iterator>(begin, it);
+    }
+  }
+
+  template <typename K = key_type>
+  std::pair<iterator, iterator> equal_range(const key_arg<K>& key) {
+    iterator it = find(key);
+    if (it == end()) {
+      return std::pair<iterator, iterator>(it, it);
+    } else {
+      iterator begin = it++;
+      return std::pair<iterator, iterator>(begin, it);
+    }
+  }
+
+  template <typename K, typename... Args>
+  std::pair<iterator, bool> try_emplace(K&& k, Args&&... args) {
+    auto p =
+        elements_.try_emplace(std::forward<K>(k), std::forward<Args>(args)...);
+    return std::pair<iterator, bool>(iterator(p.first), p.second);
+  }
+  std::pair<iterator, bool> insert(const value_type& value) {
+    return try_emplace(value.first, value.second);
+  }
+  std::pair<iterator, bool> insert(value_type&& value) {
+    return try_emplace(value.first, std::move(value.second));
+  }
+  template <typename... Args>
+  std::pair<iterator, bool> emplace(Args&&... args) {
+    return insert(value_type(std::forward<Args>(args)...));
+  }
+  template <class InputIt>
+  void insert(InputIt first, InputIt last) {
+    for (; first != last; ++first) {
+      try_emplace(first->first, first->second);
+    }
+  }
+  void insert(std::initializer_list<value_type> values) {
+    insert(values.begin(), values.end());
+  }
+
+  template <typename K = key_type>
+  size_type erase(const key_arg<K>& key) {
+    iterator it = find(key);
+    if (it == end()) {
+      return 0;
+    } else {
+      erase(it);
+      return 1;
+    }
+  }
+  iterator erase(iterator pos) {
+    iterator i = pos++;
+    elements_.erase(i.it_);
+    return pos;
+  }
+  void erase(iterator first, iterator last) {
+    while (first != last) {
+      first = erase(first);
+    }
+  }
+  void clear() { elements_.clear(); }
+
+  Map& operator=(const Map& other) {
+    if (this != &other) {
+      clear();
+      insert(other.begin(), other.end());
+    }
+    return *this;
+  }
+
+  void swap(Map& other) {
+    if (arena() == other.arena()) {
+      InternalSwap(other);
+    } else {
+
+      Map copy = *this;
+      *this = other;
+      other = copy;
+    }
+  }
+
+  void InternalSwap(Map& other) { elements_.Swap(&other.elements_); }
+
+  hasher hash_function() const { return elements_.hash_function(); }
+
+  size_t SpaceUsedExcludingSelfLong() const {
+    if (empty()) return 0;
+    return elements_.SpaceUsedInternal() + internal::SpaceUsedInValues(this);
+  }
+
+ private:
+  Arena* arena() const { return elements_.arena(); }
+  InnerMap elements_;
+
+  friend class Arena;
+  using InternalArenaConstructable_ = void;
+  using DestructorSkippable_ = void;
+  template <typename Derived, typename K, typename V,
+            internal::WireFormatLite::FieldType key_wire_type,
+            internal::WireFormatLite::FieldType value_wire_type>
+  friend class internal::MapFieldLite;
+};
+
+}
+}
+
+#include <google/protobuf/port_undef.inc>
+
+#endif

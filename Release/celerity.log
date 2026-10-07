@@ -1,0 +1,8 @@
+﻿C:\Program Files\Microsoft Visual Studio\18\Community\MSBuild\Microsoft\VC\v180\Microsoft.CppBuild.targets(551,5): warning MSB8028: Katalog pośredni (Release\) zawiera pliki udostępnione z innego projektu (celerity.vcxproj). Może to spowodować niepoprawne zachowanie podczas oczyszczania i ponownej kompilacji.
+  menu.cpp
+  Trwa generowanie kodu
+  172 of 20111 functions ( 0.9%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    323 functions had inline decision re-evaluated but remain unchanged
+  Zakończono generowanie kodu
+  celerity.vcxproj -> C:\Users\barte\Desktop\kolembahook\x64\kolembahook.dll

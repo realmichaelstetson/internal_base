@@ -1,0 +1,204 @@
+﻿
+#ifndef GOOGLE_PROTOBUF_DESCRIPTOR_DATABASE_H__
+#define GOOGLE_PROTOBUF_DESCRIPTOR_DATABASE_H__
+
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
+
+#include <google/protobuf/stubs/common.h>
+#include <google/protobuf/descriptor.h>
+
+#include <google/protobuf/port_def.inc>
+
+#ifdef SWIG
+#error "You cannot SWIG proto headers"
+#endif
+
+namespace google {
+namespace protobuf {
+
+class DescriptorDatabase;
+class SimpleDescriptorDatabase;
+class EncodedDescriptorDatabase;
+class DescriptorPoolDatabase;
+class MergedDescriptorDatabase;
+
+class PROTOBUF_EXPORT DescriptorDatabase {
+ public:
+  inline DescriptorDatabase() {}
+  virtual ~DescriptorDatabase();
+
+  virtual bool FindFileByName(const std::string& filename,
+                              FileDescriptorProto* output) = 0;
+
+  virtual bool FindFileContainingSymbol(const std::string& symbol_name,
+                                        FileDescriptorProto* output) = 0;
+
+  virtual bool FindFileContainingExtension(const std::string& containing_type,
+                                           int field_number,
+                                           FileDescriptorProto* output) = 0;
+
+  virtual bool FindAllExtensionNumbers(const std::string& ,
+                                       std::vector<int>* ) {
+    return false;
+  }
+
+  virtual bool FindAllFileNames(std::vector<std::string>* ) {
+    return false;
+  }
+
+  bool FindAllPackageNames(std::vector<std::string>* output);
+
+  bool FindAllMessageNames(std::vector<std::string>* output);
+
+ private:
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(DescriptorDatabase);
+};
+
+class PROTOBUF_EXPORT SimpleDescriptorDatabase : public DescriptorDatabase {
+ public:
+  SimpleDescriptorDatabase();
+  ~SimpleDescriptorDatabase() override;
+
+  bool Add(const FileDescriptorProto& file);
+
+  bool AddAndOwn(const FileDescriptorProto* file);
+
+  bool FindFileByName(const std::string& filename,
+                      FileDescriptorProto* output) override;
+  bool FindFileContainingSymbol(const std::string& symbol_name,
+                                FileDescriptorProto* output) override;
+  bool FindFileContainingExtension(const std::string& containing_type,
+                                   int field_number,
+                                   FileDescriptorProto* output) override;
+  bool FindAllExtensionNumbers(const std::string& extendee_type,
+                               std::vector<int>* output) override;
+
+  bool FindAllFileNames(std::vector<std::string>* output) override;
+
+ private:
+
+  template <typename Value>
+  class DescriptorIndex {
+   public:
+
+    bool AddFile(const FileDescriptorProto& file, Value value);
+    bool AddSymbol(const std::string& name, Value value);
+    bool AddNestedExtensions(const std::string& filename,
+                             const DescriptorProto& message_type, Value value);
+    bool AddExtension(const std::string& filename,
+                      const FieldDescriptorProto& field, Value value);
+
+    Value FindFile(const std::string& filename);
+    Value FindSymbol(const std::string& name);
+    Value FindExtension(const std::string& containing_type, int field_number);
+    bool FindAllExtensionNumbers(const std::string& containing_type,
+                                 std::vector<int>* output);
+    void FindAllFileNames(std::vector<std::string>* output);
+
+   private:
+    std::map<std::string, Value> by_name_;
+    std::map<std::string, Value> by_symbol_;
+    std::map<std::pair<std::string, int>, Value> by_extension_;
+
+  };
+
+  DescriptorIndex<const FileDescriptorProto*> index_;
+  std::vector<std::unique_ptr<const FileDescriptorProto>> files_to_delete_;
+
+  bool MaybeCopy(const FileDescriptorProto* file, FileDescriptorProto* output);
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(SimpleDescriptorDatabase);
+};
+
+class PROTOBUF_EXPORT EncodedDescriptorDatabase : public DescriptorDatabase {
+ public:
+  EncodedDescriptorDatabase();
+  ~EncodedDescriptorDatabase() override;
+
+  bool Add(const void* encoded_file_descriptor, int size);
+
+  bool AddCopy(const void* encoded_file_descriptor, int size);
+
+  bool FindNameOfFileContainingSymbol(const std::string& symbol_name,
+                                      std::string* output);
+
+  bool FindFileByName(const std::string& filename,
+                      FileDescriptorProto* output) override;
+  bool FindFileContainingSymbol(const std::string& symbol_name,
+                                FileDescriptorProto* output) override;
+  bool FindFileContainingExtension(const std::string& containing_type,
+                                   int field_number,
+                                   FileDescriptorProto* output) override;
+  bool FindAllExtensionNumbers(const std::string& extendee_type,
+                               std::vector<int>* output) override;
+  bool FindAllFileNames(std::vector<std::string>* output) override;
+
+ private:
+  class DescriptorIndex;
+
+  std::unique_ptr<DescriptorIndex> index_;
+  std::vector<void*> files_to_delete_;
+
+  bool MaybeParse(std::pair<const void*, int> encoded_file,
+                  FileDescriptorProto* output);
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(EncodedDescriptorDatabase);
+};
+
+class PROTOBUF_EXPORT DescriptorPoolDatabase : public DescriptorDatabase {
+ public:
+  explicit DescriptorPoolDatabase(const DescriptorPool& pool);
+  ~DescriptorPoolDatabase() override;
+
+  bool FindFileByName(const std::string& filename,
+                      FileDescriptorProto* output) override;
+  bool FindFileContainingSymbol(const std::string& symbol_name,
+                                FileDescriptorProto* output) override;
+  bool FindFileContainingExtension(const std::string& containing_type,
+                                   int field_number,
+                                   FileDescriptorProto* output) override;
+  bool FindAllExtensionNumbers(const std::string& extendee_type,
+                               std::vector<int>* output) override;
+
+ private:
+  const DescriptorPool& pool_;
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(DescriptorPoolDatabase);
+};
+
+class PROTOBUF_EXPORT MergedDescriptorDatabase : public DescriptorDatabase {
+ public:
+
+  MergedDescriptorDatabase(DescriptorDatabase* source1,
+                           DescriptorDatabase* source2);
+
+  explicit MergedDescriptorDatabase(
+      const std::vector<DescriptorDatabase*>& sources);
+  ~MergedDescriptorDatabase() override;
+
+  bool FindFileByName(const std::string& filename,
+                      FileDescriptorProto* output) override;
+  bool FindFileContainingSymbol(const std::string& symbol_name,
+                                FileDescriptorProto* output) override;
+  bool FindFileContainingExtension(const std::string& containing_type,
+                                   int field_number,
+                                   FileDescriptorProto* output) override;
+
+  bool FindAllExtensionNumbers(const std::string& extendee_type,
+                               std::vector<int>* output) override;
+
+  bool FindAllFileNames(std::vector<std::string>* output) override;
+
+ private:
+  std::vector<DescriptorDatabase*> sources_;
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(MergedDescriptorDatabase);
+};
+
+}
+}
+
+#include <google/protobuf/port_undef.inc>
+
+#endif

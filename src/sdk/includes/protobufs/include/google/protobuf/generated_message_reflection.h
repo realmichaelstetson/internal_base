@@ -1,0 +1,224 @@
+﻿
+#ifndef GOOGLE_PROTOBUF_GENERATED_MESSAGE_REFLECTION_H__
+#define GOOGLE_PROTOBUF_GENERATED_MESSAGE_REFLECTION_H__
+
+#include <google/protobuf/stubs/casts.h>
+#include <google/protobuf/stubs/common.h>
+#include <google/protobuf/stubs/once.h>
+#include <google/protobuf/port.h>
+#include <google/protobuf/descriptor.h>
+#include <google/protobuf/generated_enum_reflection.h>
+#include <google/protobuf/unknown_field_set.h>
+
+#include <google/protobuf/port_def.inc>
+
+#ifdef SWIG
+#error "You cannot SWIG proto headers"
+#endif
+
+namespace google {
+namespace protobuf {
+class MapKey;
+class MapValueRef;
+class MessageLayoutInspector;
+class Message;
+struct Metadata;
+}
+}
+
+namespace google {
+namespace protobuf {
+namespace internal {
+class DefaultEmptyOneof;
+
+class ExtensionSet;
+class WeakFieldMap;
+
+struct ReflectionSchema {
+ public:
+
+  uint32_t GetObjectSize() const { return static_cast<uint32_t>(object_size_); }
+
+  bool InRealOneof(const FieldDescriptor* field) const {
+    return field->containing_oneof() &&
+           !field->containing_oneof()->is_synthetic();
+  }
+
+  uint32_t GetFieldOffsetNonOneof(const FieldDescriptor* field) const {
+    GOOGLE_DCHECK(!InRealOneof(field));
+    return OffsetValue(offsets_[field->index()], field->type());
+  }
+
+  uint32_t GetFieldOffset(const FieldDescriptor* field) const {
+    if (InRealOneof(field)) {
+      size_t offset =
+          static_cast<size_t>(field->containing_type()->field_count()) +
+          field->containing_oneof()->index();
+      return OffsetValue(offsets_[offset], field->type());
+    } else {
+      return GetFieldOffsetNonOneof(field);
+    }
+  }
+
+  bool IsFieldInlined(const FieldDescriptor* field) const {
+    return Inlined(offsets_[field->index()], field->type());
+  }
+
+  uint32_t GetOneofCaseOffset(const OneofDescriptor* oneof_descriptor) const {
+    return static_cast<uint32_t>(oneof_case_offset_) +
+           static_cast<uint32_t>(
+               static_cast<size_t>(oneof_descriptor->index()) *
+               sizeof(uint32_t));
+  }
+
+  bool HasHasbits() const { return has_bits_offset_ != -1; }
+
+  uint32_t HasBitIndex(const FieldDescriptor* field) const {
+    if (has_bits_offset_ == -1) return static_cast<uint32_t>(-1);
+    GOOGLE_DCHECK(HasHasbits());
+    return has_bit_indices_[field->index()];
+  }
+
+  uint32_t HasBitsOffset() const {
+    GOOGLE_DCHECK(HasHasbits());
+    return static_cast<uint32_t>(has_bits_offset_);
+  }
+
+  bool HasInlinedString() const { return inlined_string_donated_offset_ != -1; }
+
+  uint32_t InlinedStringIndex(const FieldDescriptor* field) const {
+    GOOGLE_DCHECK(HasInlinedString());
+    return inlined_string_indices_[field->index()];
+  }
+
+  uint32_t InlinedStringDonatedOffset() const {
+    GOOGLE_DCHECK(HasInlinedString());
+    return static_cast<uint32_t>(inlined_string_donated_offset_);
+  }
+
+  uint32_t GetMetadataOffset() const {
+    return static_cast<uint32_t>(metadata_offset_);
+  }
+
+  bool HasExtensionSet() const { return extensions_offset_ != -1; }
+
+  uint32_t GetExtensionSetOffset() const {
+    GOOGLE_DCHECK(HasExtensionSet());
+    return static_cast<uint32_t>(extensions_offset_);
+  }
+
+  int GetWeakFieldMapOffset() const { return weak_field_map_offset_; }
+
+  bool IsDefaultInstance(const Message& message) const {
+    return &message == default_instance_;
+  }
+
+  const void* GetFieldDefault(const FieldDescriptor* field) const {
+    return reinterpret_cast<const uint8_t*>(default_instance_) +
+           OffsetValue(offsets_[field->index()], field->type());
+  }
+
+  bool IsEagerlyVerifiedLazyField(const FieldDescriptor* field) const {
+    GOOGLE_DCHECK_EQ(field->type(), FieldDescriptor::TYPE_MESSAGE);
+    (void)field;
+    return false;
+  }
+
+  bool IsFieldStripped(const FieldDescriptor* field) const {
+    (void)field;
+    return false;
+  }
+
+  bool IsMessageStripped(const Descriptor* descriptor) const {
+    (void)descriptor;
+    return false;
+  }
+
+  bool HasWeakFields() const { return weak_field_map_offset_ > 0; }
+
+  const Message* default_instance_;
+  const uint32_t* offsets_;
+  const uint32_t* has_bit_indices_;
+  int has_bits_offset_;
+  int metadata_offset_;
+  int extensions_offset_;
+  int oneof_case_offset_;
+  int object_size_;
+  int weak_field_map_offset_;
+  const uint32_t* inlined_string_indices_;
+  int inlined_string_donated_offset_;
+
+  static uint32_t OffsetValue(uint32_t v, FieldDescriptor::Type type) {
+    if (type == FieldDescriptor::TYPE_MESSAGE ||
+        type == FieldDescriptor::TYPE_STRING ||
+        type == FieldDescriptor::TYPE_BYTES) {
+      return v & 0xFFFFFFFEu;
+    }
+    return v;
+  }
+
+  static bool Inlined(uint32_t v, FieldDescriptor::Type type) {
+    if (type == FieldDescriptor::TYPE_STRING ||
+        type == FieldDescriptor::TYPE_BYTES) {
+      return (v & 1u) != 0u;
+    } else {
+
+      return false;
+    }
+  }
+};
+
+struct MigrationSchema {
+  int32_t offsets_index;
+  int32_t has_bit_indices_index;
+  int32_t inlined_string_indices_index;
+  int object_size;
+};
+
+struct PROTOBUF_EXPORT DescriptorTable {
+  mutable bool is_initialized;
+  bool is_eager;
+  int size;
+  const char* descriptor;
+  const char* filename;
+  once_flag* once;
+  const DescriptorTable* const* deps;
+  int num_deps;
+  int num_messages;
+  const MigrationSchema* schemas;
+  const Message* const* default_instances;
+  const uint32_t* offsets;
+
+  Metadata* file_level_metadata;
+  const EnumDescriptor** file_level_enum_descriptors;
+  const ServiceDescriptor** file_level_service_descriptors;
+};
+
+enum {
+
+  kInvalidFieldOffsetTag = 0x40000000u,
+};
+
+void PROTOBUF_EXPORT AssignDescriptors(const DescriptorTable* table,
+                                       bool eager = false);
+
+Metadata PROTOBUF_EXPORT AssignDescriptors(const DescriptorTable* (*table)(),
+                                           internal::once_flag* once,
+                                           const Metadata& metadata);
+
+PROTOBUF_EXPORT void UnknownFieldSetSerializer(const uint8_t* base,
+                                               uint32_t offset, uint32_t tag,
+                                               uint32_t has_offset,
+                                               io::CodedOutputStream* output);
+
+struct PROTOBUF_EXPORT AddDescriptorsRunner {
+  explicit AddDescriptorsRunner(const DescriptorTable* table);
+};
+
+}
+}
+}
+
+#include <google/protobuf/port_undef.inc>
+
+#endif

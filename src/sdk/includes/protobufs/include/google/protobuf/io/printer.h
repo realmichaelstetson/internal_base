@@ -1,0 +1,200 @@
+﻿
+#ifndef GOOGLE_PROTOBUF_IO_PRINTER_H__
+#define GOOGLE_PROTOBUF_IO_PRINTER_H__
+
+#include <map>
+#include <string>
+#include <vector>
+
+#include <google/protobuf/stubs/common.h>
+
+#include <google/protobuf/port_def.inc>
+
+namespace google {
+namespace protobuf {
+namespace io {
+
+class ZeroCopyOutputStream;
+
+class PROTOBUF_EXPORT AnnotationCollector {
+ public:
+
+  typedef std::pair<std::pair<size_t, size_t>, std::string> Annotation;
+
+  virtual void AddAnnotation(size_t begin_offset, size_t end_offset,
+                             const std::string& file_path,
+                             const std::vector<int>& path) = 0;
+
+  virtual void AddAnnotationNew(Annotation& ) {}
+
+  virtual ~AnnotationCollector() {}
+};
+
+template <typename AnnotationProto>
+class AnnotationProtoCollector : public AnnotationCollector {
+ public:
+
+  explicit AnnotationProtoCollector(AnnotationProto* annotation_proto)
+      : annotation_proto_(annotation_proto) {}
+
+  void AddAnnotation(size_t begin_offset, size_t end_offset,
+                     const std::string& file_path,
+                     const std::vector<int>& path) override {
+    typename AnnotationProto::Annotation* annotation =
+        annotation_proto_->add_annotation();
+    for (int i = 0; i < path.size(); ++i) {
+      annotation->add_path(path[i]);
+    }
+    annotation->set_source_file(file_path);
+    annotation->set_begin(begin_offset);
+    annotation->set_end(end_offset);
+  }
+
+  void AddAnnotationNew(Annotation& a) override {
+    auto* annotation = annotation_proto_->add_annotation();
+    annotation->ParseFromString(a.second);
+    annotation->set_begin(a.first.first);
+    annotation->set_end(a.first.second);
+  }
+
+ private:
+
+  AnnotationProto* const annotation_proto_;
+};
+
+class PROTOBUF_EXPORT Printer {
+ public:
+
+  Printer(ZeroCopyOutputStream* output, char variable_delimiter);
+
+  Printer(ZeroCopyOutputStream* output, char variable_delimiter,
+          AnnotationCollector* annotation_collector);
+
+  ~Printer();
+
+  template <typename SomeDescriptor>
+  void Annotate(const char* varname, const SomeDescriptor* descriptor) {
+    Annotate(varname, varname, descriptor);
+  }
+
+  template <typename SomeDescriptor>
+  void Annotate(const char* begin_varname, const char* end_varname,
+                const SomeDescriptor* descriptor) {
+    if (annotation_collector_ == NULL) {
+
+      return;
+    }
+    std::vector<int> path;
+    descriptor->GetLocationPath(&path);
+    Annotate(begin_varname, end_varname, descriptor->file()->name(), path);
+  }
+
+  void Annotate(const char* varname, const std::string& file_name) {
+    Annotate(varname, varname, file_name);
+  }
+
+  void Annotate(const char* begin_varname, const char* end_varname,
+                const std::string& file_name) {
+    if (annotation_collector_ == NULL) {
+
+      return;
+    }
+    std::vector<int> empty_path;
+    Annotate(begin_varname, end_varname, file_name, empty_path);
+  }
+
+  void Print(const std::map<std::string, std::string>& variables,
+             const char* text);
+
+  template <typename... Args>
+  void Print(const char* text, const Args&... args) {
+    std::map<std::string, std::string> vars;
+    PrintInternal(&vars, text, args...);
+  }
+
+  void Indent();
+
+  void Outdent();
+
+  void PrintRaw(const std::string& data);
+
+  void PrintRaw(const char* data);
+
+  void WriteRaw(const char* data, int size);
+
+  void FormatInternal(const std::vector<std::string>& args,
+                      const std::map<std::string, std::string>& vars,
+                      const char* format);
+
+  bool failed() const { return failed_; }
+
+ private:
+
+  void Annotate(const char* begin_varname, const char* end_varname,
+                const std::string& file_path, const std::vector<int>& path);
+
+  void PrintInternal(std::map<std::string, std::string>* vars,
+                     const char* text) {
+    Print(*vars, text);
+  }
+
+  template <typename... Args>
+  void PrintInternal(std::map<std::string, std::string>* vars, const char* text,
+                     const char* key, const std::string& value,
+                     const Args&... args) {
+    (*vars)[key] = value;
+    PrintInternal(vars, text, args...);
+  }
+
+  void CopyToBuffer(const char* data, int size);
+
+  void push_back(char c) {
+    if (failed_) return;
+    if (buffer_size_ == 0) {
+      if (!Next()) return;
+    }
+    *buffer_++ = c;
+    buffer_size_--;
+    offset_++;
+  }
+
+  bool Next();
+
+  inline void IndentIfAtStart();
+  const char* WriteVariable(
+      const std::vector<std::string>& args,
+      const std::map<std::string, std::string>& vars, const char* format,
+      int* arg_index,
+      std::vector<AnnotationCollector::Annotation>* annotations);
+
+  const char variable_delimiter_;
+
+  ZeroCopyOutputStream* const output_;
+  char* buffer_;
+  int buffer_size_;
+
+  size_t offset_;
+
+  std::string indent_;
+  bool at_start_of_line_;
+  bool failed_;
+
+  std::map<std::string, std::pair<size_t, size_t> > substitutions_;
+
+  std::vector<std::string> line_start_variables_;
+
+  bool GetSubstitutionRange(const char* varname,
+                            std::pair<size_t, size_t>* range);
+
+  AnnotationCollector* const annotation_collector_;
+
+  GOOGLE_DISALLOW_EVIL_CONSTRUCTORS(Printer);
+};
+
+}
+}
+}
+
+#include <google/protobuf/port_undef.inc>
+
+#endif
