@@ -24,7 +24,7 @@
 
 namespace dbg {
 
-inline HANDLE g_file = nullptr;   // nullptr = no file (must stay constant-initialised, see debug_log.cpp)
+inline HANDLE g_file = nullptr;   // nullptr = no file (constant-initialised on purpose)
 inline bool g_console = false;
 inline LARGE_INTEGER g_start{}, g_freq{};
 inline char g_path[MAX_PATH] = {};

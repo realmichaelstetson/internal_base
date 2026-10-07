@@ -247,9 +247,9 @@ BOOL APIENTRY DllMain(HMODULE h_module, DWORD ul_reason_for_call, LPVOID lp_rese
     (void)lp_reserved;
     if (ul_reason_for_call == DLL_PROCESS_ATTACH) {
         dbg::init(h_module);
-        DBG_INFO("[attach] 2/3 global constructors done, DllMain attach, InitMemAlloc...");
+        DBG_INFO("[attach] 1/2 DllMain attach (global constructors done), InitMemAlloc...");
         InitMemAlloc();
-        DBG_INFO("[attach] 3/3 InitMemAlloc done, starting init thread");
+        DBG_INFO("[attach] 2/2 InitMemAlloc done, starting init thread");
         DisableThreadLibraryCalls(h_module);
 
         HANDLE thread = CreateThread(nullptr, 0,
