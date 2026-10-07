@@ -4,6 +4,12 @@ using schema_key_value_map_t = std::unordered_map<unsigned long long, std::uint3
 using schema_table_map_t = std::unordered_map<unsigned long long, schema_key_value_map_t>;
 
 namespace {
+// Namespace scope on purpose: a function-local static is guarded through TLS,
+// which a manual-mapped dll does not have - the map stayed unconstructed and the
+// first lookup faulted (access violation reading 0x8).
+schema_table_map_t g_schema_by_module;
+schema_table_map_t g_schema_any_module;
+
 constexpr const char* schema_modules[] = {
     "client.dll",
     "animationsystem.dll",
@@ -67,7 +73,7 @@ std::uint32_t find_cached_offset(schema_table_map_t& table_map, const char* modu
 }
 
 std::uint32_t schema_get_offset(const char* module_name, const char* class_name, const char* key_name) {
-    static schema_table_map_t schema_table_map;
+    schema_table_map_t& schema_table_map = g_schema_by_module;
 
     if (!g_interfaces || !g_interfaces->m_schema_system || !module_name || !class_name || !key_name) {
         LOG_ERROR("[Schema] invalid lookup %s->%s", class_name ? class_name : "<null>", key_name ? key_name : "<null>");
@@ -88,12 +94,12 @@ void schema_verify_offset(const char* module_name, const char* class_name, const
 }
 
 void schema_verify_known_offsets() {
-    schema_verify_offset("client.dll", "CSkeletonInstance", "m_modelState", 0x140);
-    schema_verify_offset("client.dll", "C_CSPlayerPawn", "m_ArmorValue", 0x1C9C);
+    schema_verify_offset("client.dll", "CSkeletonInstance", "m_modelState", 0x140); // @sdk schema:CSkeletonInstance::m_modelState
+    schema_verify_offset("client.dll", "C_CSPlayerPawn", "m_ArmorValue", 0x1C9C); // @sdk schema:C_CSPlayerPawn::m_ArmorValue
 }
 
 std::uint32_t schema_get_offset(const char* class_name, const char* key_name) {
-    static schema_table_map_t schema_table_map;
+    schema_table_map_t& schema_table_map = g_schema_any_module;
 
     if (!g_interfaces || !g_interfaces->m_schema_system || !class_name || !key_name) {
         LOG_ERROR("[Schema] invalid lookup %s->%s", class_name ? class_name : "<null>", key_name ? key_name : "<null>");

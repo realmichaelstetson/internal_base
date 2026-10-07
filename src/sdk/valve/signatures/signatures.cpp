@@ -138,7 +138,10 @@ std::uint8_t* c_signatures::get(const char* module_name, const char* name)
 
 	std::uint8_t* resolved = resolve(entry);
 	m_cache.emplace(cache_key, resolved);
-	diagnostics::g_diagnostics->mark_signature(module_name, name, resolved != nullptr, is_required_signature(name));
+	// g_diagnostics can still be unconstructed if a signature is resolved from a
+	// global initialiser instead of from an init step - don't fault on it
+	if (diagnostics::g_diagnostics)
+		diagnostics::g_diagnostics->mark_signature(module_name, name, resolved != nullptr, is_required_signature(name));
 	return resolved;
 }
 

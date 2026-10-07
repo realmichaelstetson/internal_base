@@ -249,8 +249,9 @@ namespace custom_paint {
 	};
 
 	std::unordered_map<void*, vector_state_t> g_vector_states;
-	thread_local uint16_t g_weapon_material_def_index = 0;
-	thread_local int g_weapon_material_depth = 0;
+	// plain globals: thread_local needs a TLS slot, which manual-mapped dlls don't get
+	uint16_t g_weapon_material_def_index = 0;
+	int g_weapon_material_depth = 0;
 
 	void reset_cached_vectors() {
 		g_vector_states.clear();
@@ -756,6 +757,14 @@ bool c_hooks::initialize() {
 
 	bool required_ok = true;
 	auto hook_required = [&required_ok](c_hook& hook, void* target, void* detour, const char* name) {
+		if (!target) {
+			// MinHook on a null / stale address is the classic "CS2 just closed" crash
+			diagnostics::g_diagnostics->mark_hook(name, false, true);
+			LOG_ERROR(xorstr_("[hooks] required hook target missing: %s"), name);
+			required_ok = false;
+			return;
+		}
+
 		const bool ok = hook.hook(target, detour);
 		diagnostics::g_diagnostics->mark_hook(name, ok, true);
 		if (!ok) {
@@ -1295,9 +1304,24 @@ static void* try_get_event_controller(void* p_game_event, i_game_event::CUtlStri
 	}
 }
 
-static std::int64_t(__fastcall* fn_get_int64)(void*, const char*) = reinterpret_cast<std::int64_t(__fastcall*)(void*, const char*)>(SIG("GameEvent_GetInt64"));
+// Resolved on first use, NOT in a global initialiser: a global initialiser runs
+// during DllMain's static-init phase, where g_signatures / g_opcodes / g_diagnostics
+// may themselves be unconstructed and client.dll is not scanned yet. Calling SIG()
+// there crashed the game before a single line was logged.
+using get_int64_fn_t = std::int64_t(__fastcall*)(void*, const char*);
+static get_int64_fn_t g_get_int64 = nullptr;
+static bool g_get_int64_resolved = false;
+
+static get_int64_fn_t get_int64_fn() {
+	if (!g_get_int64_resolved) {
+		g_get_int64_resolved = true;
+		g_get_int64 = reinterpret_cast<get_int64_fn_t>(SIG("GameEvent_GetInt64"));
+	}
+	return g_get_int64;
+}
 
 static bool try_read_hurt_values(void* p_game_event, std::int64_t& dmg_health, std::int64_t& hitgroup, std::int64_t& health) {
+	const auto fn_get_int64 = get_int64_fn();
 	if (!fn_get_int64)
 		return false;
 	__try {
