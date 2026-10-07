@@ -249,8 +249,9 @@ namespace custom_paint {
 	};
 
 	std::unordered_map<void*, vector_state_t> g_vector_states;
-	thread_local uint16_t g_weapon_material_def_index = 0;
-	thread_local int g_weapon_material_depth = 0;
+	// plain globals: thread_local needs TLS, which manual-mapped dlls don't get
+	uint16_t g_weapon_material_def_index = 0;
+	int g_weapon_material_depth = 0;
 
 	void reset_cached_vectors() {
 		g_vector_states.clear();

@@ -29,7 +29,8 @@ inline bool g_console = false;
 inline LARGE_INTEGER g_start{}, g_freq{};
 inline char g_path[MAX_PATH] = {};
 inline const char* g_init_step = "dll attach";            // last init step (any thread)
-inline thread_local const char* t_stage = nullptr;          // last hook / feature entered on this thread
+inline const char* t_stage = nullptr;                       // last hook / signature entered (any thread)
+inline bool g_initialized = false;
 inline HMODULE g_self = nullptr;
 inline std::uintptr_t g_self_size = 0;
 inline HANDLE g_sym_process = nullptr;   // dbghelp session (our own handle, not the game's)
@@ -225,6 +226,8 @@ inline bool symbolize(const void* p, char* out, std::size_t n) {
 // ---------------------------------------------------------------- output
 
 inline void write_out(const char* s, int len, const char* color, bool to_console) {
+	OutputDebugStringA(s);          // also visible in DebugView
+	OutputDebugStringA("\n");
 	if (g_file != INVALID_HANDLE_VALUE) {
 		DWORD w = 0;
 		WriteFile(g_file, s, static_cast<DWORD>(len), &w, nullptr);
@@ -346,7 +349,7 @@ inline void crash_report(EXCEPTION_POINTERS* ep, const char* kind) {
 		DBG_ERR("access    : %s %s", op == 0 ? "READ from" : op == 1 ? "WRITE to" : "EXECUTE at",
 		        addr(rec->ExceptionInformation[1]).s);
 	}
-	DBG_ERR("thread    : %lu   init step: %s   last hook on thread: %s", GetCurrentThreadId(),
+	DBG_ERR("thread    : %lu   init step: %s   last hook/signature entered: %s", GetCurrentThreadId(),
 	        g_init_step ? g_init_step : "-", t_stage ? t_stage : "-");
 	DBG_ERR("code      : %s", bytes(rec->ExceptionAddress, 16).s);
 	DBG_ERR("RAX %016llX RBX %016llX RCX %016llX RDX %016llX", c->Rax, c->Rbx, c->Rcx, c->Rdx);
@@ -381,10 +384,9 @@ inline LONG CALLBACK vectored_handler(EXCEPTION_POINTERS* ep) {
 	if (!exception_name(code))
 		return EXCEPTION_CONTINUE_SEARCH;
 
-	static thread_local bool in_handler = false;
-	if (in_handler)
+	static volatile LONG in_handler = 0;     // no thread_local: breaks manual-mapped dlls
+	if (InterlockedExchange(&in_handler, 1))
 		return EXCEPTION_CONTINUE_SEARCH;
-	in_handler = true;
 
 	// report every faulting address once; CS2 and our __try blocks raise handled
 	// exceptions too, so only the LAST report before the game dies is the crash
@@ -405,7 +407,7 @@ inline LONG CALLBACK vectored_handler(EXCEPTION_POINTERS* ep) {
 			crash_report(ep, "EXCEPTION (if CS2 closes now, this is the crash)");
 		}
 	}
-	in_handler = false;
+	InterlockedExchange(&in_handler, 0);
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
@@ -416,7 +418,17 @@ inline LONG WINAPI unhandled_filter(EXCEPTION_POINTERS* ep) {
 
 // ---------------------------------------------------------------- setup
 
+inline HANDLE open_log(const char* dir) {
+	CreateDirectoryA(dir, nullptr);
+	_snprintf_s(g_path, sizeof(g_path), _TRUNCATE, "%s\\debug.log", dir);
+	return CreateFileA(g_path, GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, CREATE_ALWAYS,
+	                   FILE_ATTRIBUTE_NORMAL | FILE_FLAG_WRITE_THROUGH, nullptr);
+}
+
 inline void init(HMODULE self) {
+	if (g_initialized)
+		return;
+	g_initialized = true;
 	g_self = self;
 	if (self && readable(self, sizeof(IMAGE_DOS_HEADER))) {
 		const auto* dos = reinterpret_cast<const IMAGE_DOS_HEADER*>(self);
@@ -427,22 +439,38 @@ inline void init(HMODULE self) {
 	QueryPerformanceFrequency(&g_freq);
 	QueryPerformanceCounter(&g_start);
 
+	// Documents\celerity\debug.log, or %TEMP%\celerity\debug.log if that fails
 	char dir[MAX_PATH];
 	if (GetEnvironmentVariableA("USERPROFILE", dir, sizeof(dir))) {
 		strcat_s(dir, "\\Documents\\celerity");
-		CreateDirectoryA(dir, nullptr);
-		_snprintf_s(g_path, sizeof(g_path), _TRUNCATE, "%s\\debug.log", dir);
-		g_file = CreateFileA(g_path, GENERIC_WRITE, FILE_SHARE_READ, nullptr, CREATE_ALWAYS,
-		                     FILE_ATTRIBUTE_NORMAL | FILE_FLAG_WRITE_THROUGH, nullptr);
+		g_file = open_log(dir);
 	}
+	if (g_file == INVALID_HANDLE_VALUE && GetTempPathA(sizeof(dir), dir)) {
+		strcat_s(dir, "celerity");
+		g_file = open_log(dir);
+	}
+	if (g_file == INVALID_HANDLE_VALUE)
+		g_path[0] = '\0';
 
 	g_veh = AddVectoredExceptionHandler(1, vectored_handler);
 	g_prev_filter = SetUnhandledExceptionFilter(unhandled_filter);
 
 	char path[MAX_PATH];
-	DBG_INFO("debug log started, file: %s", g_path[0] ? g_path : "<none>");
+	DBG_INFO("debug log started - dll built " __DATE__ " " __TIME__);
+	DBG_INFO("log file: %s", g_path[0] ? g_path : "<could not create>");
 	DBG_INFO("our dll: %s base %p size 0x%llX%s", module_name(self, path, MAX_PATH), static_cast<void*>(self),
 	         static_cast<unsigned long long>(g_self_size), module_of(self) ? "" : " (manual mapped)");
+
+	// manual-mapped dlls get no TLS: thread_local / __declspec(thread) data would read and
+	// write somebody else's memory. The project is built with /Zc:threadSafeInit- and has no
+	// thread_local of its own; a TLS directory left in the image comes from a static lib.
+	if (self && !module_of(self) && readable(self, sizeof(IMAGE_DOS_HEADER))) {
+		const auto* dos = reinterpret_cast<const IMAGE_DOS_HEADER*>(self);
+		const auto* nt = reinterpret_cast<const IMAGE_NT_HEADERS*>(reinterpret_cast<const char*>(self) + dos->e_lfanew);
+		if (readable(nt, sizeof(*nt)) && nt->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS].Size)
+			DBG_WARN("dll is manual mapped but has a TLS directory (thread_local in a linked lib, e.g. libprotobuf) - "
+			         "if it crashes in protobuf code, use an injector with TLS support or LoadLibrary injection");
+	}
 	DBG_INFO("crash handler %s", g_veh ? "installed" : "FAILED to install");
 }
 

@@ -108,7 +108,7 @@ uintptr_t __stdcall start_address(const HMODULE h_module) {
     }
     try {
         logger::initialize();
-        DBG_INFO("[init] console ready, full log also in %s", dbg::g_path);
+        DBG_INFO("[init] console ready - dll built " __DATE__ " " __TIME__ " - full log in %s", dbg::g_path[0] ? dbg::g_path : "<could not create log file>");
         dbg::init_symbols();
         diagnostics::g_diagnostics->initialize();
         int init_index = 0;
