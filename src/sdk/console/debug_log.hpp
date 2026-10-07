@@ -479,24 +479,161 @@ inline bool register_exception_table(HMODULE self) {
 	return RtlAddFunctionTable(table, count, base) != FALSE;
 }
 
-// Reports exactly what the injector did or did not do about our TLS block.
-inline void report_tls(HMODULE self) {
+// ---- TLS ------------------------------------------------------------------
+//
+// Why this exists. MSVC guards every function-local static with a thread-local
+// epoch counter (_Init_thread_epoch). The generated prologue is
+//
+//     cmp  guard, _Init_thread_epoch      ; _Init_thread_epoch is thread-local
+//     jle  already_initialised            ; <-- skips the constructor
+//
+// and _Init_thread_epoch lives in this module's TLS block, reached as
+// TEB->ThreadLocalStoragePointer[_tls_index]. A manual mapper that does not do
+// what LdrpHandleTlsData does leaves _tls_index at 0, so that read lands in the
+// *exe's* TLS block and returns an unrelated value. Anything bigger than the
+// guard takes the jump, the constructor never runs, and the first use of the
+// object dereferences a null pointer.
+//
+// /Zc:threadSafeInit- removes those guards from our own translation units, but
+// not from the prebuilt libprotobuf.lib, whose descriptor registration runs from
+// a static initialiser before DllMain. That is the crash: a skipped magic static
+// inside protobuf, faulting with a null `this`.
+//
+// So set the block up ourselves. setup_tls() runs from the .CRT$XLB callback,
+// which is ahead of the CRT's own __dyn_tls_init (.CRT$XLC) and ahead of every
+// static initialiser, so by the time protobuf registers its descriptors
+// _tls_index points at memory we own and the guards work normally.
+
+inline DWORD g_tls_index = 0;             // slot we claimed (0 = we claimed none)
+inline void* g_tls_block = nullptr;       // what that slot points at
+inline std::size_t g_tls_size = 0;
+inline bool g_tls_repaired = false;
+
+inline const IMAGE_TLS_DIRECTORY64* tls_directory(HMODULE self) {
 	if (!self || !readable(self, sizeof(IMAGE_DOS_HEADER)))
-		return;
+		return nullptr;
 	const auto base = reinterpret_cast<std::uintptr_t>(self);
 	const auto* dos = reinterpret_cast<const IMAGE_DOS_HEADER*>(self);
+	if (dos->e_magic != IMAGE_DOS_SIGNATURE)
+		return nullptr;
 	const auto* nt = reinterpret_cast<const IMAGE_NT_HEADERS*>(base + dos->e_lfanew);
 	if (!readable(nt, sizeof(*nt)) || nt->Signature != IMAGE_NT_SIGNATURE)
-		return;
+		return nullptr;
 	const auto& dir = nt->OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_TLS];
-	if (!dir.VirtualAddress || !dir.Size) {
+	if (!dir.VirtualAddress || dir.Size < sizeof(IMAGE_TLS_DIRECTORY64))
+		return nullptr;
+	const auto* tls = reinterpret_cast<const IMAGE_TLS_DIRECTORY64*>(base + dir.VirtualAddress);
+	return readable(tls, sizeof(*tls)) ? tls : nullptr;
+}
+
+// How many entries this thread's TLS vector holds. The loader allocates it from
+// the process heap, so HeapSize hands the capacity back. 0 means "could not tell"
+// and every caller treats that as "do not touch it".
+inline std::size_t tls_array_capacity(void** arr) {
+	if (!arr)
+		return 0;
+	const SIZE_T bytes = HeapSize(GetProcessHeap(), 0, arr);
+	if (bytes == static_cast<SIZE_T>(-1) || bytes < sizeof(void*))
+		return 0;
+	return bytes / sizeof(void*);
+}
+
+// Claim a TLS slot and point _tls_index at a block of our own. Call before any
+// static initialiser; returns false (changing nothing) when there is nothing to
+// do or when anything looks unexpected, so the worst case is the old behaviour.
+inline bool setup_tls(HMODULE self) {
+	if (module_of(self))
+		return false;                       // real loader loaded us, TLS is already set up
+
+	const auto* tls = tls_directory(self);
+	if (!tls)
+		return false;                       // no TLS directory: nothing needs a slot
+
+	auto* idx_ptr = reinterpret_cast<DWORD*>(tls->AddressOfIndex);
+	if (!readable(idx_ptr, sizeof(DWORD)) || *idx_ptr != 0)
+		return false;                       // the injector handled TLS after all
+
+	void** arr = tls_array();
+	const std::size_t cap = tls_array_capacity(arr);
+	if (!cap)
+		return false;
+
+	// Highest free slot. The loader hands out the lowest free index in its bitmap,
+	// so taking the top one is what a dll loaded later is least likely to be given.
+	// Slot 0 is never ours - that one belongs to whoever got TLS first, the exe.
+	std::size_t slot = 0;
+	for (std::size_t i = cap - 1; i >= 1; --i) {
+		if (!arr[i]) {
+			slot = i;
+			break;
+		}
+	}
+	if (!slot)
+		return false;
+
+	const auto raw = static_cast<std::size_t>(tls->EndAddressOfRawData - tls->StartAddressOfRawData);
+	const std::size_t size = raw + tls->SizeOfZeroFill;
+	void* block = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size ? size : sizeof(void*));
+	if (!block)
+		return false;
+
+	// The template holds the initial values (_Init_thread_epoch starts at INT_MIN,
+	// which is what makes an uninitialised guard take the locked slow path).
+	if (raw && readable(reinterpret_cast<const void*>(tls->StartAddressOfRawData), raw))
+		std::memcpy(block, reinterpret_cast<const void*>(tls->StartAddressOfRawData), raw);
+
+	// _tls_index sits in .data; a mapper that got the section protections wrong
+	// would otherwise turn this write into the crash we are here to prevent.
+	DWORD old_protect = 0;
+	const bool unlocked = VirtualProtect(idx_ptr, sizeof(DWORD), PAGE_READWRITE, &old_protect) != FALSE;
+
+	arr[slot] = block;
+	*idx_ptr = static_cast<DWORD>(slot);
+
+	if (unlocked)
+		VirtualProtect(idx_ptr, sizeof(DWORD), old_protect, &old_protect);
+
+	g_tls_index = static_cast<DWORD>(slot);
+	g_tls_block = block;
+	g_tls_size = size;
+	g_tls_repaired = true;
+	return true;
+}
+
+// One block shared by every thread, rather than one block each.
+//
+// That is a deliberate simplification, not an oversight: a manual-mapped dll gets
+// no thread notifications, so there is no hook on which to build or free a block
+// per thread. It is sound for what actually lives in this block:
+//
+//   * _Init_thread_epoch is a monotonic cache whose only job is to let a thread
+//     skip the lock once it has caught up with _Init_global_epoch. A guard that
+//     has never been initialised still holds 0, which compares greater than any
+//     epoch (they count up from INT_MIN), so the locked slow path still runs and
+//     the constructor still happens exactly once.
+//   * protobuf's arena thread cache is never touched: libprotobuf is linked for
+//     the generated message layout, and we never construct a message.
+//
+// A thread that starts after us gets a fresh vector from the loader with our slot
+// empty, so any thread of ours that could reach TLS calls this on the way in.
+inline void bind_tls_for_current_thread() {
+	if (!g_tls_index || !g_tls_block)
+		return;
+	void** arr = tls_array();
+	if (!arr || g_tls_index >= tls_array_capacity(arr))
+		return;
+	if (arr[g_tls_index] != g_tls_block)
+		arr[g_tls_index] = g_tls_block;
+}
+
+// Reports what the injector did or did not do about our TLS block, and what
+// setup_tls() had to put right.
+inline void report_tls(HMODULE self) {
+	const auto* tls = tls_directory(self);
+	if (!tls) {
 		DBG_OK("tls       : image has no TLS directory - nothing to set up");
 		return;
 	}
-
-	const auto* tls = reinterpret_cast<const IMAGE_TLS_DIRECTORY64*>(base + dir.VirtualAddress);
-	if (!readable(tls, sizeof(*tls)))
-		return;
 	const auto tmpl = static_cast<unsigned long long>(tls->EndAddressOfRawData - tls->StartAddressOfRawData);
 	DBG_INFO("tls       : directory present, %llu + %lu bytes per thread, index stored at %p",
 	         tmpl, tls->SizeOfZeroFill, reinterpret_cast<void*>(tls->AddressOfIndex));
@@ -514,15 +651,21 @@ inline void report_tls(HMODULE self) {
 		DBG_OK("tls       : loaded by the Windows loader, TLS is set up for us");
 		return;
 	}
+	if (g_tls_repaired) {
+		DBG_OK("tls       : injector left _tls_index at 0 - claimed slot %lu ourselves, "
+		       "%llu byte block at %p", g_tls_index, static_cast<unsigned long long>(g_tls_size), g_tls_block);
+		return;
+	}
 	if (idx == 0) {
 		// index 0 is whoever got TLS first - the exe, never us
 		DBG_ERR("=============================================================");
-		DBG_ERR("TLS WAS NOT SET UP BY YOUR INJECTOR");
+		DBG_ERR("TLS WAS NOT SET UP BY YOUR INJECTOR, AND WE COULD NOT REPAIR IT");
 		DBG_ERR("_tls_index is still 0, so every thread_local in this dll reads and writes");
-		DBG_ERR("CS2's own TLS block, and the TLS callback that constructs them never ran.");
-		DBG_ERR("This dll has no thread_local of its own (built with /Zc:threadSafeInit-);");
-		DBG_ERR("the TLS directory comes from libprotobuf.lib, whose static initialisers");
-		DBG_ERR("run before DllMain - which is why nothing is printed before the crash.");
+		DBG_ERR("CS2's own TLS block. libprotobuf's static initialisers run before DllMain");
+		DBG_ERR("and their function-local statics are skipped, which faults on first use -");
+		DBG_ERR("which is why nothing is printed before the crash.");
+		DBG_ERR("setup_tls() found no free slot in this thread's TLS vector (or could not");
+		DBG_ERR("size it), so it changed nothing.");
 		DBG_ERR("Fix: inject with a manual mapper that handles TLS (LdrpHandleTlsData /");
 		DBG_ERR("'TLS support' option), or inject with LoadLibrary.");
 		DBG_ERR("=============================================================");
@@ -591,6 +734,11 @@ inline void init_from(HMODULE self, const char* via) {
 		DBG_OK("unwind    : registered our own .pdata (manual map: nobody else did)");
 	else
 		DBG_INFO("unwind    : exception table already resolvable");
+
+	// Then TLS, before anything that could use a function-local static. On the
+	// .CRT$XLB path this is ahead of every static initialiser; on the init_seg(lib)
+	// fallback path .CRT$XCL still sorts ahead of protobuf's runners in .CRT$XCU.
+	setup_tls(self);
 	report_tls(self);
 }
 

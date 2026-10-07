@@ -1599,6 +1599,13 @@ bool __fastcall hooks::fire_event_client_side::hk_fire_event_client_side(void* p
 }
 
 HRESULT hooks::present::hk_present(IDXGISwapChain* swap_chain, unsigned int sync_interval, unsigned int flags) {
+	// CS2's render thread runs nearly all of our hook code and was not around when
+	// dbg::setup_tls() claimed our TLS slot, so bind it here - this is the one
+	// per-frame entry point every other hook is reached through. Costs a heap
+	// lookup; saves a fault in any statically linked code that uses a
+	// function-local static (see dbg::setup_tls for why those need a TLS block).
+	dbg::bind_tls_for_current_thread();
+
 	auto original = m_present.get_original<decltype(&hk_present)>();
 	if (!original)
 		return S_OK;

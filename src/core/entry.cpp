@@ -83,6 +83,10 @@ void destroy(HMODULE h_module) {
 }
 
 uintptr_t __stdcall start_address(const HMODULE h_module) {
+    // This thread was created after the TLS repair, so the loader gave it a fresh
+    // TLS vector with our slot empty. Point it back at our block before running
+    // anything that could reach a thread-local (see dbg::setup_tls).
+    dbg::bind_tls_for_current_thread();
     DBG_INFO("[init] init thread started");
     char user_name[64];
     DWORD user_name_len = sizeof(user_name);
