@@ -12,7 +12,7 @@ namespace {
 struct early_init_t {
 	early_init_t() {
 		dbg::init(reinterpret_cast<HMODULE>(&__ImageBase));
-		DBG_INFO("[attach] early init (before global constructors)");
+		DBG_INFO("[attach] 1/3 early init - global constructors of the dll start now");
 	}
 };
 early_init_t g_early_init;

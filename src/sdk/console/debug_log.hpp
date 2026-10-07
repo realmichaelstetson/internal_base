@@ -24,7 +24,7 @@
 
 namespace dbg {
 
-inline HANDLE g_file = INVALID_HANDLE_VALUE;
+inline HANDLE g_file = nullptr;   // nullptr = no file (must stay constant-initialised, see debug_log.cpp)
 inline bool g_console = false;
 inline LARGE_INTEGER g_start{}, g_freq{};
 inline char g_path[MAX_PATH] = {};
@@ -226,9 +226,7 @@ inline bool symbolize(const void* p, char* out, std::size_t n) {
 // ---------------------------------------------------------------- output
 
 inline void write_out(const char* s, int len, const char* color, bool to_console) {
-	OutputDebugStringA(s);          // also visible in DebugView
-	OutputDebugStringA("\n");
-	if (g_file != INVALID_HANDLE_VALUE) {
+	if (g_file) {
 		DWORD w = 0;
 		WriteFile(g_file, s, static_cast<DWORD>(len), &w, nullptr);
 		WriteFile(g_file, "\r\n", 2, &w, nullptr);
@@ -421,8 +419,9 @@ inline LONG WINAPI unhandled_filter(EXCEPTION_POINTERS* ep) {
 inline HANDLE open_log(const char* dir) {
 	CreateDirectoryA(dir, nullptr);
 	_snprintf_s(g_path, sizeof(g_path), _TRUNCATE, "%s\\debug.log", dir);
-	return CreateFileA(g_path, GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, CREATE_ALWAYS,
-	                   FILE_ATTRIBUTE_NORMAL | FILE_FLAG_WRITE_THROUGH, nullptr);
+	HANDLE h = CreateFileA(g_path, GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, nullptr, CREATE_ALWAYS,
+	                       FILE_ATTRIBUTE_NORMAL | FILE_FLAG_WRITE_THROUGH, nullptr);
+	return h == INVALID_HANDLE_VALUE ? nullptr : h;
 }
 
 inline void init(HMODULE self) {
@@ -445,11 +444,11 @@ inline void init(HMODULE self) {
 		strcat_s(dir, "\\Documents\\celerity");
 		g_file = open_log(dir);
 	}
-	if (g_file == INVALID_HANDLE_VALUE && GetTempPathA(sizeof(dir), dir)) {
+	if (!g_file && GetTempPathA(sizeof(dir), dir)) {
 		strcat_s(dir, "celerity");
 		g_file = open_log(dir);
 	}
-	if (g_file == INVALID_HANDLE_VALUE)
+	if (!g_file)
 		g_path[0] = '\0';
 
 	g_veh = AddVectoredExceptionHandler(1, vectored_handler);
@@ -488,9 +487,9 @@ inline void shutdown() {
 		g_prev_filter = nullptr;
 	}
 	g_console = false;
-	if (g_file != INVALID_HANDLE_VALUE) {
+	if (g_file) {
 		CloseHandle(g_file);
-		g_file = INVALID_HANDLE_VALUE;
+		g_file = nullptr;
 	}
 }
 
