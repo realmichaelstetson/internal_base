@@ -314,8 +314,7 @@ namespace {
 
 	// Resolve controller index `i` to its pawn, returning it only if it is an alive
 	// enemy of `local`. Pointer/int locals only -> safe to wrap in SEH (no C2712).
-	c_cs_player_pawn* resolve_enemy_pawn(int i, c_cs_player_pawn* local, int& out_index) {
-		out_index = -1;
+	c_cs_player_pawn* resolve_enemy_pawn(int i, c_cs_player_pawn* local) {
 		__try {
 			auto* entity = get_base_entity_safe(i);
 			if (!entity || !entity->is_player_controller())
@@ -326,8 +325,7 @@ namespace {
 			if (!pawn_handle.is_valid())
 				return nullptr;
 
-			out_index = pawn_handle.get_entry_index();
-			auto* pawn = reinterpret_cast<c_cs_player_pawn*>(get_base_entity_safe(out_index));
+			auto* pawn = reinterpret_cast<c_cs_player_pawn*>(get_base_entity_safe(pawn_handle.get_entry_index()));
 			if (!pawn || pawn->m_health() <= 0)
 				return nullptr;
 			if (pawn->m_team_num() == local->m_team_num())
@@ -342,8 +340,7 @@ namespace {
 
 	// Resolve controller index `i` to its pawn, returning it only if it is an alive
 	// teammate of `local` (and not `local` itself). Pointer/int locals only.
-	c_cs_player_pawn* resolve_teammate_pawn(int i, c_cs_player_pawn* local, int& out_index) {
-		out_index = -1;
+	c_cs_player_pawn* resolve_teammate_pawn(int i, c_cs_player_pawn* local) {
 		__try {
 			auto* entity = get_base_entity_safe(i);
 			if (!entity || !entity->is_player_controller())
@@ -354,8 +351,7 @@ namespace {
 			if (!pawn_handle.is_valid())
 				return nullptr;
 
-			out_index = pawn_handle.get_entry_index();
-			auto* pawn = reinterpret_cast<c_cs_player_pawn*>(get_base_entity_safe(out_index));
+			auto* pawn = reinterpret_cast<c_cs_player_pawn*>(get_base_entity_safe(pawn_handle.get_entry_index()));
 			if (!pawn || pawn->m_health() <= 0)
 				return nullptr;
 			if (pawn == local)
@@ -372,30 +368,12 @@ namespace {
 
 	// Resolve the local player's first-person arms entity (C_CS2HudModelArms) from
 	// its handle. Pointer/int locals only -> SEH-safe.
-	c_base_entity* resolve_arms_entity(c_cs_player_pawn* local, int& out_index) {
-		out_index = -1;
+	c_base_entity* resolve_arms_entity(c_cs_player_pawn* local) {
 		__try {
 			const c_base_handle arms_handle = local->m_hud_model_arms();
 			if (!arms_handle.is_valid())
 				return nullptr;
-			out_index = arms_handle.get_entry_index();
-			return get_base_entity_safe(out_index);
-		}
-		__except (EXCEPTION_EXECUTE_HANDLER) {
-			return nullptr;
-		}
-	}
-
-	// Resolve active weapon entity from the local pawn for viewmodel chams.
-	c_base_player_weapon* resolve_weapon_entity(c_cs_player_pawn* local, int& out_index) {
-		out_index = -1;
-		__try {
-			if (!local)
-				return nullptr;
-			auto* wp = local->get_active_weapon();
-			if (wp)
-				out_index = entry_index_of(reinterpret_cast<c_entity_instance*>(wp));
-			return wp;
+			return get_base_entity_safe(arms_handle.get_entry_index());
 		}
 		__except (EXCEPTION_EXECUTE_HANDLER) {
 			return nullptr;
@@ -519,66 +497,54 @@ void c_chams::refresh_targets() {
 			resolved[resolved_count++] = { p, idx, t };
 		}
 	};
-	const auto push_direct = [&](const void* p, int idx, int t) {
-		if (p && resolved_count < static_cast<int>(std::size(resolved))) {
-			resolved[resolved_count++] = { p, idx, t };
-		}
-	};
 
 	if (g_ctx && g_ctx->m_local_pawn && g_interfaces && g_interfaces->m_entity_system) {
 		auto* local = reinterpret_cast<c_cs_player_pawn*>(g_ctx->m_local_pawn);
 
 		// Players: each controller resolves to either an enemy or a teammate pawn.
 		for (int i = 1; i <= 64; ++i) {
-			int p_idx = -1;
-			if (auto* pawn = resolve_enemy_pawn(i, local, p_idx)) {
-				push_direct(pawn, p_idx, target_enemy);
-				const void* owners[32] = {};
-				const int cnt = collect_entity_subtree_owners(pawn, owners, 32);
-				for (int k = 0; k < cnt; ++k)
-					push(owners[k], target_enemy);
-			}
-			else if (auto* mate = resolve_teammate_pawn(i, local, p_idx)) {
-				push_direct(mate, p_idx, target_teammate);
-				const void* owners[32] = {};
-				const int cnt = collect_entity_subtree_owners(mate, owners, 32);
-				for (int k = 0; k < cnt; ++k)
-					push(owners[k], target_teammate);
-			}
+			if (auto* pawn = resolve_enemy_pawn(i, local))
+				push(pawn, target_enemy);
+			else if (auto* mate = resolve_teammate_pawn(i, local))
+				push(mate, target_teammate);
 		}
 
-		// Local first-person arms and hands (C_CS2HudModelArms)
-		int arms_idx = -1;
-		if (auto* arms = resolve_arms_entity(local, arms_idx)) {
-			push_direct(arms, arms_idx, target_arms);
-			const void* arm_owners[64] = {};
-			const int arm_count = collect_entity_subtree_owners(arms, arm_owners, 64);
-			for (int k = 0; k < arm_count; ++k)
-				push(arm_owners[k], target_arms);
-		}
-
-		// Local pawn body / legs scene subtree (arms target as fallback)
+		// Local first-person / own model -> arms. The arms meshes are submitted under
+		// different nodes of the local hierarchy depending on movement state, so map
+		// the whole local-pawn scene subtree (plus the pawn itself) to the arms target.
+		// This is the catch-all that stops the arms flashing their real material while
+		// moving. Weapon-viewmodel entities are re-mapped to their own target below.
 		const void* local_owners[64] = {};
 		const int local_count = collect_entity_subtree_owners(local, local_owners, 64);
 		for (int k = 0; k < local_count; ++k)
 			push(local_owners[k], target_arms);
 		push(static_cast<const void*>(local), target_arms);
 
-		// Active weapon viewmodel and its attachments
-		int wp_idx = -1;
-		if (auto* weapon = resolve_weapon_entity(local, wp_idx)) {
-			push_direct(weapon, wp_idx, target_viewmodel);
+		// Arms entity + the entire weapon-viewmodel subtree. Deep-walk the arms scene
+		// subtree (not just its direct children) so the weapon's moving parts and
+		// attachments -- submitted under grandchild nodes of the viewmodel node -- are
+		// captured too; those descendants were the meshes still flashing their real
+		// material after the single-level walk. Pushed as viewmodel FIRST, then the arms
+		// entity itself as arms LAST, so the later upsert wins and the arm meshes keep
+		// the arms colour independent of the gun.
+		if (auto* arms = resolve_arms_entity(local)) {
 			const void* vm_owners[64] = {};
-			const int vm_count = collect_entity_subtree_owners(weapon, vm_owners, 64);
+			const int vm_count = collect_entity_subtree_owners(arms, vm_owners, 64);
 			for (int k = 0; k < vm_count; ++k)
 				push(vm_owners[k], target_viewmodel);
+
+			push(static_cast<const void*>(arms), target_arms);
 		}
 	}
 
 	// Merge with a TTL instead of hard-swapping: age out existing entries, then
 	// (re)insert everything resolved this frame with a fresh TTL. A target that
 	// missed resolution on a single frame survives k_target_ttl frames before it is
-	// dropped, which is what prevents the real-material flicker.
+	// dropped, which is what prevents the real-material flicker (worst on the local
+	// arms/viewmodel, whose handles churn far more than enemy pawns).
+	// AGGRESSIVE REFRESH: if an entity is re-resolved, reset its TTL to max instead
+	// of just keeping the old one. This bridges animation-driven scene-graph churn
+	// where moving/strafing causes nodes to temporarily disappear from traversal.
 
 	std::lock_guard<std::mutex> lock(m_targets_mutex);
 	
@@ -601,7 +567,8 @@ void c_chams::refresh_targets() {
 		// Upsert: if already exists, this resets TTL to max (aggressive refresh)
 		m_targets[resolved[k].ptr] = { resolved[k].target, k_target_ttl };
 		// Also key by handle slot: on_generate_primitives resolves the object's m_owner
-		// as a handle, and the slot is identical across pointer reallocation.
+		// as a handle, and the slot is identical across pointer reallocation -- this is
+		// what stops the arms/viewmodel flashing their real material between frames.
 		if (resolved[k].index >= 0)
 			m_target_indices[resolved[k].index] = { resolved[k].target, k_target_ttl };
 	}
@@ -625,8 +592,7 @@ int c_chams::classify(const void* entity, int entry_index) {
 }
 
 bool c_chams::on_generate_primitives(c_animatable_scene_object_desc* desc, c_scene_animatable_object* object,
-                                     void* a3, c_mesh_primitive_output_buffer* render_buf, generate_primitives_fn original,
-                                     void** out_result) {
+                                     void* a3, c_mesh_primitive_output_buffer* render_buf, generate_primitives_fn original) {
 	if (!g_cfg || !m_initialized || !object || !render_buf || !original)
 		return false;
 
@@ -643,34 +609,18 @@ bool c_chams::on_generate_primitives(c_animatable_scene_object_desc* desc, c_sce
 	if (!any_enabled)
 		return false;
 
-	// Resolve the owning entity of this object directly from candidate offsets.
-	// 0xC0 is the primary offset in current CS2; 0xB8, 0xB0, 0xC8, 0xD0, 0x118, 0x120 are checked as fallbacks.
-	int target = -1;
-	static constexpr uintptr_t k_candidate_offsets[] = { 0xC0, 0xB8, 0xB0, 0xC8, 0xD0, 0x118, 0x120 };
+	// Resolve the owning entity of this object directly from the object argument --
+	// this is the whole point of the GeneratePrimitives approach: one stable owner per
+	// animatable object, no per-mesh-part pointer churn. Pointer/int locals only inside
+	// the __try (C2712-safe).
+	const void* owner_entity = nullptr;
+	int owner_index = -1;
 	__try {
-		for (uintptr_t off : k_candidate_offsets) {
-			// Check as handle (32-bit entry index)
-			const auto handle = *reinterpret_cast<const c_base_handle*>(reinterpret_cast<const uint8_t*>(object) + off);
-			if (handle.is_valid()) {
-				const int idx = handle.get_entry_index();
-				if (idx > 0 && idx < 16384) {
-					void* entity = get_base_entity_safe(idx);
-					int t = classify(entity, idx);
-					if (t >= 0) {
-						target = t;
-						break;
-					}
-				}
-			}
-			// Check as direct entity pointer (64-bit)
-			const void* ptr = *reinterpret_cast<const void* const*>(reinterpret_cast<const uint8_t*>(object) + off);
-			if (ptr && reinterpret_cast<uintptr_t>(ptr) >= 0x10000 && reinterpret_cast<uintptr_t>(ptr) < 0x7FFFFFFEFFFF) {
-				int t = classify(ptr, -1);
-				if (t >= 0) {
-					target = t;
-					break;
-				}
-			}
+		const c_base_handle handle = *reinterpret_cast<c_base_handle*>(&object->m_owner);
+		if (handle.is_valid()) {
+			owner_index = handle.get_entry_index();
+			if (auto* entity = get_base_entity_safe(owner_index))
+				owner_entity = entity;
 		}
 	}
 	__except (EXCEPTION_EXECUTE_HANDLER) {
@@ -678,6 +628,7 @@ bool c_chams::on_generate_primitives(c_animatable_scene_object_desc* desc, c_sce
 	}
 
 	// Only override objects owned by a known target (map built in refresh_targets).
+	const int target = classify(owner_entity, owner_index);
 	if (target < 0)
 		return false;
 
@@ -691,13 +642,14 @@ bool c_chams::on_generate_primitives(c_animatable_scene_object_desc* desc, c_sce
 	const int occ_style = std::clamp(ct.m_occluded_material, 0, static_cast<int>(style_count) - 1);
 
 	// Apply a chosen material + colour to every primitive appended to render_buf by a
-	// fresh call to `original`.
-	void* last_result = nullptr;
+	// fresh call to `original`. Each call to `original` regenerates the object's mesh
+	// primitives and appends them to the buffer, so we snapshot the count before the
+	// call and only touch the ones added by it. Pointer/int locals only -> SEH-safe.
 	const auto emit_pass = [&](c_material_2* material, const ImVec4& color) {
 		if (!material)
 			return;
 		const int prev = render_buf->m_arr_size;
-		last_result = original(desc, object, a3, render_buf);
+		original(desc, object, a3, render_buf);
 		for (int i = prev; i < render_buf->m_arr_size; ++i) {
 			c_mesh_primitive* prim = render_buf->get_primitive(i);
 			if (!prim)
@@ -725,9 +677,6 @@ bool c_chams::on_generate_primitives(c_animatable_scene_object_desc* desc, c_sce
 	__except (EXCEPTION_EXECUTE_HANDLER) {
 		return false;
 	}
-
-	if (drew && out_result)
-		*out_result = last_result;
 
 	return drew;
 }

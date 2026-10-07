@@ -236,7 +236,7 @@ static glow_type get_glow_type(void* entity_ptr) {
             return glow_type::none;
 
         if (is_planted_c4_entity(entity, designer_name)) {
-            constexpr uintptr_t m_bBombTicking = 0x1288; // @sdk schema:C_PlantedC4::m_bBombTicking
+            constexpr uintptr_t m_bBombTicking = 0x1160;
             const bool is_ticking = *reinterpret_cast<bool*>(reinterpret_cast<uintptr_t>(entity_ptr) + m_bBombTicking);
             if (is_ticking && g_cfg->visuals.m_bomb_esp && (g_cfg->visuals.m_bomb_esp_type & (1 << 4)))
                 return glow_type::bomb;

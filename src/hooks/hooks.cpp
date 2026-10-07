@@ -1,4 +1,4 @@
-#include "../core/main.hpp"
+﻿#include "../core/main.hpp"
 #include "../directx/directx.hpp"
 #include "../../ui/menu/menu.hpp"
 #include "../../ui/menu/elements/bind.h"
@@ -668,7 +668,6 @@ static bool feature_enabled(const char* name) {
 }
 
 void __fastcall hooks::get_viewmodel_offsets::hk_get_viewmodel_offsets(uintptr_t viewmodel, float* out_offsets, float* out_fov) {
-	DBG_HOOK("get_viewmodel_offsets");
 	auto original = m_get_viewmodel_offsets.get_original<decltype(&hk_get_viewmodel_offsets)>();
 	if (!original)
 		return;
@@ -678,7 +677,6 @@ void __fastcall hooks::get_viewmodel_offsets::hk_get_viewmodel_offsets(uintptr_t
 }
 
 float __fastcall hooks::get_world_fov::hk_get_world_fov(uintptr_t rcx) {
-	DBG_HOOK("get_world_fov");
 	auto original = m_get_world_fov.get_original<decltype(&hk_get_world_fov)>();
 
 	if (fov_changer::should_override_world_fov())
@@ -691,7 +689,6 @@ float __fastcall hooks::get_world_fov::hk_get_world_fov(uintptr_t rcx) {
 }
 
 void __fastcall hooks::override_view::hk_override_view(void* client_mode, void* view_setup_ptr) {
-	DBG_HOOK("override_view");
 	auto original = m_override_view.get_original<decltype(&hk_override_view)>();
 	if (!original)
 		return;
@@ -707,7 +704,6 @@ void __fastcall hooks::override_view::hk_override_view(void* client_mode, void* 
 }
 
 void __fastcall hooks::build_legacy_weapon_skin_material::hk_build_legacy_weapon_skin_material(void* weapon, bool force) {
-	DBG_HOOK("build_legacy_weapon_skin_material");
 	auto original = m_build_legacy_weapon_skin_material.get_original<decltype(&hk_build_legacy_weapon_skin_material)>();
 	if (!original)
 		return;
@@ -722,7 +718,6 @@ void __fastcall hooks::build_legacy_weapon_skin_material::hk_build_legacy_weapon
 }
 
 void __fastcall hooks::build_modern_weapon_skin_material::hk_build_modern_weapon_skin_material(void* weapon, void* a2, void* a3, int a4, char a5, char a6, void* a7) {
-	DBG_HOOK("build_modern_weapon_skin_material");
 	auto original = m_build_modern_weapon_skin_material.get_original<decltype(&hk_build_modern_weapon_skin_material)>();
 	if (!original)
 		return;
@@ -737,7 +732,6 @@ void __fastcall hooks::build_modern_weapon_skin_material::hk_build_modern_weapon
 }
 
 void __fastcall hooks::composite_material_input::hk_add_to_tail(void* vector, const void* input) {
-	DBG_HOOK("composite_material_input");
 	auto original = m_add_to_tail.get_original<decltype(&hk_add_to_tail)>();
 	if (!original)
 		return;
@@ -760,33 +754,17 @@ bool c_hooks::initialize() {
 		return false;
 	}
 
-	// target address, module+offset and the first bytes (a function start usually looks
-	// like 48 89 5C 24 / 40 53 / 48 83 EC; anything else = wrong signature or vtable index)
-	auto log_target = [](void* target, const char* name, bool required) {
-		dbg::t_stage = name;
-		if (!target) {
-			DBG_WARN("[hooks] %-44s target = nullptr%s", name, required ? " (REQUIRED)" : "");
-			return;
-		}
-		DBG_INFO("[hooks] %-44s target %s bytes %s%s", name, dbg::addr(target).s, dbg::bytes(target, 12).s,
-			dbg::executable(target) ? "" : "   <-- NOT EXECUTABLE MEMORY");
-	};
-
 	bool required_ok = true;
-	auto hook_required = [&required_ok, &log_target](c_hook& hook, void* target, void* detour, const char* name) {
-		log_target(target, name, true);
+	auto hook_required = [&required_ok](c_hook& hook, void* target, void* detour, const char* name) {
 		const bool ok = hook.hook(target, detour);
 		diagnostics::g_diagnostics->mark_hook(name, ok, true);
 		if (!ok) {
 			LOG_ERROR(xorstr_("[hooks] required hook failed: %s"), name);
 			required_ok = false;
-		} else {
-			DBG_OK("[hooks] %s installed", name);
 		}
 	};
 
-	auto hook_optional = [&log_target](c_hook& hook, void* target, void* detour, const char* name) {
-		log_target(target, name, false);
+	auto hook_optional = [](c_hook& hook, void* target, void* detour, const char* name) {
 		if (!target) {
 			diagnostics::g_diagnostics->mark_hook(name, false, false);
 			LOG_ERROR(xorstr_("[hooks] optional hook target missing: %s"), name);
@@ -797,20 +775,7 @@ bool c_hooks::initialize() {
 		diagnostics::g_diagnostics->mark_hook(name, ok, false);
 		if (!ok)
 			LOG_ERROR(xorstr_("[hooks] optional hook failed: %s"), name);
-		else
-			DBG_OK("[hooks] %s installed", name);
 	};
-
-	// CreateMove is hooked through vtable index 5 - compare it with the signature
-	{
-		void* by_vtable = vmt::get_v_method(g_interfaces->m_csgo_input, 5);
-		void* by_sig = SIG("CreateMove");
-		if (by_vtable == by_sig)
-			DBG_OK("[hooks] CCSGOInput vtable[5] matches the CreateMove signature (%s)", dbg::addr(by_vtable).s);
-		else
-			DBG_WARN("[hooks] CCSGOInput vtable[5] = %s but CreateMove signature = %s - vtable index may be outdated",
-				dbg::addr(by_vtable).s, dbg::addr(by_sig).s);
-	}
 
 	hook_required(create_move::m_create_move, vmt::get_v_method(g_interfaces->m_csgo_input, 5), create_move::hk_create_move, "CreateMove");
 	hook_optional(process_input::m_process_input,
@@ -930,7 +895,6 @@ bool c_hooks::initialize() {
 		generate_primitives::hk_generate_primitives,
 		"CSceneAnimatableObject::GeneratePrimitives");
 
-	dbg::t_stage = nullptr;
 	return true;
 }
 
@@ -991,7 +955,6 @@ void c_hooks::destroy() {
 }
 
 bool __fastcall hooks::mouse_input_enabled::hk_mouse_input_enabled(void* ptr) {
-	DBG_HOOK("mouse_input_enabled");
 	auto original = m_mouse_input_enabled.get_original<decltype(&hk_mouse_input_enabled)>();
 	if (!original)
 		return true;
@@ -1000,7 +963,6 @@ bool __fastcall hooks::mouse_input_enabled::hk_mouse_input_enabled(void* ptr) {
 }
 
 bool __fastcall hooks::process_input::hk_process_input(i_csgo_input* input, int slot, c_user_cmd* cmd) {
-	DBG_HOOK("process_input");
 	auto original = m_process_input.get_original<decltype(&hk_process_input)>();
 	if (!original)
 		return false;
@@ -1023,7 +985,6 @@ bool __fastcall hooks::process_input::hk_process_input(i_csgo_input* input, int 
 }
 
 void* __fastcall hooks::enable_cursor::hk_enable_cursor(void* rcx, bool active) {
-	DBG_HOOK("enable_cursor");
 	auto original = m_enable_cursor.get_original<decltype(&hk_enable_cursor)>();
 	if (!original)
 		return nullptr;
@@ -1036,7 +997,6 @@ void* __fastcall hooks::enable_cursor::hk_enable_cursor(void* rcx, bool active) 
 }
 
 void __fastcall hooks::create_move::hk_create_move(i_csgo_input* rcx, int slot, bool active) {
-	DBG_HOOK("create_move");
 	auto original = m_create_move.get_original<decltype(&hk_create_move)>();
 	if (!original)
 		return;
@@ -1115,7 +1075,6 @@ void __fastcall hooks::create_move::hk_create_move(i_csgo_input* rcx, int slot, 
 }
 
 void hooks::frame_stage_notify::hk_frame_stage_notify(void* source_to_client, int stage) {
-	DBG_HOOK("frame_stage_notify");
 	auto original = m_frame_stage_notify.get_original<decltype(&hk_frame_stage_notify)>();
 
 	if (g_interfaces && g_interfaces->m_entity_system) {
@@ -1201,7 +1160,6 @@ void hooks::frame_stage_notify::hk_frame_stage_notify(void* source_to_client, in
 }
 
 __int64 __fastcall hooks::level_init::hk_level_init(void* rcx, void* rdx) {
-	DBG_HOOK("level_init");
 	auto original = m_level_init.get_original<decltype(&hk_level_init)>();
 	if (!original)
 		return 0;
@@ -1456,7 +1414,6 @@ static void handle_player_hurt(void* p_game_event) {
 }
 
 bool __fastcall hooks::fire_event_client_side::hk_fire_event_client_side(void* p_game_event_manager, void* p_game_event) {
-	DBG_HOOK("fire_event_client_side");
 	auto original = m_fire_event_client_side.get_original<decltype(&hk_fire_event_client_side)>();
 	if (!original)
 		return false;
@@ -1618,7 +1575,6 @@ bool __fastcall hooks::fire_event_client_side::hk_fire_event_client_side(void* p
 }
 
 HRESULT hooks::present::hk_present(IDXGISwapChain* swap_chain, unsigned int sync_interval, unsigned int flags) {
-	DBG_HOOK("present");
 	auto original = m_present.get_original<decltype(&hk_present)>();
 	if (!original)
 		return S_OK;
@@ -1748,7 +1704,6 @@ HRESULT hooks::present::hk_present(IDXGISwapChain* swap_chain, unsigned int sync
 }
 
 HRESULT hooks::resize_buffers::hk_resize_buffers(IDXGISwapChain* swap_chain, UINT buffer_count, UINT width, UINT height, DXGI_FORMAT new_format, UINT swap_chain_flags) {
-	DBG_HOOK("resize_buffers");
 	auto original = m_resize_buffers.get_original<decltype(&hk_resize_buffers)>();
 	if (!original)
 		return DXGI_ERROR_INVALID_CALL;
@@ -1782,7 +1737,6 @@ HRESULT hooks::resize_buffers::hk_resize_buffers(IDXGISwapChain* swap_chain, UIN
 }
 
 HRESULT __stdcall hooks::create_swap_chain::hk_create_swap_chain(IDXGIFactory* factory, IUnknown* device, DXGI_SWAP_CHAIN_DESC* desc, IDXGISwapChain** swap_chain) {
-	DBG_HOOK("create_swap_chain");
 	auto original = m_create_swap_chain.get_original<decltype(&hk_create_swap_chain)>();
 	if (!original)
 		return DXGI_ERROR_INVALID_CALL;
@@ -1797,7 +1751,6 @@ HRESULT __stdcall hooks::create_swap_chain::hk_create_swap_chain(IDXGIFactory* f
 }
 
 void* __fastcall hooks::draw_skybox_array::hk_draw_skybox_array(void* a1, void* a2, void* draw_primitive, int count, void* a5, void* a6, void* a7) {
-	DBG_HOOK("draw_skybox_array");
 	static auto original = m_draw_skybox_array.get_original<decltype(&hk_draw_skybox_array)>();
 	if (!original)
 		return nullptr;
@@ -1838,7 +1791,6 @@ void* __fastcall hooks::draw_skybox_array::hk_draw_skybox_array(void* a1, void* 
 }
 
 void __fastcall hooks::draw_scope::hk_draw_scope(__int64 a1, __int64 a2) {
-	DBG_HOOK("draw_scope");
 	static auto original = m_draw_scope.get_original<decltype(&hk_draw_scope)>();
 	if (!original)
 		return;
@@ -1850,7 +1802,6 @@ void __fastcall hooks::draw_scope::hk_draw_scope(__int64 a1, __int64 a2) {
 }
 
 void* __fastcall hooks::smoke_volume_draw_array::hk_smoke_volume_draw_array(void* a1, void* a2, int a3, int a4, void* a5, void* a6, void* a7, void* a8, void* a9, void* a10) {
-	DBG_HOOK("smoke_volume_draw_array");
 	static auto original = m_smoke_volume_draw_array.get_original<decltype(&hk_smoke_volume_draw_array)>();
 	if (!original)
 		return nullptr;
@@ -1862,7 +1813,6 @@ void* __fastcall hooks::smoke_volume_draw_array::hk_smoke_volume_draw_array(void
 }
 
 void* __fastcall hooks::first_person_legs::hk_first_person_legs(void* a1, void* a2, void* a3, void* a4, void* a5) {
-	DBG_HOOK("first_person_legs");
 	static auto original = m_first_person_legs.get_original<decltype(&hk_first_person_legs)>();
 	if (!original)
 		return nullptr;
@@ -1874,7 +1824,6 @@ void* __fastcall hooks::first_person_legs::hk_first_person_legs(void* a1, void* 
 }
 
 void __fastcall hooks::update_post_processing::hk_update_post_processing(void* a1, void* a2) {
-	DBG_HOOK("update_post_processing");
 	static auto original = m_update_post_processing.get_original<decltype(&hk_update_post_processing)>();
 	if (!original)
 		return;
@@ -1885,7 +1834,6 @@ void __fastcall hooks::update_post_processing::hk_update_post_processing(void* a
 }
 
 void __fastcall hooks::draw_aggregate_scene_object::hk_draw_aggregate_scene_object(void* a1, void* a2, void* a3, int a4, int a5, void* a6, void* a7) {
-	DBG_HOOK("draw_aggregate_scene_object");
 	static auto original = m_draw_aggregate_scene_object.get_original<decltype(&hk_draw_aggregate_scene_object)>();
 	if (!original)
 		return;
@@ -1899,7 +1847,6 @@ void __fastcall hooks::draw_aggregate_scene_object::hk_draw_aggregate_scene_obje
 }
 
 void* __fastcall hooks::draw_light_scene::hk_draw_light_scene(void* a1, void* a2, __int64 a3) {
-	DBG_HOOK("draw_light_scene");
 	static auto original = m_draw_light_scene.get_original<decltype(&hk_draw_light_scene)>();
 	if (!original)
 		return nullptr;
@@ -1910,7 +1857,6 @@ void* __fastcall hooks::draw_light_scene::hk_draw_light_scene(void* a1, void* a2
 }
 
 std::int64_t __fastcall hooks::draw_aggregate_sceneobject_array::hk_draw_aggregate_sceneobject_array(void* a1, void* a2, void* a3) {
-	DBG_HOOK("draw_aggregate_sceneobject_array");
 	static auto original = m_draw_aggregate_sceneobject_array.get_original<decltype(&hk_draw_aggregate_sceneobject_array)>();
 	if (!original)
 		return 0;
@@ -1946,7 +1892,6 @@ std::int64_t __fastcall hooks::draw_aggregate_sceneobject_array::hk_draw_aggrega
 }
 
 void* __fastcall hooks::generate_primitives::hk_generate_primitives(c_animatable_scene_object_desc* desc, c_scene_animatable_object* object, void* a3, c_mesh_primitive_output_buffer* render_buf) {
-	DBG_HOOK("generate_primitives");
 	static auto original = m_generate_primitives.get_original<decltype(&hk_generate_primitives)>();
 	if (!original)
 		return nullptr;
@@ -1954,14 +1899,15 @@ void* __fastcall hooks::generate_primitives::hk_generate_primitives(c_animatable
 	// Chams overrides the material of the primitives generated for a target object.
 	// on_generate_primitives calls `original` itself (to populate render_buf) and then
 	// swaps the material/colour on the newly-added primitives; if it handled the object
-	// it returns true and forwards the result from original.
-	void* result = nullptr;
+	// it returns true and we must NOT call original again. Everything else generates
+	// normally. on_generate_primitives is fully SEH-guarded internally, so no __try is
+	// needed here (an outer __try would trip C2712 once the callee is inlined).
 	bool handled = false;
 	if (g_chams && object && render_buf)
-		handled = g_chams->on_generate_primitives(desc, object, a3, render_buf, original, &result);
+		handled = g_chams->on_generate_primitives(desc, object, a3, render_buf, original);
 
 	if (handled)
-		return result;
+		return nullptr;
 
 	return original(desc, object, a3, render_buf);
 }

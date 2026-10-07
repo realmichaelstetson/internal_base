@@ -33,7 +33,7 @@ void c_thirdperson::override_view(c_view_setup* view_setup) {
 		eye = node->m_abs_origin();
 	if (!eye.is_valid() || eye.is_zero())
 		eye = local_pawn->get_eye_pos();
-	const vec3_t view_offset = *reinterpret_cast<vec3_t*>(reinterpret_cast<std::uintptr_t>(local_pawn) + 0xF60); // @sdk schema:C_BaseModelEntity::m_vecViewOffset
+	const vec3_t view_offset = *reinterpret_cast<vec3_t*>(reinterpret_cast<std::uintptr_t>(local_pawn) + 0xE70);
 	if (view_offset.is_valid() && !view_offset.is_zero())
 		eye += view_offset;
 

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../schema/schema.hpp"
 #include "../../typedefs/c_handle.hpp"
@@ -428,7 +428,7 @@ public:
 class c_base_entity : public c_entity_instance {
 public:
 	SCHEMA(m_health, int, "C_BaseEntity", "m_iHealth");
-	SCHEMA(m_team_num, uint8_t, "C_BaseEntity", "m_iTeamNum");
+	SCHEMA(m_team_num, int, "C_BaseEntity", "m_iTeamNum");
 	SCHEMA(m_flags, int, "C_BaseEntity", "m_fFlags");
 	SCHEMA(m_move_type, int, "C_BaseEntity", "m_MoveType");
 	SCHEMA(m_nSubclassID, uint32_t, "C_BaseEntity", "m_nSubclassID");

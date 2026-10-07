@@ -1,4 +1,4 @@
-#include "../../src/core/main.hpp"
+﻿#include "../../src/core/main.hpp"
 #include "menu.hpp"
 #include "../assets/SFProText-Semibold.hpp"
 #include "../assets/sfpro-bold.hpp"
@@ -1727,7 +1727,7 @@ void Menu::RenderWatermark() {
     Segment segs[4];
     int seg_count = 0;
 
-    segs[seg_count++] = { nullptr,           "kolemba", true  };
+    segs[seg_count++] = { nullptr,           "celerity", true  };
     if (elems & (1 << 1)) segs[seg_count++] = { ICON_FA_CHART_BAR, fps_buf,  false };
     if (elems & (1 << 2)) segs[seg_count++] = { ICON_FA_WIFI,      ping_buf, false };
     if (elems & (1 << 3)) segs[seg_count++] = { ICON_FA_CLOCK,     time_buf, false };
@@ -2537,7 +2537,7 @@ static void RenderBankMenu() {
         const float tab_start = sb_y + header_h + 0.0f;
         ImVec2 mouse = ImGui::GetIO().MousePos;
 
-        const char* title = "kolemba";
+        const char* title = "celerity";
         if (auto* title_font = g_menu ? g_menu->get_sidebar_title_font() : nullptr)
             ImGui::PushFont(title_font);
         ImVec2 title_ts = ImGui::CalcTextSize(title);
@@ -3068,7 +3068,7 @@ static void RenderBankMenu() {
             }
 
             float tchams_content_h = cy2;
-            ImGui::SetCursorPos(ImVec2(0, cy2));
+            ImGui::SetCursorPos(ImVec2(0, cy));
             ImGui::Dummy(ImVec2(1.0f, 1.0f));
             ImGui::EndChild();
 
@@ -3090,7 +3090,7 @@ static void RenderBankMenu() {
                     float thumb_h = ImMax(4.0f, track_h * (tchams_view_h / tchams_content_h) * 0.4f);
                     float thumb_y = scroll_top + (s_tchams_scroll_y / tchams_max_scroll) * (track_h - thumb_h);
 
-                    bool hovered = (ms.x >= area_min.x && ms.x <= area_max.x && ms.y >= area_min.y && ms.y <= area_min.y);
+                    bool hovered = (ms.x >= area_min.x && ms.x <= area_max.x && ms.y >= area_min.y && ms.y <= area_max.y);
                     bool over_thumb = (ms.x >= box_right - 6.0f && ms.x <= box_right && ms.y >= thumb_y && ms.y <= thumb_y + thumb_h);
 
                     if (!s_tchams_dragging && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && over_thumb && !UI::IsOpenColorPickerBlocking()) {
@@ -3134,55 +3134,31 @@ static void RenderBankMenu() {
             float rbox_top = content_y;
             float ry = rbox_top + l_box_pad + 10.0f;
 
-            // Local viewmodel weapon (visible & occluded)
+            // Local viewmodel weapon -- enable + colour + material (first-person, single visible pass).
             auto& vm_ct = g_cfg->visuals.m_chams_targets[c_config::visuals_t::chams_target_viewmodel];
             ImGui::SetCursorPos(ImVec2(l_r_x + l_box_pad, ry));
-            UI::Checkbox("viewmodel visible", &vm_ct.m_visible, nullptr, nullptr, r_field_w - 22.0f);
-            float next_vm_vis = ImGui::GetCursorPos().y + gap2;
+            UI::Checkbox("viewmodel", &vm_ct.m_visible, nullptr, nullptr, r_field_w - 22.0f);
+            float next_vm = ImGui::GetCursorPos().y + gap2;
             ImGui::SetCursorPos(ImVec2(l_r_x + l_box_pad, ry));
-            UI::ColorPicker("##vm_chams_vis_col", &vm_ct.m_visible_color, r_sr, 0.0f);
-            ry = next_vm_vis;
+            UI::ColorPicker("##vm_chams_col", &vm_ct.m_visible_color, r_sr, 0.0f);
+            ry = next_vm;
             if (vm_ct.m_visible) {
                 ImGui::SetCursorPos(ImVec2(l_r_x + l_box_pad, ry));
-                UI::Dropdown("##vm_chams_vis_mat", &vm_ct.m_visible_material, chams_materials, 5, r_field_w);
+                UI::Dropdown("##vm_chams_mat", &vm_ct.m_visible_material, chams_materials, 6, r_field_w);
                 ry = ImGui::GetCursorPos().y + gap2;
             }
 
-            ImGui::SetCursorPos(ImVec2(l_r_x + l_box_pad, ry));
-            UI::Checkbox("viewmodel occluded", &vm_ct.m_occluded, nullptr, nullptr, r_field_w - 22.0f);
-            float next_vm_occ = ImGui::GetCursorPos().y + gap2;
-            ImGui::SetCursorPos(ImVec2(l_r_x + l_box_pad, ry));
-            UI::ColorPicker("##vm_chams_occ_col", &vm_ct.m_occluded_color, r_sr, 0.0f);
-            ry = next_vm_occ;
-            if (vm_ct.m_occluded) {
-                ImGui::SetCursorPos(ImVec2(l_r_x + l_box_pad, ry));
-                UI::Dropdown("##vm_chams_occ_mat", &vm_ct.m_occluded_material, chams_materials, 5, r_field_w);
-                ry = ImGui::GetCursorPos().y + gap2;
-            }
-
-            // Local arms (visible & occluded)
+            // Local arms (hands) -- enable + colour + material.
             auto& arms_ct = g_cfg->visuals.m_chams_targets[c_config::visuals_t::chams_target_arms];
             ImGui::SetCursorPos(ImVec2(l_r_x + l_box_pad, ry));
-            UI::Checkbox("arms visible", &arms_ct.m_visible, nullptr, nullptr, r_field_w - 22.0f);
-            float next_arms_vis = ImGui::GetCursorPos().y + gap2;
+            UI::Checkbox("arms", &arms_ct.m_visible, nullptr, nullptr, r_field_w - 22.0f);
+            float next_arms = ImGui::GetCursorPos().y + gap2;
             ImGui::SetCursorPos(ImVec2(l_r_x + l_box_pad, ry));
-            UI::ColorPicker("##arms_chams_vis_col", &arms_ct.m_visible_color, r_sr, 0.0f);
-            ry = next_arms_vis;
+            UI::ColorPicker("##arms_chams_col", &arms_ct.m_visible_color, r_sr, 0.0f);
+            ry = next_arms;
             if (arms_ct.m_visible) {
                 ImGui::SetCursorPos(ImVec2(l_r_x + l_box_pad, ry));
-                UI::Dropdown("##arms_chams_vis_mat", &arms_ct.m_visible_material, chams_materials, 5, r_field_w);
-                ry = ImGui::GetCursorPos().y + gap2;
-            }
-
-            ImGui::SetCursorPos(ImVec2(l_r_x + l_box_pad, ry));
-            UI::Checkbox("arms occluded", &arms_ct.m_occluded, nullptr, nullptr, r_field_w - 22.0f);
-            float next_arms_occ = ImGui::GetCursorPos().y + gap2;
-            ImGui::SetCursorPos(ImVec2(l_r_x + l_box_pad, ry));
-            UI::ColorPicker("##arms_chams_occ_col", &arms_ct.m_occluded_color, r_sr, 0.0f);
-            ry = next_arms_occ;
-            if (arms_ct.m_occluded) {
-                ImGui::SetCursorPos(ImVec2(l_r_x + l_box_pad, ry));
-                UI::Dropdown("##arms_chams_occ_mat", &arms_ct.m_occluded_material, chams_materials, 5, r_field_w);
+                UI::Dropdown("##arms_chams_mat", &arms_ct.m_visible_material, chams_materials, 6, r_field_w);
                 ry = ImGui::GetCursorPos().y + gap2;
             }
 

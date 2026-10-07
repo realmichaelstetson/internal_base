@@ -8,8 +8,6 @@
 #include <string>
 #include <thread>
 
-#include "debug_log.hpp"
-
 namespace logger {
 
 inline HANDLE g_console = nullptr;
@@ -102,10 +100,7 @@ inline void draw_status(const status_msg& m, int step) {
 }
 
 inline void printer_loop() {
-    {
-        std::lock_guard<std::recursive_mutex> print_lock(dbg::print_mutex());
-        draw_banner();
-    }
+    draw_banner();
 
     int step = 0;
     while (true) {
@@ -118,7 +113,6 @@ inline void printer_loop() {
             m = std::move(g_queue.front());
             g_queue.pop_front();
         }
-        std::lock_guard<std::recursive_mutex> print_lock(dbg::print_mutex());
         if (m.notice)
             draw_notice(m);
         else
@@ -149,8 +143,6 @@ inline void initialize() {
     cursor.bVisible = FALSE;
     SetConsoleCursorInfo(g_console, &cursor);
 
-    dbg::set_console(true);
-
     // fire up the printer thread; returns immediately so init never blocks.
     detail::g_running.store(true);
     detail::g_thread = std::thread(detail::printer_loop);
@@ -162,7 +154,6 @@ inline void shutdown() {
         if (detail::g_thread.joinable())
             detail::g_thread.join();
     }
-    dbg::set_console(false);
     if (g_console) {
         FreeConsole();
         g_console = nullptr;
@@ -191,7 +182,6 @@ inline void notice(const char* text) {
 #define LOG_ERROR(fmt, ...)  do { \
     char _log_buf[512]; \
     _snprintf_s(_log_buf, sizeof(_log_buf), _TRUNCATE, (const char*)(fmt), ##__VA_ARGS__); \
-    ::dbg::log_file("ERR ", "%s", _log_buf); \
     logger::notice(_log_buf); \
 } while(0)
 #define LOG_WARNING(fmt, ...) ((void)0)

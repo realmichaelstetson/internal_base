@@ -50,8 +50,7 @@ public:
 	// and colour on the newly-added primitives, and returns true (the hook must NOT
 	// call original again). Returns false to let the hook generate normally.
 	bool on_generate_primitives(c_animatable_scene_object_desc* desc, c_scene_animatable_object* object,
-	                            void* a3, c_mesh_primitive_output_buffer* render_buf, generate_primitives_fn original,
-	                            void** out_result = nullptr);
+	                            void* a3, c_mesh_primitive_output_buffer* render_buf, generate_primitives_fn original);
 
 private:
 	// Look up the target index for an object owner, or -1 if it is not a target.

@@ -74,12 +74,12 @@ namespace {
 		if (!pawn)
 			return;
 
-		constexpr std::uintptr_t glow_offset = 0xDE8; // @sdk schema:C_BaseModelEntity::m_Glow
-		constexpr std::uintptr_t glow_color_offset = 0x40; // @sdk schema:CGlowProperty::m_glowColorOverride
-		constexpr std::uintptr_t glow_type_offset = 0x30; // @sdk schema:CGlowProperty::m_iGlowType
-		constexpr std::uintptr_t flashing_offset = 0x44; // @sdk schema:CGlowProperty::m_bFlashing
-		constexpr std::uintptr_t eligible_offset = 0x50; // @sdk schema:CGlowProperty::m_bEligibleForScreenHighlight
-		constexpr std::uintptr_t glowing_offset = 0x51; // @sdk schema:CGlowProperty::m_bGlowing
+		constexpr std::uintptr_t glow_offset = 0xDD8;
+		constexpr std::uintptr_t glow_color_offset = 0x40;
+		constexpr std::uintptr_t glow_type_offset = 0x30;
+		constexpr std::uintptr_t flashing_offset = 0x44;
+		constexpr std::uintptr_t eligible_offset = 0x50;
+		constexpr std::uintptr_t glowing_offset = 0x51;
 		const auto glow = reinterpret_cast<std::uintptr_t>(pawn) + glow_offset;
 		using on_glow_type_changed_t = __int64(__fastcall*)(void*);
 		static auto on_glow_type_changed = reinterpret_cast<on_glow_type_changed_t>(
@@ -202,7 +202,7 @@ namespace {
 		if (!offset_initialized) {
 			smoke_color_offset = schema_get_offset("client.dll", "C_SmokeGrenadeProjectile", "m_vSmokeColor");
 			if (!smoke_color_offset)
-				smoke_color_offset = 0x136C; // @sdk schema:C_SmokeGrenadeProjectile::m_vSmokeColor
+				smoke_color_offset = 0x125C;
 			offset_initialized = true;
 		}
 
@@ -660,7 +660,7 @@ namespace {
 			if (!origin.is_valid() || origin.is_zero())
 				origin = pawn->get_eye_pos();
 
-			constexpr uintptr_t view_offset = 0xF60; // @sdk schema:C_BaseModelEntity::m_vecViewOffset
+			constexpr uintptr_t view_offset = 0xE70;
 			const vec3_t offset = read<vec3_t>(reinterpret_cast<uintptr_t>(pawn) + view_offset);
 			if (offset.is_valid() && !offset.is_zero())
 				return origin + offset;
@@ -1372,11 +1372,11 @@ namespace {
 		if (!is_planted_c4_entity(const_cast<c_base_entity*>(entity), nullptr))
 			return false;
 
-		constexpr uintptr_t m_bBombTicking = 0x1288; // @sdk schema:C_PlantedC4::m_bBombTicking
-		constexpr uintptr_t m_flC4Blow = 0x12B8; // @sdk schema:C_PlantedC4::m_flC4Blow
-		constexpr uintptr_t m_pGameSceneNode = 0x330; // @sdk schema:C_BaseEntity::m_pGameSceneNode
-		constexpr uintptr_t m_vecAbsOrigin = 0xC8; // @sdk schema:CGameSceneNode::m_vecAbsOrigin
-		constexpr uintptr_t m_flSimulationTime = 0x3B8; // @sdk schema:C_BaseEntity::m_flSimulationTime
+		constexpr uintptr_t m_bBombTicking = 0x1160;
+		constexpr uintptr_t m_flC4Blow = 0x1190;
+		constexpr uintptr_t m_pGameSceneNode = 0x330;
+		constexpr uintptr_t m_vecAbsOrigin = 0xC8;
+		constexpr uintptr_t m_flSimulationTime = 0x3B8;
 
 		const bool is_ticking = read<bool>(planted_c4 + m_bBombTicking);
 		if (!is_ticking)
@@ -1512,9 +1512,9 @@ namespace {
 
 			if (g_cfg->visuals.m_grenades_type & (1 << 3)) {
 
-				constexpr uintptr_t m_flSpawnTime = 0x12E8; // @sdk schema:C_BaseCSGrenadeProjectile::m_flSpawnTime
-				constexpr uintptr_t m_flDetonateTime = 0x1270; // @sdk schema:C_BaseGrenade::m_flDetonateTime
-				constexpr uintptr_t m_flSimulationTime = 0x3B8; // @sdk schema:C_BaseEntity::m_flSimulationTime
+				constexpr uintptr_t m_flSpawnTime = 0x11D8;
+				constexpr uintptr_t m_flDetonateTime = 0x1160;
+				constexpr uintptr_t m_flSimulationTime = 0x3B8;
 
 				float spawn_time = read<float>(reinterpret_cast<uintptr_t>(entity) + m_flSpawnTime);
 				float detonate_time = read<float>(reinterpret_cast<uintptr_t>(entity) + m_flDetonateTime);
@@ -2682,11 +2682,11 @@ void visuals::draw_world() {
 				const uintptr_t planted_c4 = read<uintptr_t>(planted_c4_ptr);
 
 				if (planted_c4) {
-					constexpr uintptr_t m_bBombTicking = 0x1288; // @sdk schema:C_PlantedC4::m_bBombTicking
-					constexpr uintptr_t m_flC4Blow = 0x12B8; // @sdk schema:C_PlantedC4::m_flC4Blow
-					constexpr uintptr_t m_pGameSceneNode = 0x330; // @sdk schema:C_BaseEntity::m_pGameSceneNode
-					constexpr uintptr_t m_vecAbsOrigin = 0xC8; // @sdk schema:CGameSceneNode::m_vecAbsOrigin
-					constexpr uintptr_t m_flSimulationTime = 0x3B8; // @sdk schema:C_BaseEntity::m_flSimulationTime
+					constexpr uintptr_t m_bBombTicking = 0x1160;
+					constexpr uintptr_t m_flC4Blow = 0x1190;
+					constexpr uintptr_t m_pGameSceneNode = 0x330;
+					constexpr uintptr_t m_vecAbsOrigin = 0xC8;
+					constexpr uintptr_t m_flSimulationTime = 0x3B8;
 
 					const bool is_ticking = read<bool>(planted_c4 + m_bBombTicking);
 
@@ -2781,9 +2781,9 @@ void visuals::draw_world() {
 
 		if (is_planted_c4_entity(entity, designer_name)) {
 			if (g_cfg->visuals.m_bomb_esp && !drew_planted_c4) {
-				constexpr uintptr_t m_bBombTicking = 0x1288; // @sdk schema:C_PlantedC4::m_bBombTicking
-				constexpr uintptr_t m_flC4Blow = 0x12B8; // @sdk schema:C_PlantedC4::m_flC4Blow
-				constexpr uintptr_t m_flSimulationTime = 0x3B8; // @sdk schema:C_BaseEntity::m_flSimulationTime
+				constexpr uintptr_t m_bBombTicking = 0x1160;
+				constexpr uintptr_t m_flC4Blow = 0x1190;
+				constexpr uintptr_t m_flSimulationTime = 0x3B8;
 
 				float remaining = -1.0f;
 				const auto planted_c4 = reinterpret_cast<uintptr_t>(entity);

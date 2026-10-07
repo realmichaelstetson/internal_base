@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "../../../console/debug_log.hpp"
 #include "../../../sdk/typedefs/vec_t.hpp"
 #include "../../../sdk/vfunc/vfunc.hpp"
 #include "../../../utils/utils.hpp"
@@ -179,17 +178,13 @@ public:
         if (!local_controller)
             return nullptr;
 
+        static auto sig_poo = *reinterpret_cast<void**>(SIG("CSGOInput_ptr"));
         static auto setup_cmd = reinterpret_cast<int (__fastcall*)(void*)>(SIG("SetupCmd"));
+
+        int sequence_number = setup_cmd(sig_poo);
+
         static auto automake_user_cmd = reinterpret_cast<void*>(SIG("AutoMakeUserCmd"));
         static auto poo = reinterpret_cast<c_user_cmd * (__fastcall*)(void*, int)>(automake_user_cmd);
-        if (!setup_cmd || !poo) {
-            static volatile LONG reported = 0;
-            if (!InterlockedExchange(&reported, 1))
-                DBG_ERR("[usercmd] SetupCmd=%p AutoMakeUserCmd=%p - signature missing, get_user_cmd disabled", setup_cmd, automake_user_cmd);
-            return nullptr;
-        }
-
-        int sequence_number = setup_cmd(this);
 
         return poo(local_controller, sequence_number);
     }
