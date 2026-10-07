@@ -3991,8 +3991,13 @@ PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_usermess
   return &descriptor_table_usermessages_2eproto;
 }
 
+// Not registered: we never use reflection, and running this faults when the dll
+// is manual-mapped without TLS. See CELERITY_NO_PROTOBUF_DESCRIPTORS in
+// celerity.vcxproj for the whole story.
+#ifndef CELERITY_NO_PROTOBUF_DESCRIPTORS
 // Force running AddDescriptors() at dynamic initialization time.
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_usermessages_2eproto(&descriptor_table_usermessages_2eproto);
+#endif
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* EBaseUserMessages_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_usermessages_2eproto);
   return file_level_enum_descriptors_usermessages_2eproto[0];

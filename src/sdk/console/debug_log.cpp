@@ -14,10 +14,6 @@ extern "C" IMAGE_DOS_HEADER __ImageBase;
 //                      libprotobuf's descriptor registration included.
 //   3. DllMain       - see entry.cpp.
 //
-// The first two matter beyond logging: whichever of them wins also runs
-// dbg::setup_tls(), which has to happen before libprotobuf's static initialisers
-// or they are skipped and fault on first use. By path 3 it is already too late.
-//
 // If no log file appears at all, none of the three ran: the image is not being
 // executed (wrong / stale dll), or it dies in the loader before reaching us.
 

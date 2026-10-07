@@ -57,7 +57,7 @@
     <ClCompile>
       <WarningLevel>Level2</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;STBI_NO_THREAD_LOCALS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;STBI_NO_THREAD_LOCALS;CELERITY_NO_PROTOBUF_DESCRIPTORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)src\sdk\includes\protobufs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -68,7 +68,20 @@
       <!-- /Zc:threadSafeInit- : MSVC keeps the "is this static initialised yet"
            flag of a function-local static in TLS. A manual-mapped dll gets no
            TLS slot, so that guard reads foreign memory, the constructor is
-           skipped and the first use faults. -->
+           skipped and the first use faults.
+
+           CELERITY_NO_PROTOBUF_DESCRIPTORS : the flag above only covers our own
+           translation units, not the prebuilt libprotobuf.lib, whose descriptor
+           registration runs from a static initialiser before DllMain and whose
+           function-local statics are therefore skipped - it then dies on a null
+           `this` with nothing logged yet. The define drops the
+           AddDescriptorsRunner objects at the bottom of each generated .pb.cc,
+           which is the only thing that ran that code. Those descriptors exist
+           for reflection (GetMetadata, DebugString, descriptor lookups) and we
+           use none of it: libprotobuf is linked for the generated message
+           layout and the inline field accessors, which never consult the pool.
+           Undefine it to get reflection back, and inject with a TLS-aware
+           mapper (or LoadLibrary) if you do. -->
       <AdditionalOptions>/Zc:threadSafeInit- %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
@@ -85,7 +98,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;STBI_NO_THREAD_LOCALS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;_CRT_SECURE_NO_WARNINGS;STBI_NO_THREAD_LOCALS;CELERITY_NO_PROTOBUF_DESCRIPTORS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)src\sdk\includes\protobufs\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
