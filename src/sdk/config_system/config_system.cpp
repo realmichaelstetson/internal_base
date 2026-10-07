@@ -306,6 +306,8 @@ void c_config_system::setup_values() {
     push_item(&g_cfg->visuals.m_grenades_color.z, "visuals", "grenades_color_b", 1.0f);
     push_item(&g_cfg->visuals.m_grenades_color.w, "visuals", "grenades_color_a", 1.0f);
     push_item(&g_cfg->visuals.m_grenade_trails, "visuals", "grenade_trails", false);
+    push_item(&g_cfg->visuals.m_hit_effects_type, "visuals", "hit_effects_type", 0);
+    push_item(&g_cfg->visuals.m_hit_effects_kill_type, "visuals", "hit_effects_kill_type", 0);
 
     push_item(&g_cfg->visuals.m_glow, "visuals", "glow", false);
     push_item(&g_cfg->visuals.m_glow_color.x, "visuals", "glow_color_r", 0.4f);

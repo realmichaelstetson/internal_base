@@ -253,6 +253,12 @@ public:
 		ImVec4 m_grenades_color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
 		bool m_grenade_trails = false;
 
+		// Hit-effect presets spawned on an enemy hit / kill. 0 = blood, 1 = sparks,
+		// 2 = explosion, 3 = taser, 4 = fire, 5 = fireworks. Keep the range in sync
+		// with k_type_count in src/features/hit_effects/hit_effects.cpp.
+		int m_hit_effects_type = 0;
+		int m_hit_effects_kill_type = 0;
+
 		bool m_glow = false;
 		ImVec4 m_glow_color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
 

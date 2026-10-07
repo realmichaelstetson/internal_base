@@ -120,6 +120,7 @@
     <ClInclude Include="src\features\fov_changer\fov_changer.hpp" />
     <ClInclude Include="src\features\glove_changer\glove_changer.hpp" />
     <ClInclude Include="src\features\glow\glow.hpp" />
+    <ClInclude Include="src\features\hit_effects\hit_effects.hpp" />
     <ClInclude Include="src\features\jump_bug\jump_bug.hpp" />
     <ClInclude Include="src\features\jump_stats\jump_stats.hpp" />
     <ClInclude Include="src\features\mini_jump\mini_jump.hpp" />
@@ -265,6 +266,7 @@
     <ClCompile Include="src\features\fov_changer\fov_changer.cpp" />
     <ClCompile Include="src\features\glove_changer\glove_changer.cpp" />
     <ClCompile Include="src\features\glow\glow.cpp" />
+    <ClCompile Include="src\features\hit_effects\hit_effects.cpp" />
     <ClCompile Include="src\features\jump_bug\jump_bug.cpp" />
     <ClCompile Include="src\features\jump_stats\jump_stats.cpp" />
     <ClCompile Include="src\features\mini_jump\mini_jump.cpp" />
